@@ -44,7 +44,7 @@ const project = new GemeenteNijmegenCdkApp({
     },
   },
   eslintOptions: {
-    devdirs: ['src/app/persoonsgegevens/tests', '/test', '/build-tools'],
+    devdirs: ['src/app/zaken/tests', '/test', '/build-tools'],
   },
   bundlerOptions: {
     loaders: {

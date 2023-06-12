@@ -6,7 +6,7 @@ import { ITable, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { ApiFunction } from './ApiFunction';
-import { PersoonsgegevensFunction } from './app/persoonsgegevens/persoonsgegevens-function';
+import { ZakenFunction } from './app/zaken/zaken-function';
 import { Statics } from './statics';
 
 export class ZakenApiStack extends Stack {
@@ -37,7 +37,6 @@ export class ZakenApiStack extends Stack {
   /**
    * Create and configure lambda's for all api routes, and
    * add routes to the gateway.
-   * @param {string} baseUrl the application url
    */
   setFunctions() {
 
@@ -59,7 +58,7 @@ export class ZakenApiStack extends Stack {
       //  BRP_API_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBrpApiEndpointUrl),
       },
       readOnlyRole,
-      apiFunction: PersoonsgegevensFunction,
+      apiFunction: ZakenFunction,
     });
 
     // secretMTLSPrivateKey.grantRead(gegevensFunction.lambda);

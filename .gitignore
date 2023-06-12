@@ -62,6 +62,6 @@ junit.xml
 /cdk.out/
 .cdk.staging/
 .parcel-cache/
-!/src/app/persoonsgegevens/persoonsgegevens-function.ts
+!/src/app/zaken/zaken-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml

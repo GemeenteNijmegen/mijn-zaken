@@ -1,7 +1,7 @@
 import { Stage, StageProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { ZakenApiStack } from './ZakenApiStack';
 import { Configurable } from './Configuration';
+import { ZakenApiStack } from './ZakenApiStack';
 
 export interface ZakenApiStageProps extends StageProps, Configurable {}
 

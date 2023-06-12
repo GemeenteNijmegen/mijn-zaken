@@ -145,10 +145,10 @@
       "error",
       {
         "devDependencies": [
-          "**/src/app/persoonsgegevens/tests/**",
+          "**/src/app/zaken/tests/**",
           "**//test/**",
           "**//build-tools/**",
-          "src/app/persoonsgegevens/persoonsgegevens.lambda.ts"
+          "src/app/zaken/zaken.lambda.ts"
         ],
         "optionalDependencies": false,
         "peerDependencies": true

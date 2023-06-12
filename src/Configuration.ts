@@ -1,4 +1,4 @@
-import { Statics } from "./statics";
+import { Statics } from './statics';
 
 export interface Environment {
   account: string;
@@ -17,17 +17,17 @@ export interface Configuration {
 }
 
 export const configurations: {[key: string]: Configuration} = {
-  'acceptance': {
+  acceptance: {
     branchName: 'acceptance',
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.acceptanceEnvironment,
     codeStarConnectionArn: Statics.codeStarConnectionArn,
-  }
-}
+  },
+};
 
-export function getConfiguration(branchName: string){
+export function getConfiguration(branchName: string) {
   const config = configurations[branchName];
-  if(!config){
+  if (!config) {
     throw new Error(`Configuration for branch ${branchName} not found`);
   }
   return config;

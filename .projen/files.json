@@ -17,7 +17,7 @@
     ".projen/tasks.json",
     "cdk.json",
     "LICENSE",
-    "src/app/persoonsgegevens/persoonsgegevens-function.ts",
+    "src/app/zaken/zaken-function.ts",
     "tsconfig.dev.json",
     "tsconfig.json"
   ],

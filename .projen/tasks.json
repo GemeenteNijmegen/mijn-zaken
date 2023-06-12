@@ -46,25 +46,25 @@
       "description": "Prepare assets",
       "steps": [
         {
-          "spawn": "bundle:app/persoonsgegevens/persoonsgegevens.lambda"
+          "spawn": "bundle:app/zaken/zaken.lambda"
         }
       ]
     },
-    "bundle:app/persoonsgegevens/persoonsgegevens.lambda": {
-      "name": "bundle:app/persoonsgegevens/persoonsgegevens.lambda",
-      "description": "Create a JavaScript bundle from src/app/persoonsgegevens/persoonsgegevens.lambda.ts",
+    "bundle:app/zaken/zaken.lambda": {
+      "name": "bundle:app/zaken/zaken.lambda",
+      "description": "Create a JavaScript bundle from src/app/zaken/zaken.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/app/persoonsgegevens/persoonsgegevens.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"assets/app/persoonsgegevens/persoonsgegevens.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --loader:.mustache=text"
+          "exec": "esbuild --bundle src/app/zaken/zaken.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"assets/app/zaken/zaken.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --loader:.mustache=text"
         }
       ]
     },
-    "bundle:app/persoonsgegevens/persoonsgegevens.lambda:watch": {
-      "name": "bundle:app/persoonsgegevens/persoonsgegevens.lambda:watch",
-      "description": "Continuously update the JavaScript bundle from src/app/persoonsgegevens/persoonsgegevens.lambda.ts",
+    "bundle:app/zaken/zaken.lambda:watch": {
+      "name": "bundle:app/zaken/zaken.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/app/zaken/zaken.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/app/persoonsgegevens/persoonsgegevens.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"assets/app/persoonsgegevens/persoonsgegevens.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --loader:.mustache=text --watch"
+          "exec": "esbuild --bundle src/app/zaken/zaken.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"assets/app/zaken/zaken.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --loader:.mustache=text --watch"
         }
       ]
     },
@@ -159,7 +159,7 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src src/app/persoonsgegevens/tests /test /build-tools .projenrc.js"
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src src/app/zaken/tests /test /build-tools .projenrc.js"
         }
       ]
     },
