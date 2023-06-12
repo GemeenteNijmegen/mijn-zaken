@@ -1,4 +1,4 @@
-import { Stack, Tags, Stage, aws_ssm as SSM, aws_secretsmanager as SecretsManager, StageProps } from 'aws-cdk-lib';
+import { Stack, Tags, Stage, StageProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Statics } from './statics';
 
@@ -43,24 +43,24 @@ export class ssmParamsConstruct extends Construct {
     Tags.of(this).add('cdkManaged', 'yes');
     Tags.of(this).add('Project', Statics.projectName);
 
-    new SSM.StringParameter(this, 'ssm_gegevens_2', {
-      stringValue: '-',
-      parameterName: Statics.ssmMTLSClientCert,
-    });
+    // new SSM.StringParameter(this, 'ssm_zaken_2', {
+    //   stringValue: '-',
+    //   parameterName: Statics.ssmMTLSClientCert,
+    // });
 
-    new SSM.StringParameter(this, 'ssm_gegevens_3', {
-      stringValue: '-',
-      parameterName: Statics.ssmMTLSRootCA,
-    });
+    // new SSM.StringParameter(this, 'ssm_zaken_3', {
+    //   stringValue: '-',
+    //   parameterName: Statics.ssmMTLSRootCA,
+    // });
 
-    new SecretsManager.Secret(this, 'secret_2', {
-      secretName: Statics.secretMTLSPrivateKey,
-      description: 'mTLS certificate private key',
-    });
+    // new SecretsManager.Secret(this, 'secret_2', {
+    //   secretName: Statics.secretMTLSPrivateKey,
+    //   description: 'mTLS certificate private key',
+    // });
 
-    new SSM.StringParameter(this, 'ssm_brp_1', {
-      stringValue: 'https://data-test.nijmegen.nl/TenT/Bevraging/Irma',
-      parameterName: Statics.ssmBrpApiEndpointUrl,
-    });
+    // new SSM.StringParameter(this, 'ssm_brp_1', {
+    //   stringValue: 'https://data-test.nijmegen.nl/TenT/Bevraging/Irma',
+    //   parameterName: Statics.ssmBrpApiEndpointUrl,
+    // });
   }
 }
