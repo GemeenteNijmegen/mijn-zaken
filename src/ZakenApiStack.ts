@@ -61,9 +61,9 @@ export class ZakenApiStack extends Stack {
       apiFunction: ZakenFunction,
     });
 
-    // secretMTLSPrivateKey.grantRead(gegevensFunction.lambda);
-    // tlskeyParam.grantRead(gegevensFunction.lambda);
-    // tlsRootCAParam.grantRead(gegevensFunction.lambda);
+    // secretMTLSPrivateKey.grantRead(zakenFunction.lambda);
+    // tlskeyParam.grantRead(zakenFunction.lambda);
+    // tlsRootCAParam.grantRead(zakenFunction.lambda);
 
     new apigatewayv2.HttpRoute(this, 'zaken-route', {
       httpApi: this.api,
