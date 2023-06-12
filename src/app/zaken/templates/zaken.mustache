@@ -1,0 +1,117 @@
+{{>header}}
+
+<main>
+    <!-- START: template component(s) -->
+    <div class="container" id="section-1">
+        <div class="row">
+            <div class="col-12">
+                <h1>Mijn gegevens</h1>
+                <p class="lead">Hier vindt u een overzicht van uw zaken.</p>
+                <div class="tabs-wrapper">
+
+                    <!-- Tab List -->
+                    <div class="nav classic-tabs-no-line" role="tablist">
+                        <div class="nav-item">
+                            <button class="nav-link active" role="tab" aria-selected="true" aria-controls="example-1-tab" id="example-1">
+                                Lopende zaken
+                            </button>
+                        </div>
+                        <div class="nav-item">
+                            <button class="nav-link" role="tab" aria-selected="false" aria-controls="example-2-tab" id="example-2" tabindex="-1">
+                                Afgeronde zaken
+                            </button>
+                        </div>
+                    </div>
+                
+                    <!-- Tab Content -->
+                    <div class="tab-content" tabindex="0" role="tabpanel" id="example-1-tab" aria-labelledby="example-1">
+                        <div class="cards">
+                            <div class="card card-services">
+                                <div class="card-body">
+                                    <h3 class="card-title">Klacht</h3>
+                                    <p class="card-text">Zaaknummer: <strong>DMS11.1253</strong><br />
+                                    Status: <strong>Ontvangen</strong></p>
+                                    <p>Geregistreerd op 3 september 2022</p>
+                                    <p class="card-read-more text-right mb-0 text-uppercase">
+                                        <a href="/voorbeeld-zaak.html">Open zaak</a>
+                                    </p>
+                                </div>
+                            </div>
+                                <div class="card card-services">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Aanvraag evenementenvergunning</h3>
+                                        <p class="card-text">Zaaknummer: <strong>APV10.1324</strong><br />
+                                            Status: <strong>In behandeling</strong></p>
+                                            <p>Geregistreerd op 2 april 2022</p>
+                                        <p class="card-read-more text-right mb-0 text-uppercase">
+                                            <a href="/voorbeeld-zaak-2.html">Open zaak</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!--                         
+                        <table class="responsive-table">
+                            <caption>Open zaken</caption>
+                            <thead>
+                                <tr>
+                                    <th>Zaaknummer</th>
+                                    <th>Registratiedatum</th>
+                                    <th>Zaaktype</th>
+                                    <th>Status</th>
+                                    <th>Actie</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Z23.000202</td>
+                                    <td>2023-03-09</td>
+                                    <td>Klacht</td>
+                                    <td>Ontvangen</td>
+                                    <td><a class="btn" href="/">Openen</a></td>
+                                </tr>
+                            </tbody>
+                        </table> -->
+                    </div>
+                    <div class="tab-content" tabindex="0" role="tabpanel" id="example-2-tab" aria-labelledby="example-2" hidden="">
+                        <table class="responsive-table">
+                            <caption>Afgesloten zaken</caption>
+                            <thead>
+                                <tr>
+                                    <th>Zaaknummer</th>
+                                    <th>Registratiedatum</th>
+                                    <th>Einddatum</th>
+                                    <th>Zaaktype</th>
+                                    <th>Status</th>
+                                    <th>Resultaat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Z23.000036</td>
+                                    <td>2023-01-18</td>
+                                    <td>2023-01-27</td>
+                                    <td>Bezwaar</td>
+                                    <td>Afgerond</td>
+                                    <td>Ingetrokken na BIA</td>
+                                </tr>
+                                <tr>
+                                    <td>Z23.000007</td>
+                                    <td>2022-12-18</td>
+                                    <td>2023-01-12</td>
+                                    <td>Bezwaar</td>
+                                    <td>Afgerond</td>
+                                    <td>Niet ontvankelijk</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- END: template component(s) -->
+</main>
+
+{{>footer}}
