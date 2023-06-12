@@ -19,6 +19,7 @@ const dynamoDBClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 function parseEvent(event: APIGatewayProxyEventV2): any {
   return {
     cookies: event?.cookies?.join(';'),
+    zaak: event?.queryStringParameters?.zaak,
   };
 }
 
@@ -26,7 +27,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
   try {
     const params = parseEvent(event);
     // await initPromise;
-    return await zakenRequestHandler(params.cookies, dynamoDBClient);
+    return await zakenRequestHandler(params, dynamoDBClient);
 
   } catch (err) {
     console.debug(err);
