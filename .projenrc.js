@@ -13,20 +13,21 @@ const project = new GemeenteNijmegenCdkApp({
     '@gemeentenijmegen/apigateway-http',
     '@gemeentenijmegen/session',
     '@gemeentenijmegen/utils',
-    'dotenv',
     '@aws-cdk/aws-apigatewayv2-alpha',
     '@aws-cdk/aws-apigatewayv2-integrations-alpha',
-    '@aws-solutions-constructs/aws-lambda-dynamodb',
     'mustache',
     'axios',
+    'jsonwebtoken'
   ],
   devDeps: [
     '@types/aws-lambda',
+    '@types/jsonwebtoken',
     'jest-aws-client-mock',
     'copyfiles',
     '@glen/jest-raw-loader',
     'axios-mock-adapter',
     '@aws-sdk/client-ssm',
+    'dotenv',
   ],
   mutableBuild: true,
   jestOptions: {

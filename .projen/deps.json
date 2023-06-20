@@ -17,6 +17,10 @@
       "type": "build"
     },
     {
+      "name": "@types/jsonwebtoken",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^16",
       "type": "build"
@@ -42,6 +46,10 @@
     },
     {
       "name": "copyfiles",
+      "type": "build"
+    },
+    {
+      "name": "dotenv",
       "type": "build"
     },
     {
@@ -121,10 +129,6 @@
       "type": "runtime"
     },
     {
-      "name": "@aws-solutions-constructs/aws-lambda-dynamodb",
-      "type": "runtime"
-    },
-    {
       "name": "@gemeentenijmegen/apiclient",
       "type": "runtime"
     },
@@ -159,7 +163,7 @@
       "type": "runtime"
     },
     {
-      "name": "dotenv",
+      "name": "jsonwebtoken",
       "type": "runtime"
     },
     {
