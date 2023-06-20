@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
-import * as template from './templates/zaken.mustache';
+import * as template from './templates/zaken.mustache'
 import { render } from '../../shared/render';
 
 export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient) {

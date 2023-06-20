@@ -1,9 +1,16 @@
 import axios from "axios";
 import { OpenZaakClient } from "../OpenZaakClient";
 import { Statuses } from "../Statuses";
+import MockAdapter from 'axios-mock-adapter';
+
+const axiosMock = new MockAdapter(axios);
+beforeEach(() => {
+  axiosMock.reset();
+});
 
 describe('Statuses', () => {
   test('constructing object succeeds', async () => {
+    axiosMock.onGet().reply(200, []);
     const client = new OpenZaakClient({ baseUrl: new URL('https://example.com'), axiosInstance: axios.create() })
     expect(() => { new Statuses(client) }).not.toThrow();
   });

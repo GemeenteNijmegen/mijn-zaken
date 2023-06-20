@@ -15,6 +15,7 @@ const project = new GemeenteNijmegenCdkApp({
     '@gemeentenijmegen/utils',
     '@aws-cdk/aws-apigatewayv2-alpha',
     '@aws-cdk/aws-apigatewayv2-integrations-alpha',
+    '@aws-solutions-constructs/aws-lambda-dynamodb',
     'mustache',
     'axios',
     'jsonwebtoken'
@@ -28,6 +29,7 @@ const project = new GemeenteNijmegenCdkApp({
     'axios-mock-adapter',
     '@aws-sdk/client-ssm',
     'dotenv',
+    'axios-mock-adapter'
   ],
   mutableBuild: true,
   jestOptions: {

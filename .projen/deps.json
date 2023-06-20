@@ -129,6 +129,10 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-solutions-constructs/aws-lambda-dynamodb",
+      "type": "runtime"
+    },
+    {
       "name": "@gemeentenijmegen/apiclient",
       "type": "runtime"
     },
