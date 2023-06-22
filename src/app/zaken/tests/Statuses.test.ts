@@ -4,8 +4,8 @@ import { OpenZaakClient } from '../OpenZaakClient';
 import { Statuses } from '../Statuses';
 
 let baseUrl = new URL('http://localhost');
-if (process.env.BASE_URL) {
-  baseUrl = new URL(process.env.BASE_URL);
+if (process.env.VIP_BASE_URL) {
+  baseUrl = new URL(process.env.VIP_BASE_URL);
 }
 
 const axiosMock = new MockAdapter(axios);
@@ -21,15 +21,15 @@ describe('Statuses', () => {
   });
 
   // test('list returns zaken', async () => {
-  //   if(!process.env.SECRET) {
+  //   if(!process.env.VIP_JWT_SECRET) {
   //     console.debug('Secret must be provided for live test, skipping');
   //     return;
   //   }
   //   const client = new OpenZaakClient({
   //     baseUrl,
-  //     clientId: process.env.CLIENT_ID,
-  //     userId: process.env.USER_ID,
-  //     secret: process.env.SECRET
+  //     clientId: process.env.VIP_CLIENT_ID,
+  //     userId: process.env.VIP_USER_ID,
+  //     secret: process.env.VIP_JWT_SECRET
   //   });
   //   const statuses  = new Statuses(client);
   //   const zaken = await statuses.list();
