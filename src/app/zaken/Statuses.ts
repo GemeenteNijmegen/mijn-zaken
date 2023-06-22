@@ -1,4 +1,4 @@
-import { OpenZaakClient } from "./OpenZaakClient";
+import { OpenZaakClient } from './OpenZaakClient';
 
 export class Statuses {
   private client: OpenZaakClient;
@@ -21,39 +21,44 @@ export class Statuses {
     await this.metaData();
     const params = new URLSearchParams({
       rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: '900026236',
-      page: '1'
+      page: '1',
     });
-    
+
     // Get all zaken
-    const zaken = await this.client.request('https://openzaak.woweb.app/zaken/api/v1/zaken', params);
-    console.debug(zaken);
-    const [statussen, resultaten] = await this.zaakMetaData(zaken);
-    return this.summarizeZaken(zaken, statussen, resultaten);
+    const zaken = await this.client.request('/zaken/api/v1/zaken', params);
+    if (zaken.results) {
+      const [statussen, resultaten] = await this.zaakMetaData(zaken);
+      return this.summarizeZaken(zaken, statussen, resultaten);
+    }
+    return [];
   }
   /**
    * Gather metadata for zaken
-   * 
+   *
    * @param zaken all zaken we're interested in
    * @returns `[statussen, resultaten]` An array with two elements, containing the status- and resultaat-objects
    */
   private async zaakMetaData(zaken: any) {
+    if (!zaken.results) {
+      throw Error('No zaken found');
+    };
     // Gather status-urls from zaken, so we can get all statusses in parallel
     const status_urls = zaken.results.map((zaak: any) => zaak.status).filter((status: any) => status != null);
     // Gather resultaat-urls from zaken, so we can get all resultaten in parallel
     const resultaat_urls = zaken.results.map((zaak: any) => zaak.resultaat).filter((resultaat: any) => resultaat != null);
 
     // Get all statuses and resultaten in parallel
-    return await Promise.all([
+    return Promise.all([
       Promise.all(status_urls.map((status: string) => this.client.request(status))),
-      Promise.all(resultaat_urls.map((resultaat: string) => this.client.request(resultaat)))
+      Promise.all(resultaat_urls.map((resultaat: string) => this.client.request(resultaat))),
     ]);
   }
 
   private summarizeZaken(zaken: any, statussen: any[], resultaten: any[]) {
     const zaak_summaries: any[] = [];
     for (const zaak of zaken.results) {
-      const status = statussen.find((status: any) => status.url == zaak.status);
-      const resultaat = resultaten.find((resultaat: any) => resultaat.url == zaak.resultaat);
+      const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
+      const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype).omschrijving;
       let status_type = null;
       if (status) {
@@ -68,7 +73,7 @@ export class Statuses {
         registratiedatum: zaak.registratiedatum,
         zaak_type: zaaktype,
         status: status_type,
-        resultaat: resultaat_type
+        resultaat: resultaat_type,
       });
     }
     return zaak_summaries;
@@ -76,8 +81,16 @@ export class Statuses {
 
   /** Guarantee metadata promises are resolved */
   private async metaData() {
-    if(!this.zaakTypes || !this.statusTypes || !this.resultaatTypes) {
-      [this.zaakTypes, this.statusTypes, this.resultaatTypes] = await Promise.all([this.zaakTypesPromise, this.statusTypesPromise, this.resultaatTypesPromise]);
+    if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes) {
+      [
+        this.zaakTypes,
+        this.statusTypes,
+        this.resultaatTypes,
+      ] = await Promise.all([
+        this.zaakTypesPromise,
+        this.statusTypesPromise,
+        this.resultaatTypesPromise,
+      ]);
     }
   }
 }
