@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 import { OpenZaakClient } from '../OpenZaakClient';
 dotenv.config();
 
-const secret = process.env.SECRET;
+const secret = process.env.VIP_JWT_SECRET;
 let baseUrl = new URL('http://localhost');
-if (process.env.BASE_URL) {
-  baseUrl = new URL(process.env.BASE_URL);
+if (process.env.VIP_BASE_URL) {
+  baseUrl = new URL(process.env.VIP_BASE_URL);
 }
 
 describe('Openzaak Client', () => {
@@ -17,11 +17,11 @@ describe('Openzaak Client', () => {
       return;
     }
     const token = jwt.sign({
-      iss: process.env.CLIENT_ID,
+      iss: process.env.VIP_CLIENT_ID,
       iat: Date.now(),
-      client_id: process.env.CLIENT_ID,
-      user_id: process.env.USER_ID,
-      user_representation: process.env.USER_ID,
+      client_id: process.env.VIP_CLIENT_ID,
+      user_id: process.env.VIP_USER_ID,
+      user_representation: process.env.VIP_USER_ID,
     }, secret);
 
     const axiosInstance = axios.create(
@@ -43,7 +43,7 @@ describe('Openzaak Client', () => {
       console.debug('Secret must be provided for live test, skipping');
       return;
     }
-    const client = new OpenZaakClient({ baseUrl, clientId: process.env.CLIENT_ID, userId: process.env.USER_ID, secret });
+    const client = new OpenZaakClient({ baseUrl, clientId: process.env.VIP_CLIENT_ID, userId: process.env.VIP_USER_ID, secret });
     const res = await client.request('/catalogi/api/v1/zaaktypen');
     expect(res).toHaveProperty('results');
   });
@@ -67,7 +67,7 @@ describe('Openzaak Client', () => {
     expect(() => {
       const axiosInstance = axios.create(
         {
-          baseURL: 'process.env.BASE_URL',
+          baseURL: 'process.env.VIP_BASE_URL',
         });
       new OpenZaakClient({ baseUrl, axiosInstance });
     }).not.toThrow();

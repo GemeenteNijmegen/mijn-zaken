@@ -9,25 +9,15 @@ export abstract class Statics {
   static readonly ssmDataKeyArn: string = '/cdk/mijn-nijmegen/kms-datakey-arn';
   static readonly ssmReadOnlyRoleArn: string = '/cdk/mijn-nijmegen/role-readonly-arn';
 
-  /**
-   * Certificate private key for mTLS
-   */
-  static readonly secretMTLSPrivateKey: string = '/cdk/mijn-zaken/mtls-privatekey';
 
+  static readonly ssmUserId: string = '/cdk/mijn-zaken/vip-jwt-userid';
+  static readonly ssmClientId: string = '/cdk/mijn-zaken/vip-jwt-clientid';
+  static readonly ssmBaseUrl: string = '/cdk/mijn-zaken/vip-base-url';
+  
   /**
-   * Certificate for mTLS
+   * Secret for VIP jwt token
    */
-  static readonly ssmMTLSClientCert: string = '/cdk/mijn-zaken/mtls-clientcert';
-
-  /**
-    * Root CA for mTLS (PKIO root)
-    */
-  static readonly ssmMTLSRootCA: string = '/cdk/mijn-zaken/mtls-rootca';
-
-  /**
-   * BRP API endpoint
-   */
-  static readonly ssmBrpApiEndpointUrl: string = '/cdk/mijn-zaken/brp-api-url';
+  static readonly secret: string = '/cdk/mijn-zaken/vip-jwt-secret';
 
   /**
    * Codestar connection (old lz)

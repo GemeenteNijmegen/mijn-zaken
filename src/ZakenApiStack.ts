@@ -8,6 +8,7 @@ import { Construct } from 'constructs';
 import { ApiFunction } from './ApiFunction';
 import { ZakenFunction } from './app/zaken/zaken-function';
 import { Statics } from './statics';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 
 export class ZakenApiStack extends Stack {
   private sessionsTable: ITable;
@@ -52,10 +53,10 @@ export class ZakenApiStack extends Stack {
       table: this.sessionsTable,
       tablePermissions: 'ReadWrite',
       environment: {
-      //  MTLS_PRIVATE_KEY_ARN: secretMTLSPrivateKey.secretArn,
-      //  MTLS_CLIENT_CERT_NAME: Statics.ssmMTLSClientCert,
-      //  MTLS_ROOT_CA_NAME: Statics.ssmMTLSRootCA,
-      //  BRP_API_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBrpApiEndpointUrl),
+       VIP_JWT_SECRET_ARN: Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret).secretArn,
+       VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
+       VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
+       VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
       },
       readOnlyRole,
       apiFunction: ZakenFunction,
