@@ -26,30 +26,23 @@
                     <!-- Tab Content -->
                     <div class="tab-content" tabindex="0" role="tabpanel" id="example-1-tab" aria-labelledby="example-1">
                         <div class="cards">
-                            <div class="card card-services">
-                                <div class="card-body">
-                                    <h3 class="card-title">Klacht</h3>
-                                    <p class="card-text">Zaaknummer: <strong>DMS11.1253</strong><br />
-                                    Status: <strong>Ontvangen</strong></p>
-                                    <p>Geregistreerd op 3 september 2022</p>
-                                    <p class="card-read-more text-right mb-0 text-uppercase">
-                                        <a href="/zaken?zaak=1">Open zaak</a>
+                        {{#zaken}}
                                     </p>
                                 </div>
                             </div>
                             <br/>
                             <div class="card card-services">
                                 <div class="card-body">
-                                    <h3 class="card-title">Aanvraag evenementenvergunning</h3>
-                                    <p class="card-text">Zaaknummer: <strong>APV10.1324</strong><br />
-                                        Status: <strong>In behandeling</strong></p>
-                                        <p>Geregistreerd op 2 april 2022</p>
+                                    <h3 class="card-title">{{zaak_type}}</h3>
+                                    <p class="card-text">Zaaknummer: <strong>{{id}}</strong><br />
+                                    Status: <strong>{{status}}</strong></p>
+                                    <p>Geregistreerd op {{registratiedatum}}</p>
                                     <p class="card-read-more text-right mb-0 text-uppercase">
                                         <a href="/zaken?zaak=2">Open zaak</a>
                                     </p>
                                 </div>
                             </div>
-                            </div>
+                        {{/zaken}}
                         </div>
 <!--                         
                         <table class="responsive-table">

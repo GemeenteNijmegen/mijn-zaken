@@ -1,23 +1,23 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
-import * as voorbeeldZaak1 from './templates/voorbeeldzaak1.mustache';
-import * as voorbeeldZaak2 from './templates/voorbeeldzaak2.mustache';
+import { OpenZaakClient } from './OpenZaakClient';
+import { Statuses } from './Statuses';
 import * as template from './templates/zaken.mustache';
 import { render } from '../../shared/render';
 
-export async function zakenRequestHandler(params: any, dynamoDBClient: DynamoDBClient) {
+export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient }) {
 
   console.time('request');
   console.timeLog('request', 'start request');
   console.timeLog('request', 'finished init');
 
-  let session = new Session(params.cookies, dynamoDBClient);
+  let session = new Session(cookies, dynamoDBClient);
   await session.init();
 
   console.timeLog('request', 'init session');
   if (session.isLoggedIn() == true) {
-    const response = await handleLoggedinRequest(session, params);
+    const response = await handleLoggedinRequest(session, config.zakenClient);
     console.timeEnd('request');
     return response;
   }
@@ -26,26 +26,24 @@ export async function zakenRequestHandler(params: any, dynamoDBClient: DynamoDBC
   return Response.redirect('/login');
 }
 
-async function handleLoggedinRequest(session: Session, params: any) {
+async function handleLoggedinRequest(session: Session, client: OpenZaakClient) {
 
   console.timeLog('request', 'Api Client init');
   console.timeLog('request', 'Brp Api');
 
-  const data = {
+  let data = {
     volledigenaam: session.getValue('username'),
     title: 'Lopende zaken',
     shownav: true,
+    zaken: <any>[],
   };
 
-  let t = template.default;
-  if (params.zaak == '1') {
-    t = voorbeeldZaak1.default;
-  } else if (params.zaak == '2') {
-    t = voorbeeldZaak2.default;
-  }
+  const statuses = new Statuses(client);
+  const zaken = await statuses.list();
+  data.zaken = zaken;
 
   // render page
-  const html = await render(data, t);
+  const html = await render(data, template.default);
   return Response.html(html, 200, session.getCookie());
 }
 

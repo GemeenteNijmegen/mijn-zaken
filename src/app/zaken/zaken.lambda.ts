@@ -1,20 +1,22 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { ApiGatewayV2Response, Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
+import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { OpenZaakClient } from './OpenZaakClient';
 import { zakenRequestHandler } from './zakenRequestHandler';
 
 const dynamoDBClient = new DynamoDBClient({ region: process.env.AWS_REGION });
-// const apiClient = new ApiClient();
 
-// async function init() {
-//   console.time('init');
-//   console.timeLog('init', 'start init');
-//   let promise = apiClient.init();
-//   console.timeEnd('init');
-//   return promise;
-// }
+let openZaakClient: OpenZaakClient | false;
 
-// const initPromise = init();
+async function initSecret() {
+  if (!process.env.SECRET_ARN) {
+    throw Error('No secret ARN provided');
+  }
+  return AWS.getSecret(process.env.SECRET_ARN);
+}
+
+const initPromise = initSecret();
 
 function parseEvent(event: APIGatewayProxyEventV2): any {
   return {
@@ -26,11 +28,23 @@ function parseEvent(event: APIGatewayProxyEventV2): any {
 export async function handler(event: any, _context: any):Promise<ApiGatewayV2Response> {
   try {
     const params = parseEvent(event);
-    // await initPromise;
-    return await zakenRequestHandler(params, dynamoDBClient);
-
+    const secret = await initPromise;
+    const zakenClient = sharedOpenZaakClient(secret);
+    return await zakenRequestHandler(params.cookies, dynamoDBClient, { zakenClient });
   } catch (err) {
     console.debug(err);
     return Response.error(500);
   }
 };
+
+function sharedOpenZaakClient(secret: string): OpenZaakClient {
+  if (!openZaakClient) {
+    openZaakClient = new OpenZaakClient({
+      baseUrl: new URL(process.env.BASE_URL),
+      clientId: process.env.CLIENT_ID,
+      userId: process.env.USER_ID,
+      secret,
+    });
+  }
+  return openZaakClient;
+}
