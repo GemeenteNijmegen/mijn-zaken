@@ -12,7 +12,7 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
   console.timeLog('request', 'start request');
   console.timeLog('request', 'finished init');
 
-  let session = new Session(params.cookies, dynamoDBClient);
+  let session = new Session(cookies, dynamoDBClient);
   await session.init();
 
   console.timeLog('request', 'init session');
@@ -43,7 +43,7 @@ async function handleLoggedinRequest(session: Session, client: OpenZaakClient) {
   data.zaken = zaken;
 
   // render page
-  const html = await render(data, t);
+  const html = await render(data, template.default);
   return Response.html(html, 200, session.getCookie());
 }
 
