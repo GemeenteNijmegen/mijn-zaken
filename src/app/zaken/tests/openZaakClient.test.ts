@@ -17,11 +17,11 @@ describe('Openzaak Client', () => {
       return;
     }
     const token = jwt.sign({
-      iss: process.env.VIP_CLIENT_ID,
+      iss: process.env.VIP_JWT_CLIENT_ID,
       iat: Date.now(),
-      client_id: process.env.VIP_CLIENT_ID,
-      user_id: process.env.VIP_USER_ID,
-      user_representation: process.env.VIP_USER_ID,
+      client_id: process.env.VIP_JWT_CLIENT_ID,
+      user_id: process.env.VIP_JWT_USER_ID,
+      user_representation: process.env.VIP_JWT_USER_ID,
     }, secret);
 
     const axiosInstance = axios.create(
@@ -43,7 +43,7 @@ describe('Openzaak Client', () => {
       console.debug('Secret must be provided for live test, skipping');
       return;
     }
-    const client = new OpenZaakClient({ baseUrl, clientId: process.env.VIP_CLIENT_ID, userId: process.env.VIP_USER_ID, secret });
+    const client = new OpenZaakClient({ baseUrl, clientId: process.env.VIP_JWT_CLIENT_ID, userId: process.env.VIP_JWT_USER_ID, secret });
     const res = await client.request('/catalogi/api/v1/zaaktypen');
     expect(res).toHaveProperty('results');
   });

@@ -28,11 +28,11 @@ if (process.env.VIP_BASE_URL) {
 }
 
 const token = jwt.sign({
-  iss: process.env.VIP_CLIENT_ID,
+  iss: process.env.VIP_JWT_CLIENT_ID,
   iat: Date.now(),
-  client_id: process.env.VIP_CLIENT_ID,
-  user_id: process.env.VIP_USER_ID,
-  user_representation: process.env.VIP_USER_ID,
+  client_id: process.env.VIP_JWT_CLIENT_ID,
+  user_id: process.env.VIP_JWT_USER_ID,
+  user_representation: process.env.VIP_JWT_USER_ID,
 }, secret);
 
 const axiosInstance = axios.create(

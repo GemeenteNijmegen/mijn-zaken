@@ -27,8 +27,8 @@ describe('Statuses', () => {
   //   }
   //   const client = new OpenZaakClient({
   //     baseUrl,
-  //     clientId: process.env.VIP_CLIENT_ID,
-  //     userId: process.env.VIP_USER_ID,
+  //     clientId: process.env.VIP_JWT_CLIENT_ID,
+  //     userId: process.env.VIP_JWT_USER_ID,
   //     secret: process.env.VIP_JWT_SECRET
   //   });
   //   const statuses  = new Statuses(client);

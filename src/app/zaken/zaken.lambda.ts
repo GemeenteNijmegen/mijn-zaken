@@ -44,8 +44,8 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
     }
     openZaakClient = new OpenZaakClient({
       baseUrl: new URL(process.env.VIP_BASE_URL),
-      clientId: process.env.VIP_CLIENT_ID,
-      userId: process.env.VIP_USER_ID,
+      clientId: process.env.VIP_JWT_CLIENT_ID,
+      userId: process.env.VIP_JWT_USER_ID,
       secret,
     });
   }
