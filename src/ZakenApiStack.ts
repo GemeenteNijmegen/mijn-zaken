@@ -9,7 +9,6 @@ import { Construct } from 'constructs';
 import { ApiFunction } from './ApiFunction';
 import { ZakenFunction } from './app/zaken/zaken-function';
 import { Statics } from './statics';
-import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 
 export class ZakenApiStack extends Stack {
   private sessionsTable: ITable;

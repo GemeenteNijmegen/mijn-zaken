@@ -3,8 +3,6 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Statics } from './statics';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 
 /**
  * Stage for creating SSM parameters. This needs to run
