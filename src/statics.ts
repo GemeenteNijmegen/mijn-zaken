@@ -17,7 +17,7 @@ export abstract class Statics {
   /**
    * Secret for VIP jwt token
    */
-  static readonly secret: string = '/cdk/mijn-zaken/vip-jwt-secret';
+  static readonly vipJwtSecret: string = '/cdk/mijn-zaken/vip-jwt-secret';
 
   /**
    * Codestar connection (old lz)

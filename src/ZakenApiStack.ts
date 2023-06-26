@@ -4,6 +4,7 @@ import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-al
 import { Stack, aws_ssm as SSM, aws_kms } from 'aws-cdk-lib';
 import { ITable, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role } from 'aws-cdk-lib/aws-iam';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { ApiFunction } from './ApiFunction';
 import { ZakenFunction } from './app/zaken/zaken-function';
@@ -53,10 +54,10 @@ export class ZakenApiStack extends Stack {
       table: this.sessionsTable,
       tablePermissions: 'ReadWrite',
       environment: {
-       VIP_JWT_SECRET_ARN: Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret).secretArn,
-       VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
-       VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
-       VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
+        VIP_JWT_SECRET_ARN: Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret).secretArn,
+        VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
+        VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
+        VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
       },
       readOnlyRole,
       apiFunction: ZakenFunction,
