@@ -29,7 +29,6 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
 async function handleLoggedinRequest(session: Session, client: OpenZaakClient) {
 
   console.timeLog('request', 'Api Client init');
-  console.timeLog('request', 'Brp Api');
 
   let data = {
     volledigenaam: session.getValue('username'),
@@ -41,6 +40,7 @@ async function handleLoggedinRequest(session: Session, client: OpenZaakClient) {
   const statuses = new Statuses(client);
   const zaken = await statuses.list();
   data.zaken = zaken;
+  console.timeLog('request', 'zaken received');
 
   // render page
   const html = await render(data, template.default);

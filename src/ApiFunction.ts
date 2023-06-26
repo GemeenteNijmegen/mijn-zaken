@@ -29,7 +29,7 @@ export class ApiFunction extends Construct {
     const insightsArn = 'arn:aws:lambda:eu-west-1:580247275435:layer:LambdaInsightsExtension:21';
     this.lambda = new props.apiFunction(this, 'lambda', {
       runtime: Lambda.Runtime.NODEJS_18_X,
-      memorySize: 512,
+      memorySize: 1024,
       handler: 'index.handler',
       description: props.description,
       code: Lambda.Code.fromInline('empty'), // Overwritten,
