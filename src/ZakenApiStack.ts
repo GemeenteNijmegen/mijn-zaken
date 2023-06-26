@@ -62,7 +62,7 @@ export class ZakenApiStack extends Stack {
       readOnlyRole,
       apiFunction: ZakenFunction,
     });
-    jwtSecret.grantRead(zakenFunction.lambda);
+    jwtSecret.grantRead(zakenFunction.lambda.grantPrincipal);
     
     new apigatewayv2.HttpRoute(this, 'zaken-route', {
       httpApi: this.api,
