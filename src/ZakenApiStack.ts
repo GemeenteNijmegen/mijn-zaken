@@ -47,13 +47,14 @@ export class ZakenApiStack extends Stack {
 
     const readOnlyRole = Role.fromRoleArn(this, 'readonly', SSM.StringParameter.valueForStringParameter(this, Statics.ssmReadOnlyRoleArn));
 
+    const jwtSecret = Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret);
     const zakenFunction = new ApiFunction(this, 'zaken-function', {
       description: 'Zaken-lambda voor de Mijn Nijmegen-applicatie.',
       codePath: 'app/zaken',
       table: this.sessionsTable,
       tablePermissions: 'ReadWrite',
       environment: {
-        VIP_JWT_SECRET_ARN: Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret).secretArn,
+        VIP_JWT_SECRET_ARN: jwtSecret.secretArn,
         VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
         VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
         VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
@@ -61,11 +62,8 @@ export class ZakenApiStack extends Stack {
       readOnlyRole,
       apiFunction: ZakenFunction,
     });
-
-    // secretMTLSPrivateKey.grantRead(zakenFunction.lambda);
-    // tlskeyParam.grantRead(zakenFunction.lambda);
-    // tlsRootCAParam.grantRead(zakenFunction.lambda);
-
+    jwtSecret.grantRead(zakenFunction.lambda);
+    
     new apigatewayv2.HttpRoute(this, 'zaken-route', {
       httpApi: this.api,
       integration: new HttpLambdaIntegration('zaken', zakenFunction.lambda),
