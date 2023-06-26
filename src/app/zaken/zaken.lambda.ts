@@ -39,7 +39,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
 
 function sharedOpenZaakClient(secret: string): OpenZaakClient {
   if (!openZaakClient) {
-    if(!process.env.VIP_BASE_URL) { 
+    if (!process.env.VIP_BASE_URL) {
       throw Error('no base url set');
     }
     openZaakClient = new OpenZaakClient({
