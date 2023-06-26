@@ -30,6 +30,7 @@ export class ApiFunction extends Construct {
     this.lambda = new props.apiFunction(this, 'lambda', {
       runtime: Lambda.Runtime.NODEJS_18_X,
       memorySize: 1024,
+      timeout: Duration.seconds(10),
       handler: 'index.handler',
       description: props.description,
       code: Lambda.Code.fromInline('empty'), // Overwritten,

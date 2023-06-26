@@ -22,6 +22,7 @@ export class Statuses {
   }
 
   async list() {
+    console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
     const params = new URLSearchParams({
       rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.bsn.bsn,
@@ -30,8 +31,10 @@ export class Statuses {
 
     // Get all zaken
     const zaken = await this.client.request('/zaken/api/v1/zaken', params);
+    console.timeLog('zaken status', 'received zaken');
     if (zaken.results) {
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
+      console.timeLog('zaken status', 'received zaakmetadata');
       return this.summarizeZaken(zaken, statussen, resultaten);
     }
     return [];
