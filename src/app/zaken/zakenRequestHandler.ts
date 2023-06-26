@@ -5,6 +5,7 @@ import { OpenZaakClient } from './OpenZaakClient';
 import { Statuses } from './Statuses';
 import * as template from './templates/zaken.mustache';
 import { render } from '../../shared/render';
+import { Bsn } from '@gemeentenijmegen/utils';
 
 export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient }) {
 
@@ -17,9 +18,16 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
 
   console.timeLog('request', 'init session');
   if (session.isLoggedIn() == true) {
-    const response = await handleLoggedinRequest(session, config.zakenClient);
-    console.timeEnd('request');
-    return response;
+    try {
+      const response = await handleLoggedinRequest(session, config.zakenClient);
+      console.timeEnd('request');
+      return response;
+    } catch(error: any) {
+      console.error(error);
+      return Response.error(500);
+    }
+
+    }
   }
 
   console.timeEnd('request');
@@ -37,7 +45,8 @@ async function handleLoggedinRequest(session: Session, client: OpenZaakClient) {
     zaken: <any>[],
   };
 
-  const statuses = new Statuses(client);
+  const bsn = new Bsn(session.getValue('bsn'));
+  const statuses = new Statuses(client, bsn);
   const zaken = await statuses.list();
   data.zaken = zaken;
   console.timeLog('request', 'zaken received');

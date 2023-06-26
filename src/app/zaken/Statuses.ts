@@ -1,3 +1,4 @@
+import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
 
 export class Statuses {
@@ -10,8 +11,11 @@ export class Statuses {
   private zaakTypes?: any;
   private resultaatTypes?: any;
 
-  constructor(client: OpenZaakClient) {
+  private bsn: Bsn;
+
+  constructor(client: OpenZaakClient, bsn: Bsn) {
     this.client = client;
+    this.bsn = bsn;
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.request('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
@@ -20,7 +24,7 @@ export class Statuses {
   async list() {
     await this.metaData();
     const params = new URLSearchParams({
-      rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: '900026236',
+      rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.bsn.bsn,
       page: '1',
     });
 
