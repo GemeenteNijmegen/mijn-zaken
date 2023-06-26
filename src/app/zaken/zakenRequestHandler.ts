@@ -1,11 +1,11 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
+import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Statuses } from './Statuses';
 import * as template from './templates/zaken.mustache';
 import { render } from '../../shared/render';
-import { Bsn } from '@gemeentenijmegen/utils';
 
 export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient }) {
 
@@ -22,11 +22,9 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
       const response = await handleLoggedinRequest(session, config.zakenClient);
       console.timeEnd('request');
       return response;
-    } catch(error: any) {
+    } catch (error: any) {
       console.error(error);
       return Response.error(500);
-    }
-
     }
   }
 

@@ -1,3 +1,4 @@
+import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { OpenZaakClient } from '../OpenZaakClient';
@@ -17,7 +18,7 @@ describe('Statuses', () => {
   test('constructing object succeeds', async () => {
     axiosMock.onGet().reply(200, []);
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios.create() });
-    expect(() => { new Statuses(client); }).not.toThrow();
+    expect(() => { new Statuses(client, new Bsn('900222670')); }).not.toThrow();
   });
 
   // test('list returns zaken', async () => {

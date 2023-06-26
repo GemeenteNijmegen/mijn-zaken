@@ -15,7 +15,7 @@ const getItemOutput: Partial<GetItemCommandOutput> = {
     data: {
       M: {
         loggedin: { BOOL: true },
-        bsn: { S: '999993653' },
+        bsn: { S: '900026236' },
       },
     },
   },
