@@ -66,7 +66,7 @@ export class Statuses {
     for (const zaak of zaken.results) {
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
-      const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype).omschrijving;
+      const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
       let status_type = null;
       if (status) {
         status_type = this.statusTypes.results.find((type: any) => type.url == status.statustype).omschrijving;
@@ -83,7 +83,8 @@ export class Statuses {
         resultaat: resultaat_type,
       });
     }
-    return zaak_summaries;
+    // Registratiedatum is formatted YYYY-MM-DD. Sort reverse-chronological
+    return zaak_summaries.sort((a: any, b: any) => { return a.registratiedatum < b.registratiedatum ? 1 : -1; });
   }
 
   /** Guarantee metadata promises are resolved */
