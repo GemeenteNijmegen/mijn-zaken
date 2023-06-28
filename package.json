@@ -30,7 +30,7 @@
     "projen": "npx projen"
   },
   "devDependencies": {
-    "@aws-sdk/client-ssm": "^3.360.0",
+    "@aws-sdk/client-ssm": "^3.361.0",
     "@glen/jest-raw-loader": "^2.0.0",
     "@types/aws-lambda": "^8.10.119",
     "@types/jest": "^27.5.2",
@@ -50,7 +50,7 @@
     "jest-aws-client-mock": "^0.0.26",
     "jest-junit": "^15",
     "npm-check-updates": "^16",
-    "projen": "^0.71.111",
+    "projen": "^0.71.113",
     "standard-version": "^9",
     "ts-jest": "^29",
     "ts-node": "^10.9.1",
