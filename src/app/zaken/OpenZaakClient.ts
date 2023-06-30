@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 export class OpenZaakClient {
   private axios: Axios;
+  public baseUrl: URL;
   constructor(config: {
     baseUrl: URL;
     axiosInstance?: AxiosInstance;
@@ -10,6 +11,7 @@ export class OpenZaakClient {
     userId?: string;
     secret?: string;
   }) {
+    this.baseUrl = config.baseUrl;
     this.axios = this.initAxios(config);
     if (process.env.DEBUG) {
       this.axios.interceptors.request.use(function (configuration) {
