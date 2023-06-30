@@ -3,6 +3,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import resultaattypen from './samples/resultaattypen.json';
 import resultaatvoorbeeld from './samples/resultaatvoorbeeld.json';
+import rol from './samples/rol.json';
 import statustypen from './samples/statustypen.json';
 import statusvoorbeeld from './samples/statusvoorbeeld.json';
 import statusvoorbeeld2 from './samples/statusvoorbeeld2.json';
@@ -51,6 +52,7 @@ describe('Zaken', () => {
     axiosMock.onGet('/zaken/api/v1/statussen/9f14d7b0-8f00-4827-9b99-d77ae5d8d155').reply(200, statusvoorbeeld);
     axiosMock.onGet(/\/zaken\/api\/v1\/statussen\/.+/).reply(200, statusvoorbeeld2);
     axiosMock.onGet(/\/zaken\/api\/v1\/resultaten\/.+/).reply(200, resultaatvoorbeeld);
+    axiosMock.onGet(/\/zaken\/api\/v1\/rollen.+/).reply(200, rol);
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
     const ZakenResults = new Zaken(client, bsn);
     const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');

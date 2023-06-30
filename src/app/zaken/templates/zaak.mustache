@@ -5,22 +5,23 @@
     <div class="container" id="section-1">
         <div class="row">
             <div class="col-12">
+            {{zaak}}
                 <h1>Klacht</h1>
-                <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{ontvangstdatum}}</strong>. De status is <strong>{{status}}</strong>.</p>
+                <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>.</p>
                 <div class="meta-blocks">
                     <div class="meta-blocks--container">
                         <div class="meta-blocks--content row">
                             <div class="col-xs-12 col-md-4 meta-blocks--col">
-                                <h3 class="meta-blocks--content-heading">Aanvraag ingediend</h3>
-                                <p>3 september 2022</p>
+                                <h3 class="meta-blocks--content-heading">Aanvraag ontvangen</h3>
+                                <p>{{registratiedatum}}</p>
                             </div>
                             <div class="col-xs-12 col-md-4 meta-blocks--col">
                                 <h3 class="meta-blocks--content-heading">Status</h3>
-                                <p>Ontvangen</p>
+                                <p>{{status}}</p>
                             </div>
                             <div class="col-xs-12 col-md-4 meta-blocks--col">
                                 <h3 class="meta-blocks--content-heading">Verwachtte einddatum</h3>
-                                <p>24 april 2023</p>
+                                <p>??</p>
                             </div>
                         </div>
                     </div>
@@ -34,6 +35,11 @@
                     <li><span class="circle">3</span> Afgerond</li>
 
                 </ol>
+            {{/zaak}}
+            {{^zaak}}
+                <h1>Geen zaak gevonden</h1>
+                <p>We konden geen zaak vinden met dit kenmerk.</p>
+            {{/zaak}}
             </div>
         </div>
     </div>

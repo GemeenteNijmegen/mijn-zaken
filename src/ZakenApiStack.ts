@@ -69,5 +69,11 @@ export class ZakenApiStack extends Stack {
       integration: new HttpLambdaIntegration('zaken', zakenFunction.lambda),
       routeKey: HttpRouteKey.with('/zaken', apigatewayv2.HttpMethod.GET),
     });
+
+    new apigatewayv2.HttpRoute(this, 'zaak-route', {
+      httpApi: this.api,
+      integration: new HttpLambdaIntegration('zaak', zakenFunction.lambda),
+      routeKey: HttpRouteKey.with('/zaken/{zaak}', apigatewayv2.HttpMethod.GET),
+    });
   }
 }

@@ -44,7 +44,6 @@ const axiosInstance = axios.create(
       'Content-Crs': 'EPSG:4326',
     },
   });
-console.debug(baseUrl);
 const client = new OpenZaakClient({ baseUrl, axiosInstance });
 
 describe('Request handler', () => {

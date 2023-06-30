@@ -21,7 +21,7 @@ const initPromise = initSecret();
 function parseEvent(event: APIGatewayProxyEventV2): any {
   return {
     cookies: event?.cookies?.join(';'),
-    zaak: event?.queryStringParameters?.zaak,
+    zaak: event?.pathParameters?.zaak,
   };
 }
 
@@ -30,7 +30,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const params = parseEvent(event);
     const secret = await initPromise;
     const zakenClient = sharedOpenZaakClient(secret);
-    return await zakenRequestHandler(params.cookies, dynamoDBClient, { zakenClient });
+    return await zakenRequestHandler(params.cookies, dynamoDBClient, { zakenClient, zaak: params.zaak });
   } catch (err) {
     console.debug(err);
     return Response.error(500);

@@ -43,16 +43,25 @@ export class Zaken {
   async get(zaakId: string) {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
-    const zaak = await this.client.request(`/zaken/api/v1/zaken/${zaakId}`);
-    const status = zaak.status ? await this.client.request(zaak.status) : null;
-    const resultaat = zaak.resultaat ? await this.client.request(`/zaken/api/v1/zaken/${zaak.resultaat}`) : null;
-    return {
-      id: zaak.identificatie,
-      registratiedatum: zaak.registratiedatum,
-      zaak_type: this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving,
-      status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
-      resultaat: resultaat?.omschrijving ?? null,
-    };
+    const [zaak, rol] = await Promise.all([
+      this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
+      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}/zaken/api/v1/zaken/${zaakId}`),
+    ]);
+
+    const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
+    const resultaatPromise = zaak.resultaat ? this.client.request(`/zaken/api/v1/zaken/${zaak.resultaat}`) : null;
+    const [status, resultaat] = await Promise.all([statusPromise, resultaatPromise]);
+
+    if (Number(rol?.count) >= 1) {
+      return {
+        id: zaak.identificatie,
+        registratiedatum: zaak.registratiedatum,
+        zaak_type: this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving,
+        status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
+        resultaat: resultaat?.omschrijving ?? null,
+      };
+    }
+    return false;
   }
   /**
    * Gather metadata for zaken
