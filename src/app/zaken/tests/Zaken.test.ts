@@ -39,7 +39,7 @@ describe('Zaken', () => {
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
     const statusResults = new Zaken(client, bsn);
     const results = await statusResults.list();
-    expect(results).toStrictEqual([{ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', zaak_type: 'Bezwaar' }, { id: 'Z23.001438', registratiedatum: '2023-03-30', resultaat: 'Ingetrokken na BIA', status: 'Ontvangen', zaak_type: 'Klacht' }]);
+    expect(results).toStrictEqual([{ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', zaak_type: 'Bezwaar' }, { id: 'Z23.001438', registratiedatum: '2023-03-30', resultaat: 'Ingetrokken na BIA', status: 'Ontvangen', uuid: '3720dbc1-6a94-411e-b651-0aeb67330064', zaak_type: 'Klacht' }]);
   });
 
   test('a single zaak is processed correctly', async () => {
@@ -56,7 +56,7 @@ describe('Zaken', () => {
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
     const ZakenResults = new Zaken(client, bsn);
     const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
-    expect(results).toStrictEqual({ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', zaak_type: 'Bezwaar' });
+    expect(results).toStrictEqual({ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', zaak_type: 'Bezwaar' });
   });
 
 
