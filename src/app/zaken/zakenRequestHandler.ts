@@ -3,8 +3,8 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
-import { Zaken } from './Zaken';
 import * as template from './templates/zaken.mustache';
+import { Zaken } from './Zaken';
 import { render } from '../../shared/render';
 
 export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient }) {

@@ -52,7 +52,7 @@ export class Zaken {
       zaak_type: this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving,
       status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
       resultaat: resultaat?.omschrijving ?? null,
-    }
+    };
   }
   /**
    * Gather metadata for zaken

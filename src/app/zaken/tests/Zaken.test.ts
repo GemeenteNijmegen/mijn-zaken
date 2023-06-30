@@ -1,16 +1,16 @@
 import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { OpenZaakClient } from '../OpenZaakClient';
-import { Zaken } from '../Zaken';
-import zaaktypen from './samples/zaaktypen.json';
-import statustypen from './samples/statustypen.json';
 import resultaattypen from './samples/resultaattypen.json';
-import zaken from './samples/zaken.json';
+import resultaatvoorbeeld from './samples/resultaatvoorbeeld.json';
+import statustypen from './samples/statustypen.json';
 import statusvoorbeeld from './samples/statusvoorbeeld.json';
 import statusvoorbeeld2 from './samples/statusvoorbeeld2.json';
-import resultaatvoorbeeld from './samples/resultaatvoorbeeld.json';
 import zaak1 from './samples/zaak1.json';
+import zaaktypen from './samples/zaaktypen.json';
+import zaken from './samples/zaken.json';
+import { OpenZaakClient } from '../OpenZaakClient';
+import { Zaken } from '../Zaken';
 
 let baseUrl = new URL('http://localhost');
 if (process.env.VIP_BASE_URL) {
@@ -38,7 +38,7 @@ describe('Zaken', () => {
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
     const statusResults = new Zaken(client, bsn);
     const results = await statusResults.list();
-    expect(results).toStrictEqual([{"id": "Z23.001592", "registratiedatum": "2023-06-09", "resultaat": null, "status": "Ontvangen", "zaak_type": "Bezwaar"}, {"id": "Z23.001438", "registratiedatum": "2023-03-30", "resultaat": "Ingetrokken na BIA", "status": "Ontvangen", "zaak_type": "Klacht"}]);
+    expect(results).toStrictEqual([{ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', zaak_type: 'Bezwaar' }, { id: 'Z23.001438', registratiedatum: '2023-03-30', resultaat: 'Ingetrokken na BIA', status: 'Ontvangen', zaak_type: 'Klacht' }]);
   });
 
   test('a single zaak is processed correctly', async () => {
@@ -47,14 +47,14 @@ describe('Zaken', () => {
     axiosMock.onGet('/catalogi/api/v1/zaaktypen').reply(200, zaaktypen);
     axiosMock.onGet('/catalogi/api/v1/statustypen').reply(200, statustypen);
     axiosMock.onGet('/catalogi/api/v1/resultaattypen').reply(200, resultaattypen);
-    axiosMock.onGet(`/zaken/api/v1/zaken/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`).reply(200, zaak1);
+    axiosMock.onGet('/zaken/api/v1/zaken/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886').reply(200, zaak1);
     axiosMock.onGet('/zaken/api/v1/statussen/9f14d7b0-8f00-4827-9b99-d77ae5d8d155').reply(200, statusvoorbeeld);
     axiosMock.onGet(/\/zaken\/api\/v1\/statussen\/.+/).reply(200, statusvoorbeeld2);
     axiosMock.onGet(/\/zaken\/api\/v1\/resultaten\/.+/).reply(200, resultaatvoorbeeld);
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
     const ZakenResults = new Zaken(client, bsn);
     const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
-    expect(results).toStrictEqual({"id": "Z23.001592", "registratiedatum": "2023-06-09", "resultaat": null, "status": "Ontvangen", "zaak_type": "Bezwaar"});
+    expect(results).toStrictEqual({ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', zaak_type: 'Bezwaar' });
   });
 
 
