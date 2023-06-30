@@ -45,7 +45,7 @@ export class Zaken {
     await this.metaData();
     const [zaak, rol] = await Promise.all([
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
-      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}/zaken/api/v1/zaken/${zaakId}`),
+      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
     ]);
 
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
@@ -54,6 +54,7 @@ export class Zaken {
 
     if (Number(rol?.count) >= 1) {
       return {
+        uuid: zaak.uuid,
         id: zaak.identificatie,
         registratiedatum: zaak.registratiedatum,
         zaak_type: this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving,
@@ -101,6 +102,7 @@ export class Zaken {
       }
       zaak_summaries.push({
         id: zaak.identificatie,
+        uuid: zaak.uuid,
         registratiedatum: zaak.registratiedatum,
         zaak_type: zaaktype,
         status: status_type,
