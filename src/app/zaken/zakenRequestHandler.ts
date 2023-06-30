@@ -3,12 +3,12 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
-import * as zakenTemplate from './templates/zaken.mustache';
 import * as zaakTemplate from './templates/zaak.mustache';
+import * as zakenTemplate from './templates/zaken.mustache';
 import { Zaken } from './Zaken';
 import { render } from '../../shared/render';
 
-export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient, zaak?: string }) {
+export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient; zaak?: string }) {
 
   console.time('request');
   console.timeLog('request', 'start request');
@@ -20,7 +20,11 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
   console.timeLog('request', 'init session');
   if (session.isLoggedIn() == true) {
     try {
-      const response = await listZakenRequest(session, config.zakenClient);
+      let response;
+      if (config.zaak) {
+        response = await singleZaakRequest(session, config.zakenClient, config.zaak);
+      }
+      response = await listZakenRequest(session, config.zakenClient);
       console.timeEnd('request');
       return response;
     } catch (error: any) {
