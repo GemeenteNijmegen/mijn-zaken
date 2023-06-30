@@ -49,7 +49,7 @@ export class Zaken {
     ]);
 
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
-    const resultaatPromise = zaak.resultaat ? this.client.request(`/zaken/api/v1/zaken/${zaak.resultaat}`) : null;
+    const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
     const [status, resultaat] = await Promise.all([statusPromise, resultaatPromise]);
 
     if (Number(rol?.count) >= 1) {
