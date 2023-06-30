@@ -76,6 +76,7 @@ export class Zaken {
       return {
         name: statusType.omschrijving,
         is_eind: statusType.isEindstatus,
+        volgnummer: statusType.volgnummer,
         current: status.statustype == statusType.url,
       };
     });
