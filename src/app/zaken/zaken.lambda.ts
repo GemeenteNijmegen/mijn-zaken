@@ -21,7 +21,7 @@ const initPromise = initSecret();
 function parseEvent(event: APIGatewayProxyEventV2): any {
   return {
     cookies: event?.cookies?.join(';'),
-    zaak: event?.queryStringParameters?.zaak,
+    zaak: event?.pathParameters?.zaak,
   };
 }
 
