@@ -52,18 +52,36 @@ export class Zaken {
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
     const [status, resultaat] = await Promise.all([statusPromise, resultaatPromise]);
 
+    const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
+
     if (Number(rol?.count) >= 1) {
       return {
         uuid: zaak.uuid,
         id: zaak.identificatie,
         registratiedatum: zaak.registratiedatum,
-        zaak_type: this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving,
+        zaak_type: zaakType?.omschrijving,
+        status_list: this.statusTypesForZaakType(zaakType, status),
         status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
         resultaat: resultaat?.omschrijving ?? null,
       };
     }
     return false;
   }
+  private statusTypesForZaakType(zaakType: any, status: any) {
+    const statusTypenUrls = zaakType.statustypen;
+    const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
+    statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
+
+    const status_list = statusTypen.map((statusType: any) => {
+      return {
+        name: statusType.omschrijving,
+        is_eind: statusType.isEindstatus,
+        current: status.statustype == statusType.url,
+      };
+    });
+    return status_list;
+  }
+
   /**
    * Gather metadata for zaken
    *
@@ -116,6 +134,7 @@ export class Zaken {
   /** Guarantee metadata promises are resolved */
   private async metaData() {
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes) {
+      console.debug('resolving metadata');
       [
         this.zaakTypes,
         this.statusTypes,

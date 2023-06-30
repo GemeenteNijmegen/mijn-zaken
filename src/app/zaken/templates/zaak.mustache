@@ -28,12 +28,15 @@
                 </div>
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="steps">
-                    <li class="active"><h3><span class="circle">1</span> Ontvangen</h3>
-                        <p>Uw aanvraag is ontvangen op 2 april 2022.</p>
-                    </li>
-                    <li><span class="circle">2</span> In behandeling</li>
-                    <li><span class="circle">3</span> Afgerond</li>
-
+                {{#status_list}}
+                    {{#current}}
+                        <li class="active"><h3><span class="circle">{{volgnummer}}</span>{{name}}</h3>
+                        </li>
+                    {{/current}}
+                    {{^current}}
+                        <li><span class="circle">{{volgnummer}}</span>{{name}}</li>
+                    {{/current}}
+                {{/status_list}}
                 </ol>
             {{/zaak}}
             {{^zaak}}
