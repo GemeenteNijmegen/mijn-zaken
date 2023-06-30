@@ -3,8 +3,8 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
-import { Statuses } from './Statuses';
 import * as template from './templates/zaken.mustache';
+import { Zaken } from './Zaken';
 import { render } from '../../shared/render';
 
 export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient }) {
@@ -44,7 +44,7 @@ async function handleLoggedinRequest(session: Session, client: OpenZaakClient) {
   };
 
   const bsn = new Bsn(session.getValue('bsn'));
-  const statuses = new Statuses(client, bsn);
+  const statuses = new Zaken(client, bsn);
   const zaken = await statuses.list();
   data.zaken = zaken;
   console.timeLog('request', 'zaken received');

@@ -1,7 +1,7 @@
 import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
 
-export class Statuses {
+export class Zaken {
   private client: OpenZaakClient;
   private statusTypesPromise: Promise<any>;
   private zaakTypesPromise: Promise<any>;
@@ -38,6 +38,21 @@ export class Statuses {
       return this.summarizeZaken(zaken, statussen, resultaten);
     }
     return [];
+  }
+
+  async get(zaakId: string) {
+    console.timeLog('zaken status', 'awaiting metadata');
+    await this.metaData();
+    const zaak = await this.client.request(`/zaken/api/v1/zaken/${zaakId}`);
+    const status = zaak.status ? await this.client.request(zaak.status) : null;
+    const resultaat = zaak.resultaat ? await this.client.request(`/zaken/api/v1/zaken/${zaak.resultaat}`) : null;
+    return {
+      id: zaak.identificatie,
+      registratiedatum: zaak.registratiedatum,
+      zaak_type: this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving,
+      status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
+      resultaat: resultaat?.omschrijving ?? null,
+    };
   }
   /**
    * Gather metadata for zaken
