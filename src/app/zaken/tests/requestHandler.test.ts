@@ -68,7 +68,7 @@ describe('Request handler', () => {
     if (result.body) {
       console.debug('writing file');
       try {
-        writeFile(path.join(__dirname, 'output', 'test.html'), result.body, () => { });
+        writeFile(path.join(__dirname, 'output', 'test2.html'), result.body, () => { });
       } catch (error) {
         console.debug(error);
       }

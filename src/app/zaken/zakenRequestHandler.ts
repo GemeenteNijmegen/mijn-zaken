@@ -23,8 +23,9 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
       let response;
       if (config.zaak) {
         response = await singleZaakRequest(session, config.zakenClient, config.zaak);
+      } else {
+        response = await listZakenRequest(session, config.zakenClient);
       }
-      response = await listZakenRequest(session, config.zakenClient);
       console.timeEnd('request');
       return response;
     } catch (error: any) {
