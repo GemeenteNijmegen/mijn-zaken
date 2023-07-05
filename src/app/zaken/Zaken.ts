@@ -26,6 +26,7 @@ export class Zaken {
     await this.metaData();
     const params = new URLSearchParams({
       rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.bsn.bsn,
+      ordering: '-startdatum',
       page: '1',
     });
 
@@ -128,8 +129,7 @@ export class Zaken {
         resultaat: resultaat_type,
       });
     }
-    // Registratiedatum is formatted YYYY-MM-DD. Sort reverse-chronological
-    return zaak_summaries.sort((a: any, b: any) => { return a.registratiedatum < b.registratiedatum ? 1 : -1; });
+    return zaak_summaries;
   }
 
   /** Guarantee metadata promises are resolved */
