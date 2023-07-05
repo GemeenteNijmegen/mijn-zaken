@@ -21,11 +21,17 @@ export class Zaken {
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
   }
 
+  /**
+   * List all zaken for a person
+   *
+   * @returns
+   */
   async list() {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
     const params = new URLSearchParams({
       rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.bsn.bsn,
+      ordering: '-startdatum',
       page: '1',
     });
 
@@ -106,7 +112,7 @@ export class Zaken {
   }
 
   private summarizeZaken(zaken: any, statussen: any[], resultaten: any[]) {
-    const zaak_summaries: any[] = [];
+    const zaak_summaries: { open: any[]; gesloten: any[] } = { open: [], gesloten: [] };
     for (const zaak of zaken.results) {
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
@@ -119,17 +125,22 @@ export class Zaken {
       if (resultaat) {
         resultaat_type = this.resultaatTypes.results.find((type: any) => type.url == resultaat.resultaattype).omschrijving;
       }
-      zaak_summaries.push({
+      const summary = {
         id: zaak.identificatie,
         uuid: zaak.uuid,
         registratiedatum: zaak.registratiedatum,
         zaak_type: zaaktype,
         status: status_type,
         resultaat: resultaat_type,
-      });
+      };
+
+      if (resultaat) {
+        zaak_summaries.gesloten.push(summary);
+      } else {
+        zaak_summaries.open.push(summary);
+      }
     }
-    // Registratiedatum is formatted YYYY-MM-DD. Sort reverse-chronological
-    return zaak_summaries.sort((a: any, b: any) => { return a.registratiedatum < b.registratiedatum ? 1 : -1; });
+    return zaak_summaries;
   }
 
   /** Guarantee metadata promises are resolved */

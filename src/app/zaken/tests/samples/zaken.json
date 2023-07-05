@@ -1,5 +1,5 @@
 {
-  "count": 12,
+  "count": 3,
   "next": null,
   "previous": null,
   "results": [
@@ -65,9 +65,9 @@
           "registratiedatum": "2023-03-30",
           "verantwoordelijkeOrganisatie": "001479179",
           "startdatum": "2023-03-30",
-          "einddatum": null,
-          "einddatumGepland": "2023-05-11",
-          "uiterlijkeEinddatumAfdoening": "2023-05-11",
+          "einddatum": "2023-03-28",
+          "einddatumGepland": "2023-06-20",
+          "uiterlijkeEinddatumAfdoening": "2023-06-11",
           "publicatiedatum": null,
           "communicatiekanaal": "",
           "productenOfDiensten": [],
@@ -100,7 +100,7 @@
                   "bron": "DEMOzaak"
               }
           ],
-          "archiefnominatie": null,
+          "archiefnominatie": "blijvend_bewaren",
           "archiefstatus": "nog_te_archiveren",
           "archiefactiedatum": null,
           "resultaat": "/zaken/api/v1/resultaten/9df2adf0-5937-495a-aba0-daf893c0c7e1"
