@@ -24,13 +24,12 @@ const project = new GemeenteNijmegenCdkApp({
   devDeps: [
     '@types/aws-lambda',
     '@types/jsonwebtoken',
-    'jest-aws-client-mock',
     'copyfiles',
     '@glen/jest-raw-loader',
     'axios-mock-adapter',
     '@aws-sdk/client-ssm',
     'axios-mock-adapter',
-    'jest-aws-client-mock',
+    'aws-sdk-client-mock',
   ],
   mutableBuild: true,
   jestOptions: {
