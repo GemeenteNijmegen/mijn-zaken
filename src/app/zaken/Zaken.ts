@@ -64,7 +64,7 @@ export class Zaken {
       return {
         uuid: zaak.uuid,
         id: zaak.identificatie,
-        registratiedatum: zaak.registratiedatum,
+        registratiedatum: this.humanDate(zaak.registratiedatum),
         zaak_type: zaakType?.omschrijving,
         status_list: this.statusTypesForZaakType(zaakType, status),
         status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
@@ -128,7 +128,7 @@ export class Zaken {
       const summary = {
         id: zaak.identificatie,
         uuid: zaak.uuid,
-        registratiedatum: zaak.registratiedatum,
+        registratiedatum: this.humanDate(zaak.registratiedatum),
         zaak_type: zaaktype,
         status: status_type,
         resultaat: resultaat_type,
@@ -141,6 +141,14 @@ export class Zaken {
       }
     }
     return zaak_summaries;
+  }
+
+  /**
+   * Convert ISO 8601 datestring to something formatted like '12 september 2023'
+   */
+  private humanDate(dateString: string) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   /** Guarantee metadata promises are resolved */

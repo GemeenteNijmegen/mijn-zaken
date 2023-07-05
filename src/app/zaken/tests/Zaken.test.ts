@@ -44,7 +44,7 @@ describe('Zaken', () => {
       open: [
         {
           id: 'Z23.001592',
-          registratiedatum: '2023-06-09',
+          registratiedatum: '9 juni 2023',
           resultaat: null,
           status: 'Ontvangen',
           uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
@@ -54,7 +54,7 @@ describe('Zaken', () => {
       gesloten: [
         {
           id: 'Z23.001438',
-          registratiedatum: '2023-03-30',
+          registratiedatum: '30 maart 2023',
           resultaat: 'Ingetrokken na BIA',
           status: 'Ontvangen',
           uuid: '3720dbc1-6a94-411e-b651-0aeb67330064',
@@ -83,7 +83,7 @@ describe('Zaken', () => {
       expect(results).toStrictEqual(
         {
           id: 'Z23.001592',
-          registratiedatum: '2023-06-09',
+          registratiedatum: '9 juni 2023',
           resultaat: null,
           status: 'Ontvangen',
           uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
@@ -127,7 +127,7 @@ describe('Zaken', () => {
     const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
     expect(results).toStrictEqual({
       id: 'Z23.001592',
-      registratiedatum: '2023-06-09',
+      registratiedatum: '9 juni 2023',
       resultaat: null,
       status: 'Ontvangen',
       status_list: [
