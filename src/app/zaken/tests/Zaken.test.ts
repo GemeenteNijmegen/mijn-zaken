@@ -40,53 +40,76 @@ describe('Zaken', () => {
     const statusResults = new Zaken(client, bsn);
     const results = await statusResults.list();
     console.debug(results);
-    expect(results).toStrictEqual([{ id: 'Z23.001592', registratiedatum: '2023-06-09', resultaat: null, status: 'Ontvangen', uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', zaak_type: 'Bezwaar' }, { id: 'Z23.001438', registratiedatum: '2023-03-30', resultaat: 'Ingetrokken na BIA', status: 'Ontvangen', uuid: '3720dbc1-6a94-411e-b651-0aeb67330064', zaak_type: 'Klacht' }]);
+    expect(results).toStrictEqual({
+      open: [
+        {
+          id: 'Z23.001592',
+          registratiedatum: '2023-06-09',
+          resultaat: null,
+          status: 'Ontvangen',
+          uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          zaak_type: 'Bezwaar',
+        },
+      ],
+      gesloten: [
+        {
+          id: 'Z23.001438',
+          registratiedatum: '2023-03-30',
+          resultaat: 'Ingetrokken na BIA',
+          status: 'Ontvangen',
+          uuid: '3720dbc1-6a94-411e-b651-0aeb67330064',
+          zaak_type: 'Klacht',
+        },
+      ],
+    });
   });
 
-  test('a single zaak is processed correctly', async () => {
-    const bsn = new Bsn('900026236');
-    const axiosMock = new MockAdapter(axios);
-    axiosMock.onGet('/catalogi/api/v1/zaaktypen').reply(200, zaaktypen);
-    axiosMock.onGet('/catalogi/api/v1/statustypen').reply(200, statustypen);
-    axiosMock.onGet('/catalogi/api/v1/resultaattypen').reply(200, resultaattypen);
-    axiosMock.onGet('/zaken/api/v1/zaken/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886').reply(200, zaak1);
-    axiosMock.onGet('/zaken/api/v1/statussen/9f14d7b0-8f00-4827-9b99-d77ae5d8d155').reply(200, statusvoorbeeld);
-    axiosMock.onGet(/\/zaken\/api\/v1\/statussen\/.+/).reply(200, statusvoorbeeld2);
-    axiosMock.onGet(/\/zaken\/api\/v1\/resultaten\/.+/).reply(200, resultaatvoorbeeld);
-    axiosMock.onGet(/\/zaken\/api\/v1\/rollen.+/).reply(200, rol);
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const ZakenResults = new Zaken(client, bsn);
-    const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
-    expect(results).toStrictEqual(
-      {
-        id: 'Z23.001592',
-        registratiedatum: '2023-06-09',
-        resultaat: null,
-        status: 'Ontvangen',
-        uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
-        zaak_type: 'Bezwaar',
-        status_list: [
-          {
-            name: 'Ontvangen',
-            current: true,
-            is_eind: false,
-            volgnummer: 1,
-          },
-          {
-            name: 'In behandeling',
-            current: false,
-            is_eind: false,
-            volgnummer: 2,
-          },
-          {
-            name: 'Afgerond',
-            current: false,
-            is_eind: true,
-            volgnummer: 3,
-          },
-        ],
-      });
-  });
+  test('a single zaak is processed correctly',
+    async () => {
+      const bsn = new Bsn('900026236');
+      const axiosMock = new MockAdapter(axios);
+      axiosMock.onGet('/catalogi/api/v1/zaaktypen').reply(200,
+        zaaktypen);
+      axiosMock.onGet('/catalogi/api/v1/statustypen').reply(200, statustypen);
+      axiosMock.onGet('/catalogi/api/v1/resultaattypen').reply(200, resultaattypen);
+      axiosMock.onGet('/zaken/api/v1/zaken/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886').reply(200, zaak1);
+      axiosMock.onGet('/zaken/api/v1/statussen/9f14d7b0-8f00-4827-9b99-d77ae5d8d155').reply(200, statusvoorbeeld);
+      axiosMock.onGet(/\/zaken\/api\/v1\/statussen\/.+/).reply(200, statusvoorbeeld2);
+      axiosMock.onGet(/\/zaken\/api\/v1\/resultaten\/.+/).reply(200, resultaatvoorbeeld);
+      axiosMock.onGet(/\/zaken\/api\/v1\/rollen.+/).reply(200, rol);
+      const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
+      const ZakenResults = new Zaken(client, bsn);
+      const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      expect(results).toStrictEqual(
+        {
+          id: 'Z23.001592',
+          registratiedatum: '2023-06-09',
+          resultaat: null,
+          status: 'Ontvangen',
+          uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          zaak_type: 'Bezwaar',
+          status_list: [
+            {
+              name: 'Ontvangen',
+              current: true,
+              is_eind: false,
+              volgnummer: 1,
+            },
+            {
+              name: 'In behandeling',
+              current: false,
+              is_eind: false,
+              volgnummer: 2,
+            },
+            {
+              name: 'Afgerond',
+              current: false,
+              is_eind: true,
+              volgnummer: 3,
+            },
+          ],
+        });
+    });
 
   test('a single zaak has several statusses, which are available in the zaak', async () => {
     const bsn = new Bsn('900026236');
