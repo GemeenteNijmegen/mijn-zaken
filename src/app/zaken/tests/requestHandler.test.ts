@@ -1,9 +1,9 @@
 import { writeFile } from 'fs';
 import path from 'path';
-import { DynamoDBClient, GetItemCommandOutput } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, GetItemCommand, GetItemCommandOutput } from '@aws-sdk/client-dynamodb';
+import { mockClient } from 'aws-sdk-client-mock';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
-import { mockClient } from 'jest-aws-client-mock';
 import jwt from 'jsonwebtoken';
 import { OpenZaakClient } from '../OpenZaakClient';
 import { zakenRequestHandler } from '../zakenRequestHandler';
@@ -20,7 +20,7 @@ const getItemOutput: Partial<GetItemCommandOutput> = {
     },
   },
 };
-ddbMock.mockImplementation(() => getItemOutput);
+ddbMock.on(GetItemCommand).resolves(getItemOutput);
 const secret = process.env.VIP_JWT_SECRET ?? 'fakesecret';
 let baseUrl = new URL('http://localhost');
 if (process.env.VIP_BASE_URL) {

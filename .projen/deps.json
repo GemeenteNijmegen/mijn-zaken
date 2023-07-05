@@ -41,6 +41,10 @@
       "type": "build"
     },
     {
+      "name": "aws-sdk-client-mock",
+      "type": "build"
+    },
+    {
       "name": "axios-mock-adapter",
       "type": "build"
     },
@@ -71,10 +75,6 @@
     },
     {
       "name": "jest",
-      "type": "build"
-    },
-    {
-      "name": "jest-aws-client-mock",
       "type": "build"
     },
     {
