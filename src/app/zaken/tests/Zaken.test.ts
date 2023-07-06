@@ -45,6 +45,9 @@ describe('Zaken', () => {
         {
           id: 'Z23.001592',
           registratiedatum: '9 juni 2023',
+          verwachtte_einddatum: '1 september 2023',
+          einddatum: null,
+          uiterlijke_einddatum: '11 oktober 2023',
           resultaat: null,
           status: 'Ontvangen',
           uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
@@ -55,6 +58,9 @@ describe('Zaken', () => {
         {
           id: 'Z23.001438',
           registratiedatum: '30 maart 2023',
+          einddatum: "28 maart 2023",
+          verwachtte_einddatum: '20 juni 2023',
+          uiterlijke_einddatum: '11 juni 2023',
           resultaat: 'Ingetrokken na BIA',
           status: 'Ontvangen',
           uuid: '3720dbc1-6a94-411e-b651-0aeb67330064',
@@ -84,6 +90,9 @@ describe('Zaken', () => {
         {
           id: 'Z23.001592',
           registratiedatum: '9 juni 2023',
+          verwachtte_einddatum: '1 september 2023',
+          einddatum: null,
+          uiterlijke_einddatum: '11 oktober 2023',
           resultaat: null,
           status: 'Ontvangen',
           uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
@@ -128,6 +137,9 @@ describe('Zaken', () => {
     expect(results).toStrictEqual({
       id: 'Z23.001592',
       registratiedatum: '9 juni 2023',
+      verwachtte_einddatum: '1 september 2023',
+      uiterlijke_einddatum: '11 oktober 2023',
+      einddatum: null,
       resultaat: null,
       status: 'Ontvangen',
       status_list: [
