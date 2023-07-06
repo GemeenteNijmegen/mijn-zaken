@@ -20,8 +20,14 @@
                                 <p>{{status}}</p>
                             </div>
                             <div class="col-xs-12 col-md-4 meta-blocks--col">
+                            {{#einddatum}}
+                                <h3 class="meta-blocks--content-heading">Einddatum</h3>
+                                <p>{{einddatum}}</p>
+                            {{/einddatum}}
+                            {{^einddatum}}
                                 <h3 class="meta-blocks--content-heading">Verwachtte einddatum</h3>
-                                <p>??</p>
+                                <p>{{verwachtte_einddatum}}</p>
+                            {{/einddatum}}
                             </div>
                         </div>
                     </div>
