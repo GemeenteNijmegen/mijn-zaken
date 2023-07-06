@@ -71,7 +71,7 @@
     "axios": "^1.4.0",
     "constructs": "^10.0.5",
     "dotenv": "^16.3.1",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.1",
     "mustache": "^4.2.0"
   },
   "license": "EUPL-1.2",
