@@ -58,7 +58,7 @@ describe('Zaken', () => {
         {
           id: 'Z23.001438',
           registratiedatum: '30 maart 2023',
-          einddatum: '28 maart 2023',
+          einddatum: "28 maart 2023",
           verwachtte_einddatum: '20 juni 2023',
           uiterlijke_einddatum: '11 juni 2023',
           resultaat: 'Ingetrokken na BIA',
@@ -162,6 +162,36 @@ describe('Zaken', () => {
           volgnummer: 3,
         },
       ],
+      uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+      zaak_type: 'Bezwaar',
+    });
+  });
+
+  test('a single zaak can have a null status', async () => {
+    const bsn = new Bsn('900026236');
+    const axiosMock = new MockAdapter(axios);
+    const modifiedZaak: any = { ...zaak1}; //clone zaak1
+    modifiedZaak.status = null;
+    axiosMock.onGet('/catalogi/api/v1/zaaktypen').reply(200, zaaktypen);
+    axiosMock.onGet('/catalogi/api/v1/statustypen').reply(200, statustypen);
+    axiosMock.onGet('/catalogi/api/v1/resultaattypen').reply(200, resultaattypen);
+    axiosMock.onGet('/zaken/api/v1/zaken/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886').reply(200, modifiedZaak);
+    axiosMock.onGet('/zaken/api/v1/statussen/9f14d7b0-8f00-4827-9b99-d77ae5d8d155').reply(200, statusvoorbeeld);
+    axiosMock.onGet(/\/zaken\/api\/v1\/statussen\/.+/).reply(200, statusvoorbeeld2);
+    axiosMock.onGet(/\/zaken\/api\/v1\/resultaten\/.+/).reply(200, resultaatvoorbeeld);
+    axiosMock.onGet(/\/zaken\/api\/v1\/rollen.+/).reply(200, rol);
+    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
+    const ZakenResults = new Zaken(client, bsn);
+    const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+    expect(results).toStrictEqual({
+      id: 'Z23.001592',
+      registratiedatum: '9 juni 2023',
+      verwachtte_einddatum: '1 september 2023',
+      uiterlijke_einddatum: '11 oktober 2023',
+      einddatum: null,
+      resultaat: null,
+      status: null,
+      status_list: null,
       uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
       zaak_type: 'Bezwaar',
     });
