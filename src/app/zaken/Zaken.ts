@@ -70,17 +70,20 @@ export class Zaken {
         einddatum: zaak.einddatum ? this.humanDate(zaak.einddatum) : null,
         zaak_type: zaakType?.omschrijving,
         status_list: this.statusTypesForZaakType(zaakType, status),
-        status: this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving,
+        status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
       };
     }
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
+    if(!status) {
+      return null;
+    }
     const statusTypenUrls = zaakType.statustypen;
     const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
+    console.debug(statusTypen);
     statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
-
     const status_list = statusTypen.map((statusType: any) => {
       return {
         name: statusType.omschrijving,
@@ -89,6 +92,7 @@ export class Zaken {
         current: status.statustype == statusType.url,
       };
     });
+    console.debug(status_list);
     return status_list;
   }
 
