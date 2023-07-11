@@ -77,7 +77,7 @@ export class Zaken {
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
-    if(!status) {
+    if (!status) {
       return null;
     }
     const statusTypenUrls = zaakType.statustypen;

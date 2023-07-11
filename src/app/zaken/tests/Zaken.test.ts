@@ -58,7 +58,7 @@ describe('Zaken', () => {
         {
           id: 'Z23.001438',
           registratiedatum: '30 maart 2023',
-          einddatum: "28 maart 2023",
+          einddatum: '28 maart 2023',
           verwachtte_einddatum: '20 juni 2023',
           uiterlijke_einddatum: '11 juni 2023',
           resultaat: 'Ingetrokken na BIA',
@@ -170,7 +170,7 @@ describe('Zaken', () => {
   test('a single zaak can have a null status', async () => {
     const bsn = new Bsn('900026236');
     const axiosMock = new MockAdapter(axios);
-    const modifiedZaak: any = { ...zaak1}; //clone zaak1
+    const modifiedZaak: any = { ...zaak1 }; //clone zaak1
     modifiedZaak.status = null;
     axiosMock.onGet('/catalogi/api/v1/zaaktypen').reply(200, zaaktypen);
     axiosMock.onGet('/catalogi/api/v1/statustypen').reply(200, statustypen);
