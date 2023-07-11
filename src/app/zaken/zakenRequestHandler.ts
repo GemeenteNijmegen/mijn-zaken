@@ -18,6 +18,7 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
   await session.init();
 
   console.timeLog('request', 'init session');
+  console.debug(session, session.isLoggedIn(), cookies);
   if (session.isLoggedIn() == true) {
     try {
       let response;
