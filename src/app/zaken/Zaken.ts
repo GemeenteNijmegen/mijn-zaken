@@ -122,11 +122,11 @@ export class Zaken {
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
       let status_type = null;
       if (status) {
-        status_type = this.statusTypes.results.find((type: any) => type.url == status.statustype).omschrijving;
+        status_type = this.statusTypes.results.find((type: any) => type.url == status.statustype)?.omschrijving;
       }
       let resultaat_type = null;
       if (resultaat) {
-        resultaat_type = this.resultaatTypes.results.find((type: any) => type.url == resultaat.resultaattype).omschrijving;
+        resultaat_type = this.resultaatTypes.results.find((type: any) => type.url == resultaat.resultaattype)?.omschrijving;
       }
       const summary = {
         id: zaak.identificatie,
