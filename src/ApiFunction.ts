@@ -1,4 +1,4 @@
-import { aws_lambda as Lambda, aws_dynamodb, RemovalPolicy, Duration } from 'aws-cdk-lib';
+import { aws_lambda as Lambda, aws_dynamodb, RemovalPolicy, Duration, Stack } from 'aws-cdk-lib';
 import { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { FilterPattern, IFilterPattern, MetricFilter, RetentionDays } from 'aws-cdk-lib/aws-logs';
