@@ -1,4 +1,4 @@
-import { Stack, StackProps, Tags, pipelines } from 'aws-cdk-lib';
+import { CfnParameter, Stack, StackProps, Tags, pipelines } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { ParameterStage } from './ParameterStage';
@@ -14,7 +14,9 @@ export class PipelineStack extends Stack {
     super(scope, id, props);
     Tags.of(this).add('cdkManaged', 'yes');
     Tags.of(this).add('Project', Statics.projectName);
-    const pipeline = this.pipeline(props);
+
+    const connectionArn = new CfnParameter(this, 'connectionArn');
+    const pipeline = this.pipeline(props, connectionArn.valueAsString);
 
     pipeline.addStage(new ParameterStage(this, 'mijn-zaken-parameters', {
       env: props.configuration.deployToEnvironment,
@@ -27,10 +29,10 @@ export class PipelineStack extends Stack {
 
   }
 
-  pipeline(props: PipelineStackProps): pipelines.CodePipeline {
+  pipeline(props: PipelineStackProps, codeStarConnectionArn: string): pipelines.CodePipeline {
     const branch = props.configuration.branchName;
     const source = pipelines.CodePipelineSource.connection('GemeenteNijmegen/mijn-zaken', branch, {
-      connectionArn: props.configuration.codeStarConnectionArn,
+      connectionArn: codeStarConnectionArn,
     });
     const pipeline = new pipelines.CodePipeline(this, `mijnzaken-${branch}`, {
       pipelineName: `mijnzaken-${branch}`,

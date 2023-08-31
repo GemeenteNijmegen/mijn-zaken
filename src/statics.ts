@@ -19,12 +19,6 @@ export abstract class Statics {
    */
   static readonly vipJwtSecret: string = '/cdk/mijn-zaken/vip-jwttoken';
 
-  /**
-   * Codestar connection (old lz)
-   */
-  static readonly codeStarConnectionArn: string = 'arn:aws:codestar-connections:eu-west-1:418648875085:connection/4f647929-c982-4f30-94f4-24ff7dbf9766';
-
-
   /*
    * Environments (old lz)
    */

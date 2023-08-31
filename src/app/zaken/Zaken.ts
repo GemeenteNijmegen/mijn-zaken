@@ -82,7 +82,6 @@ export class Zaken {
     }
     const statusTypenUrls = zaakType.statustypen;
     const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
-    console.debug(statusTypen);
     statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
     const status_list = statusTypen.map((statusType: any) => {
       return {
@@ -92,7 +91,6 @@ export class Zaken {
         current: status.statustype == statusType.url,
       };
     });
-    console.debug(status_list);
     return status_list;
   }
 
@@ -164,7 +162,6 @@ export class Zaken {
   /** Guarantee metadata promises are resolved */
   private async metaData() {
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes) {
-      console.debug('resolving metadata');
       [
         this.zaakTypes,
         this.statusTypes,

@@ -13,7 +13,6 @@ export interface Configuration {
   branchName: string;
   deployFromEnvironment: Environment;
   deployToEnvironment: Environment;
-  codeStarConnectionArn: string;
 }
 
 export const configurations: {[key: string]: Configuration} = {
@@ -21,7 +20,6 @@ export const configurations: {[key: string]: Configuration} = {
     branchName: 'acceptance',
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.acceptanceEnvironment,
-    codeStarConnectionArn: Statics.codeStarConnectionArn,
   },
 };
 

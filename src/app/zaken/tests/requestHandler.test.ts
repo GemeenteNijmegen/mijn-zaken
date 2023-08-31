@@ -52,7 +52,6 @@ describe('Request handler', () => {
     const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client });
     expect(result.statusCode).toBe(200);
     if (result.body) {
-      console.debug('writing file');
       try {
         writeFile(path.join(__dirname, 'output', 'test.html'), result.body, () => { });
       } catch (error) {
@@ -66,7 +65,6 @@ describe('Request handler', () => {
     const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
-      console.debug('writing file');
       try {
         writeFile(path.join(__dirname, 'output', 'test2.html'), result.body, () => { });
       } catch (error) {

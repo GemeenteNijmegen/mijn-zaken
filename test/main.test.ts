@@ -16,7 +16,6 @@ test('Snapshot', () => {
       branchName: 'test', 
       deployToEnvironment: dummyEnv,
       deployFromEnvironment: dummyEnv,
-      codeStarConnectionArn: '',
     },
   });
   const template = Template.fromStack(stack);
