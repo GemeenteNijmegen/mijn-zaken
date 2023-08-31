@@ -1,4 +1,5 @@
-import { Stack, Tags, Stage, StageProps } from 'aws-cdk-lib';
+import { PermissionsBoundaryAspect } from '@gemeentenijmegen/aws-constructs';
+import { Stack, Tags, Stage, StageProps, Aspects } from 'aws-cdk-lib';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
@@ -14,6 +15,7 @@ export class ParameterStage extends Stage {
     super(scope, id, props);
     Tags.of(this).add('cdkManaged', 'yes');
     Tags.of(this).add('Project', Statics.projectName);
+    Aspects.of(this).add(new PermissionsBoundaryAspect());
 
     new ParameterStack(this, 'params');
   }

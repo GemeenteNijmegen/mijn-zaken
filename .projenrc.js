@@ -13,6 +13,7 @@ const project = new GemeenteNijmegenCdkApp({
     '@gemeentenijmegen/apigateway-http',
     '@gemeentenijmegen/session',
     '@gemeentenijmegen/utils',
+    '@gemeentenijmegen/aws-constructs',
     '@aws-cdk/aws-apigatewayv2-alpha',
     '@aws-cdk/aws-apigatewayv2-integrations-alpha',
     '@aws-solutions-constructs/aws-lambda-dynamodb',
