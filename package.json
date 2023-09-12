@@ -30,9 +30,9 @@
     "projen": "npx projen"
   },
   "devDependencies": {
-    "@aws-sdk/client-ssm": "^3.409.0",
+    "@aws-sdk/client-ssm": "^3.410.0",
     "@glen/jest-raw-loader": "^2.0.0",
-    "@types/aws-lambda": "^8.10.119",
+    "@types/aws-lambda": "^8.10.120",
     "@types/jest": "^27.5.2",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^16",
@@ -40,7 +40,7 @@
     "@typescript-eslint/parser": "^6",
     "aws-cdk": "^2.41.0",
     "aws-sdk-client-mock": "^3.0.0",
-    "axios-mock-adapter": "^1.21.5",
+    "axios-mock-adapter": "^1.22.0",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.19.2",
     "eslint": "^8",
@@ -59,8 +59,8 @@
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.95.1-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.95.1-alpha.0",
-    "@aws-sdk/client-dynamodb": "^3.409.0",
-    "@aws-sdk/client-secrets-manager": "^3.409.0",
+    "@aws-sdk/client-dynamodb": "^3.410.0",
+    "@aws-sdk/client-secrets-manager": "^3.410.0",
     "@aws-solutions-constructs/aws-lambda-dynamodb": "^2.44.0",
     "@gemeentenijmegen/apiclient": "^0.0.6",
     "@gemeentenijmegen/apigateway-http": "^0.0.7",
