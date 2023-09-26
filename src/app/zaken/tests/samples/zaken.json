@@ -54,7 +54,57 @@
           "archiefactiedatum": null,
           "resultaat": null
       },
-      
+      {
+        "url": "/zaken/api/v1/zaken/30009319-395f-491f-be0e-24c0e0d04a75",
+        "uuid": "30009319-395f-491f-be0e-24c0e0d04a75",
+        "identificatie": "Z23.001719",
+        "bronorganisatie": "001479179",
+        "omschrijving": "",
+        "toelichting": "",
+        "zaaktype": "/catalogi/api/v1/zaaktypen/1a37500b-4954-4c75-b5d3-e1f5151516ad",
+        "registratiedatum": "2023-09-21",
+        "verantwoordelijkeOrganisatie": "001479179",
+        "startdatum": "2023-09-21",
+        "einddatum": null,
+        "einddatumGepland": "2024-09-20",
+        "uiterlijkeEinddatumAfdoening": "2024-09-20",
+        "publicatiedatum": null,
+        "communicatiekanaal": "",
+        "productenOfDiensten": [],
+        "vertrouwelijkheidaanduiding": "zaakvertrouwelijk",
+        "betalingsindicatie": "",
+        "betalingsindicatieWeergave": "",
+        "laatsteBetaaldatum": null,
+        "zaakgeometrie": null,
+        "verlenging": {
+            "reden": "",
+            "duur": null
+        },
+        "opschorting": {
+            "indicatie": false,
+            "reden": ""
+        },
+        "selectielijstklasse": "",
+        "hoofdzaak": null,
+        "deelzaken": [],
+        "relevanteAndereZaken": [],
+        "eigenschappen": [],
+        "status": "/zaken/api/v1/statussen/2c8fc994-fd3e-46fd-adf8-7606d5e1be4b",
+        "kenmerken": [
+            {
+                "kenmerk": "fc3ef495-520e-4e2c-9360-f6571dfa7d41",
+                "bron": "VIP_formSubmission"
+            },
+            {
+                "kenmerk": "0eac9125-f738-4ac3-8a44-4f1c5ae186b3",
+                "bron": "VIP_zaak"
+            }
+        ],
+        "archiefnominatie": null,
+        "archiefstatus": "nog_te_archiveren",
+        "archiefactiedatum": null,
+        "resultaat": null
+    },
       {
           "url": "/zaken/api/v1/zaken/3720dbc1-6a94-411e-b651-0aeb67330064",
           "uuid": "3720dbc1-6a94-411e-b651-0aeb67330064",

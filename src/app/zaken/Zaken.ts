@@ -15,7 +15,7 @@ export class Zaken {
 
   private bsn: Bsn;
 
-  private allowedDomains = ['APV', 'JZ'];
+  private allowedDomains?: string[];
 
   constructor(client: OpenZaakClient, bsn: Bsn) {
     this.client = client;
@@ -24,6 +24,17 @@ export class Zaken {
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.request('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
+  }
+
+  /**
+   * If this method is called, all further requests are matched
+   * for this list of domains. The domains can be found in the zaaktypecatalogus
+   * object, and will be matched via zaak.zaaktype => zaaktype.catalogus, => catalogus.domein
+   *
+   * @param domains a list of domain strings to allow
+   */
+  public allowDomains(domains: string[]) {
+    this.allowedDomains = domains;
   }
 
   /**
@@ -191,7 +202,10 @@ export class Zaken {
    * domains (`this.allowedDomains`)
    */
   private allowedCatalogi() {
-    return this.catalogi?.results.filter((catalogus: any) => this.allowedDomains.includes(catalogus.domein));
+    if(this.allowedDomains) {
+      return this.catalogi?.results.filter((catalogus: any) => this.allowedDomains!.includes(catalogus.domein));
+    }
+    return this.catalogi.results;
   }
 
   private zaakTypeInAllowedCatalogus(zaakType: any) {

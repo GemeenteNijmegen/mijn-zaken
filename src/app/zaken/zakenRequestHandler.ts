@@ -52,6 +52,7 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
 
   const bsn = new Bsn(session.getValue('bsn'));
   const statuses = new Zaken(client, bsn);
+  statuses.allowDomains(['APV']);
   const zaken = await statuses.list();
   data.zaken = zaken;
   console.timeLog('request', 'zaken received');
@@ -75,6 +76,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
 
   const bsn = new Bsn(session.getValue('bsn'));
   const statuses = new Zaken(client, bsn);
+  statuses.allowDomains(['APV']);
   data.zaak = await statuses.get(zaak);
   console.timeLog('request', 'zaak received');
 
