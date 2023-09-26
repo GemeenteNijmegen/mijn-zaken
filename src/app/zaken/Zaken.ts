@@ -6,19 +6,35 @@ export class Zaken {
   private statusTypesPromise: Promise<any>;
   private zaakTypesPromise: Promise<any>;
   private resultaatTypesPromise: Promise<any>;
+  private catalogiPromise: Promise<any>;
 
   private statusTypes?: any;
   private zaakTypes?: any;
   private resultaatTypes?: any;
+  private catalogi?: any;
 
   private bsn: Bsn;
+
+  private allowedDomains?: string[];
 
   constructor(client: OpenZaakClient, bsn: Bsn) {
     this.client = client;
     this.bsn = bsn;
+    this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.request('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
+  }
+
+  /**
+   * If this method is called, all further requests are matched
+   * for this list of domains. The domains can be found in the zaaktypecatalogus
+   * object, and will be matched via zaak.zaaktype => zaaktype.catalogus, => catalogus.domein
+   *
+   * @param domains a list of domain strings to allow
+   */
+  public allowDomains(domains: string[]) {
+    this.allowedDomains = domains;
   }
 
   /**
@@ -53,6 +69,8 @@ export class Zaken {
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
       this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
     ]);
+    // Only process zaken in allowed catalogi
+    if(!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { return false; }
 
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
@@ -60,7 +78,7 @@ export class Zaken {
 
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
 
-    if (Number(rol?.count) >= 1) {
+    if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
         uuid: zaak.uuid,
         id: zaak.identificatie,
@@ -119,6 +137,8 @@ export class Zaken {
   private summarizeZaken(zaken: any, statussen: any[], resultaten: any[]) {
     const zaak_summaries: { open: any[]; gesloten: any[] } = { open: [], gesloten: [] };
     for (const zaak of zaken.results) {
+      // Only process zaken in allowed catalogi
+      if(!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
@@ -161,16 +181,37 @@ export class Zaken {
 
   /** Guarantee metadata promises are resolved */
   private async metaData() {
-    if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes) {
+    if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes ||  !this.catalogi) {
       [
         this.zaakTypes,
         this.statusTypes,
         this.resultaatTypes,
+        this.catalogi,
       ] = await Promise.all([
         this.zaakTypesPromise,
         this.statusTypesPromise,
         this.resultaatTypesPromise,
+        this.catalogiPromise,
       ]);
     }
+  }
+
+  /**
+   * We need to filter for zaken from specific systems. The catalogi hold 
+   * the domains (APV & JZ), this filters the catalogi based on the allowed
+   * domains (`this.allowedDomains`)
+   */
+  private allowedCatalogi() {
+    if(this.allowedDomains) {
+      return this.catalogi?.results.filter((catalogus: any) => this.allowedDomains!.includes(catalogus.domein));
+    }
+    return this.catalogi.results;
+  }
+
+  private zaakTypeInAllowedCatalogus(zaakType: any) {
+    for(let catalogus of this.allowedCatalogi()) {
+      if(catalogus?.zaaktypen.includes(zaakType)) { return true; }
+    }
+    return false;
   }
 }
