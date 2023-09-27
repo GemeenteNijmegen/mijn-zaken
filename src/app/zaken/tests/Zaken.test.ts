@@ -1,11 +1,11 @@
 import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import catalogi from './samples/catalogi.json';
 import resultaattypen from './samples/resultaattypen.json';
 import resultaatvoorbeeld from './samples/resultaatvoorbeeld.json';
 import rol from './samples/rol.json';
 import statustypen from './samples/statustypen.json';
-import catalogi from './samples/catalogi.json';
 import statusvoorbeeld from './samples/statusvoorbeeld.json';
 import statusvoorbeeld2 from './samples/statusvoorbeeld2.json';
 import zaak1 from './samples/zaak1.json';
@@ -62,15 +62,15 @@ describe('Zaken', () => {
         },
         {
           einddatum: null,
-          id: "Z23.001719",
-          registratiedatum: "21 september 2023",
+          id: 'Z23.001719',
+          registratiedatum: '21 september 2023',
           resultaat: null,
           status: null,
-          uiterlijke_einddatum: "20 september 2024",
-          uuid: "30009319-395f-491f-be0e-24c0e0d04a75",
-          verwachtte_einddatum: "20 september 2024",
-          zaak_type: "Bingo",
-        }
+          uiterlijke_einddatum: '20 september 2024',
+          uuid: '30009319-395f-491f-be0e-24c0e0d04a75',
+          verwachtte_einddatum: '20 september 2024',
+          zaak_type: 'Bingo',
+        },
       ],
       gesloten: [
         {
@@ -214,14 +214,14 @@ describe('Filtering domains', () => {
     expect(results).toStrictEqual({
       open: [{
         einddatum: null,
-        id: "Z23.001719",
-        registratiedatum: "21 september 2023",
+        id: 'Z23.001719',
+        registratiedatum: '21 september 2023',
         resultaat: null,
         status: null,
-        uiterlijke_einddatum: "20 september 2024",
-        uuid: "30009319-395f-491f-be0e-24c0e0d04a75",
-        verwachtte_einddatum: "20 september 2024",
-        zaak_type: "Bingo",
+        uiterlijke_einddatum: '20 september 2024',
+        uuid: '30009319-395f-491f-be0e-24c0e0d04a75',
+        verwachtte_einddatum: '20 september 2024',
+        zaak_type: 'Bingo',
       }],
       gesloten: [],
     });
@@ -264,52 +264,52 @@ describe('Filtering domains', () => {
   });
 
   test('a single zaak is processed correctly',
-  async () => {
-    const bsn = new Bsn('900026236');
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const statusResults = new Zaken(client, bsn);
-    statusResults.allowDomains(['JZ']);
-    const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
-    expect(results).toStrictEqual(
-      {
-        id: 'Z23.001592',
-        registratiedatum: '9 juni 2023',
-        verwachtte_einddatum: '1 september 2023',
-        einddatum: null,
-        uiterlijke_einddatum: '11 oktober 2023',
-        resultaat: null,
-        status: 'Ontvangen',
-        uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
-        zaak_type: 'Bezwaar',
-        status_list: [
-          {
-            name: 'Ontvangen',
-            current: true,
-            is_eind: false,
-            volgnummer: 1,
-          },
-          {
-            name: 'In behandeling',
-            current: false,
-            is_eind: false,
-            volgnummer: 2,
-          },
-          {
-            name: 'Afgerond',
-            current: false,
-            is_eind: true,
-            volgnummer: 3,
-          },
-        ],
-      });
-  });
+    async () => {
+      const bsn = new Bsn('900026236');
+      const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
+      const statusResults = new Zaken(client, bsn);
+      statusResults.allowDomains(['JZ']);
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      expect(results).toStrictEqual(
+        {
+          id: 'Z23.001592',
+          registratiedatum: '9 juni 2023',
+          verwachtte_einddatum: '1 september 2023',
+          einddatum: null,
+          uiterlijke_einddatum: '11 oktober 2023',
+          resultaat: null,
+          status: 'Ontvangen',
+          uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          zaak_type: 'Bezwaar',
+          status_list: [
+            {
+              name: 'Ontvangen',
+              current: true,
+              is_eind: false,
+              volgnummer: 1,
+            },
+            {
+              name: 'In behandeling',
+              current: false,
+              is_eind: false,
+              volgnummer: 2,
+            },
+            {
+              name: 'Afgerond',
+              current: false,
+              is_eind: true,
+              volgnummer: 3,
+            },
+          ],
+        });
+    });
   test('a single zaak is filtered correctly (APV)',
-  async () => {
-    const bsn = new Bsn('900026236');
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const statusResults = new Zaken(client, bsn);
-    statusResults.allowDomains(['APV']);
-    const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
-    expect(results).toBeFalsy();
-  });
+    async () => {
+      const bsn = new Bsn('900026236');
+      const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
+      const statusResults = new Zaken(client, bsn);
+      statusResults.allowDomains(['APV']);
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      expect(results).toBeFalsy();
+    });
 });

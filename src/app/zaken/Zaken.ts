@@ -70,7 +70,7 @@ export class Zaken {
       this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
     ]);
     // Only process zaken in allowed catalogi
-    if(!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { return false; }
+    if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { return false; }
 
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
@@ -138,7 +138,7 @@ export class Zaken {
     const zaak_summaries: { open: any[]; gesloten: any[] } = { open: [], gesloten: [] };
     for (const zaak of zaken.results) {
       // Only process zaken in allowed catalogi
-      if(!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
+      if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
@@ -181,7 +181,7 @@ export class Zaken {
 
   /** Guarantee metadata promises are resolved */
   private async metaData() {
-    if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes ||  !this.catalogi) {
+    if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
       [
         this.zaakTypes,
         this.statusTypes,
@@ -197,20 +197,20 @@ export class Zaken {
   }
 
   /**
-   * We need to filter for zaken from specific systems. The catalogi hold 
+   * We need to filter for zaken from specific systems. The catalogi hold
    * the domains (APV & JZ), this filters the catalogi based on the allowed
    * domains (`this.allowedDomains`)
    */
   private allowedCatalogi() {
-    if(this.allowedDomains) {
+    if (this.allowedDomains) {
       return this.catalogi?.results.filter((catalogus: any) => this.allowedDomains!.includes(catalogus.domein));
     }
     return this.catalogi.results;
   }
 
   private zaakTypeInAllowedCatalogus(zaakType: any) {
-    for(let catalogus of this.allowedCatalogi()) {
-      if(catalogus?.zaaktypen.includes(zaakType)) { return true; }
+    for (let catalogus of this.allowedCatalogi()) {
+      if (catalogus?.zaaktypen.includes(zaakType)) { return true; }
     }
     return false;
   }
