@@ -38,8 +38,6 @@ export class PipelineStack extends Stack {
     });
     const pipeline = new pipelines.CodePipeline(this, `mijnzaken-${branch}`, {
       pipelineName: `mijnzaken-${branch}`,
-      dockerEnabledForSelfMutation: true,
-      dockerEnabledForSynth: true,
       crossAccountKeys: true,
       synth: new pipelines.ShellStep('Synth', {
         input: source,
