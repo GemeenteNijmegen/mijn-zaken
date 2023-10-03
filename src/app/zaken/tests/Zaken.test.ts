@@ -2,6 +2,7 @@ import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import catalogi from './samples/catalogi.json';
+import enkelvoudiginformatiobject from './samples/enkelvoudiginformatieobject.json';
 import resultaattypen from './samples/resultaattypen.json';
 import resultaatvoorbeeld from './samples/resultaatvoorbeeld.json';
 import rol from './samples/rol.json';
@@ -10,10 +11,9 @@ import statusvoorbeeld from './samples/statusvoorbeeld.json';
 import statusvoorbeeld2 from './samples/statusvoorbeeld2.json';
 import zaak1 from './samples/zaak1.json';
 import zaak1noStatus from './samples/zaak1noStatus.json';
+import zaakinformatieobjecten from './samples/zaakinformatieobjecten.json';
 import zaaktypen from './samples/zaaktypen.json';
 import zaken from './samples/zaken.json';
-import zaakinformatieobjecten from './samples/zaakinformatieobjecten.json';
-import enkelvoudiginformatiobject from './samples/enkelvoudiginformatieobject.json';
 import { OpenZaakClient } from '../OpenZaakClient';
 import { Zaken } from '../Zaken';
 
@@ -109,7 +109,7 @@ describe('Zaken', () => {
           status: 'In behandeling',
           uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
           zaak_type: 'Bezwaar',
-          status_list: [ 
+          status_list: [
             {
               name: 'Ontvangen',
               current: false,
@@ -134,16 +134,16 @@ describe('Zaken', () => {
           ],
           documenten: [
             {
-            beschrijving: "",
-            registratieDatum: "2023-10-03T11:33:45.683874Z",
-            titel: "test docx",
-            url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+              beschrijving: '',
+              registratieDatum: '2023-10-03T11:33:45.683874Z',
+              titel: 'test docx',
+              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
             },
             {
-              beschrijving: "",
-              registratieDatum: "2023-10-03T11:33:45.683874Z",
-              titel: "test docx",
-              url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+              beschrijving: '',
+              registratieDatum: '2023-10-03T11:33:45.683874Z',
+              titel: 'test docx',
+              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
             },
           ],
         });
@@ -189,16 +189,16 @@ describe('Zaken', () => {
       zaak_type: 'Bezwaar',
       documenten: [
         {
-        beschrijving: "",
-        registratieDatum: "2023-10-03T11:33:45.683874Z",
-        titel: "test docx",
-        url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+          beschrijving: '',
+          registratieDatum: '2023-10-03T11:33:45.683874Z',
+          titel: 'test docx',
+          url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
         },
         {
-          beschrijving: "",
-          registratieDatum: "2023-10-03T11:33:45.683874Z",
-          titel: "test docx",
-          url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+          beschrijving: '',
+          registratieDatum: '2023-10-03T11:33:45.683874Z',
+          titel: 'test docx',
+          url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
         },
       ],
     });
@@ -222,16 +222,16 @@ describe('Zaken', () => {
       zaak_type: 'Bezwaar',
       documenten: [
         {
-        beschrijving: "",
-        registratieDatum: "2023-10-03T11:33:45.683874Z",
-        titel: "test docx",
-        url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+          beschrijving: '',
+          registratieDatum: '2023-10-03T11:33:45.683874Z',
+          titel: 'test docx',
+          url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
         },
         {
-          beschrijving: "",
-          registratieDatum: "2023-10-03T11:33:45.683874Z",
-          titel: "test docx",
-          url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+          beschrijving: '',
+          registratieDatum: '2023-10-03T11:33:45.683874Z',
+          titel: 'test docx',
+          url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
         },
       ],
     });
@@ -358,16 +358,16 @@ describe('Filtering domains', () => {
           ],
           documenten: [
             {
-            beschrijving: "",
-            registratieDatum: "2023-10-03T11:33:45.683874Z",
-            titel: "test docx",
-            url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+              beschrijving: '',
+              registratieDatum: '2023-10-03T11:33:45.683874Z',
+              titel: 'test docx',
+              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
             },
             {
-              beschrijving: "",
-              registratieDatum: "2023-10-03T11:33:45.683874Z",
-              titel: "test docx",
-              url: "/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0",
+              beschrijving: '',
+              registratieDatum: '2023-10-03T11:33:45.683874Z',
+              titel: 'test docx',
+              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
             },
           ],
         });
