@@ -79,7 +79,7 @@ export class Zaken {
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
 
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
-    
+
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
         uuid: zaak.uuid,
@@ -217,7 +217,7 @@ export class Zaken {
 
   private zaakTypeInAllowedCatalogus(zaakType: any) {
     const catalogi = this.allowedCatalogi();
-    if(catalogi) {
+    if (catalogi) {
       for (let catalogus of this.allowedCatalogi()) {
         if (catalogus?.zaaktypen.includes(zaakType)) { return true; }
       }
@@ -230,9 +230,11 @@ export class Zaken {
     try {
       const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
       console.error(zaakinformatieobjecten);
-    
-      if(!zaakinformatieobjecten || zaakinformatieobjecten.length <= 0) { return false; }
-      const documentUrls = zaakinformatieobjecten.map((zaakinformatieobject: any) => zaakinformatieobject.informatieobject).filter((informatieobject: any) => informatieobject != null);
+
+      if (!zaakinformatieobjecten || zaakinformatieobjecten.length <= 0) { return false; }
+      const documentUrls = zaakinformatieobjecten
+        .map((zaakinformatieobject: any) => zaakinformatieobject.informatieobject).filter((informatieobject: any) => informatieobject != null,
+        );
       const enkelvoudiginformatieobjecten = await Promise.all(documentUrls.map((url: string) => this.client.request(url)));
       return enkelvoudiginformatieobjecten.map((object) => {
         return {
@@ -240,12 +242,11 @@ export class Zaken {
           titel: object.titel,
           beschrijving: object.beschrijving,
           registratieDatum: object.beginRegistratie,
-        }
+        };
       });
-  }
-  catch(error: any) {
-    console.error(error);
-    return [];
-  }
+    } catch (error: any) {
+      console.error(error);
+      return [];
+    }
   }
 }
