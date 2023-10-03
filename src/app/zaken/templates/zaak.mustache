@@ -12,9 +12,9 @@
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="denhaag-process-steps">
                 {{#status_list}}
-                    <li class="denhaag-process-steps__step denhaag-process-steps__step--{{#current}}current{{/current}}{{^current}}{{completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">  
+                    <li class="denhaag-process-steps__step denhaag-process-steps__step--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">  
                         <div class="denhaag-process-steps__step-header">
-                        <div class="denhaag-step-marker denhaag-step-marker--{{#current}}current{{/current}}{{^current}}{{completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">
+                        <div class="denhaag-step-marker denhaag-step-marker--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" class="denhaag-icon"
                             focusable="false" aria-hidden="true" shape-rendering="auto">
                             <path
@@ -22,14 +22,14 @@
                                 stroke="currentColor" stroke-width="1.75"></path>
                             </svg>
                         </div>
-                        <p class="denhaag-process-steps__step-heading denhaag-process-steps__step-heading--{{#current}}current{{/current}}{{^current}}{{completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">
+                        <p class="denhaag-process-steps__step-heading denhaag-process-steps__step-heading--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">
                             {{name}}
                         </p>
                         </div>
                         <div class="denhaag-process-steps__step-body">
-                        {{is_eind}}<div>Verwacht op {{verwachtte_einddatum}}</div>{{/is_eind}}
-                        {{^is_eind}}<div
-                            class="denhaag-step-marker__connector denhaag-step-marker__connector--{{#current}}current{{/current}}{{^current}}{{completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}} denhaag-step-marker__connector--main-to-main">{{/is_eind}}
+                        {{#is_eind}}<div>Verwacht op {{verwachtte_einddatum}}</div>{{/is_eind}}
+                        {{^is_eind}}
+                            <div class="denhaag-step-marker__connector denhaag-step-marker__connector--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}} denhaag-step-marker__connector--main-to-main">{{/is_eind}}
                         </div>
                         </div>
                     </li>
