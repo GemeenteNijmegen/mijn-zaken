@@ -77,7 +77,7 @@ export class Zaken {
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
     const documentPromise = this.documents(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
-
+    console.debug('resolved promises', status, resultaat, documents);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
 
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
