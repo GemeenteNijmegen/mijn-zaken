@@ -105,7 +105,7 @@ describe('Zaken', () => {
           status: 'In behandeling',
           uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
           zaak_type: 'Bezwaar',
-          status_list: [ 
+          status_list: [
             {
               name: 'Ontvangen',
               current: false,

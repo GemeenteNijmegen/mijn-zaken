@@ -215,7 +215,7 @@ export class Zaken {
 
   private zaakTypeInAllowedCatalogus(zaakType: any) {
     const catalogi = this.allowedCatalogi();
-    if(catalogi) {
+    if (catalogi) {
       for (let catalogus of this.allowedCatalogi()) {
         if (catalogus?.zaaktypen.includes(zaakType)) { return true; }
       }
