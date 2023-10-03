@@ -101,12 +101,16 @@ export class Zaken {
     const statusTypenUrls = zaakType.statustypen;
     const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
     statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
+    let before_current = true;
     const status_list = statusTypen.map((statusType: any) => {
+      const current = status.statustype == statusType.url;
+      if(current) { before_current = false; }
       return {
         name: statusType.omschrijving,
         is_eind: statusType.isEindstatus,
+        completed: before_current,
         volgnummer: statusType.volgnummer,
-        current: status.statustype == statusType.url,
+        current,
       };
     });
     return status_list;
