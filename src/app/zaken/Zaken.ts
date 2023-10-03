@@ -98,10 +98,13 @@ export class Zaken {
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
+    console.debug('getting status types');
     if (!status) {
+      console.debug('no status, return null');
       return null;
     }
     const statusTypenUrls = zaakType.statustypen;
+    console.debug('urls', statusTypenUrls);
     const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
     statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
     let before_current = true;
@@ -116,6 +119,7 @@ export class Zaken {
         current,
       };
     });
+    console.debug('urls', status_list);
     return status_list;
   }
 
