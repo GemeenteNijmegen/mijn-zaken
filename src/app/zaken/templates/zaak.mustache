@@ -7,31 +7,8 @@
             <div class="col-12">
             {{#zaak}}
                 <h1>{{zaak_type}}</h1>
-                <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>.</p>
-                <div class="meta-blocks">
-                    <div class="meta-blocks--container">
-                        <div class="meta-blocks--content row">
-                            <div class="col-xs-12 col-md-4 meta-blocks--col">
-                                <h3 class="meta-blocks--content-heading">Aanvraag ontvangen</h3>
-                                <p>{{registratiedatum}}</p>
-                            </div>
-                            <div class="col-xs-12 col-md-4 meta-blocks--col">
-                                <h3 class="meta-blocks--content-heading">Status</h3>
-                                <p>{{status}}</p>
-                            </div>
-                            <div class="col-xs-12 col-md-4 meta-blocks--col">
-                            {{#einddatum}}
-                                <h3 class="meta-blocks--content-heading">Einddatum</h3>
-                                <p>{{einddatum}}</p>
-                            {{/einddatum}}
-                            {{^einddatum}}
-                                <h3 class="meta-blocks--content-heading">Verwachtte einddatum</h3>
-                                <p>{{verwachtte_einddatum}}</p>
-                            {{/einddatum}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>. We verwachten uw aanvraag af te ronden op {{verwachtte_einddatum}}.</p>
+                
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="denhaag-process-steps">
                 {{#status_list}}
