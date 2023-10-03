@@ -24,6 +24,7 @@ export class Zaken {
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.request('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
+    console.time('zaken status');
   }
 
   /**
@@ -104,7 +105,7 @@ export class Zaken {
     let before_current = true;
     const status_list = statusTypen.map((statusType: any) => {
       const current = status.statustype == statusType.url;
-      if(current) { before_current = false; }
+      if (current) { before_current = false; }
       return {
         name: statusType.omschrijving,
         is_eind: statusType.isEindstatus,
@@ -206,16 +207,20 @@ export class Zaken {
    * domains (`this.allowedDomains`)
    */
   private allowedCatalogi() {
-    if (this.allowedDomains) {
-      return this.catalogi?.results.filter((catalogus: any) => this.allowedDomains!.includes(catalogus.domein));
+    if (this.allowedDomains && this.catalogi?.results) {
+      return this.catalogi?.results?.filter((catalogus: any) => this.allowedDomains!.includes(catalogus.domein));
     }
     return this.catalogi.results;
   }
 
   private zaakTypeInAllowedCatalogus(zaakType: any) {
-    for (let catalogus of this.allowedCatalogi()) {
-      if (catalogus?.zaaktypen.includes(zaakType)) { return true; }
+    const catalogi = this.allowedCatalogi();
+    if(catalogi) {
+      for (let catalogus of this.allowedCatalogi()) {
+        if (catalogus?.zaaktypen.includes(zaakType)) { return true; }
+      }
+      return false;
     }
-    return false;
+    return true;
   }
 }
