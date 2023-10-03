@@ -104,7 +104,7 @@ export class Zaken {
     let before_current = true;
     const status_list = statusTypen.map((statusType: any) => {
       const current = status.statustype == statusType.url;
-      if(current) { before_current = false; }
+      if (current) { before_current = false; }
       return {
         name: statusType.omschrijving,
         is_eind: statusType.isEindstatus,
