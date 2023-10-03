@@ -227,17 +227,25 @@ export class Zaken {
   }
 
   private async documents(zaakId: string) {
-    const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
-    if(zaakinformatieobjecten.length <= 0) { return []; }
-    const documentUrls = zaakinformatieobjecten.map((zaakinformatieobject: any) => zaakinformatieobject.informatieobject).filter((informatieobject: any) => informatieobject != null);
-    const enkelvoudiginformatieobjecten = await Promise.all(documentUrls.map((url: string) => this.client.request(url)));
-    return enkelvoudiginformatieobjecten.map((object) => {
-      return {
-        url: object.url,
-        titel: object.titel,
-        beschrijving: object.beschrijving,
-        registratieDatum: object.beginRegistratie,
-      }
-    });
+    try {
+      const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
+      console.error(zaakinformatieobjecten);
+    
+      if(!zaakinformatieobjecten || zaakinformatieobjecten.length <= 0) { return false; }
+      const documentUrls = zaakinformatieobjecten.map((zaakinformatieobject: any) => zaakinformatieobject.informatieobject).filter((informatieobject: any) => informatieobject != null);
+      const enkelvoudiginformatieobjecten = await Promise.all(documentUrls.map((url: string) => this.client.request(url)));
+      return enkelvoudiginformatieobjecten.map((object) => {
+        return {
+          url: object.url,
+          titel: object.titel,
+          beschrijving: object.beschrijving,
+          registratieDatum: object.beginRegistratie,
+        }
+      });
+  }
+  catch(error: any) {
+    console.error(error);
+    return [];
+  }
   }
 }
