@@ -40,6 +40,15 @@
                     </li>
                 {{/status_list}}
                 </ol>
+
+                <h2>Documenten</h2>
+                {{#documenten}}
+                    <ul>
+                        <li><a href="{{url}}">{{titel}}</a></li>
+                {{/documenten}}
+                {{^documenten}}
+                <p>Er zijn geen documenten bij deze zaak te tonen.
+                {{/documenten}}
             {{/zaak}}
             {{^zaak}}
                 <h1>Geen zaak gevonden</h1>

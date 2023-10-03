@@ -75,10 +75,11 @@ export class Zaken {
 
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
-    const [status, resultaat] = await Promise.all([statusPromise, resultaatPromise]);
+    const documentPromise = this.documents(zaakId);
+    const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
 
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
-
+    
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
         uuid: zaak.uuid,
@@ -91,6 +92,7 @@ export class Zaken {
         status_list: this.statusTypesForZaakType(zaakType, status),
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
+        documenten: documents,
       };
     }
     return false;
@@ -222,5 +224,20 @@ export class Zaken {
       return false;
     }
     return true;
+  }
+
+  private async documents(zaakId: string) {
+    const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
+    if(zaakinformatieobjecten.length <= 0) { return []; }
+    const documentUrls = zaakinformatieobjecten.map((zaakinformatieobject: any) => zaakinformatieobject.informatieobject).filter((informatieobject: any) => informatieobject != null);
+    const enkelvoudiginformatieobjecten = await Promise.all(documentUrls.map((url: string) => this.client.request(url)));
+    return enkelvoudiginformatieobjecten.map((object) => {
+      return {
+        url: object.url,
+        titel: object.titel,
+        beschrijving: object.beschrijving,
+        registratieDatum: object.beginRegistratie,
+      }
+    });
   }
 }
