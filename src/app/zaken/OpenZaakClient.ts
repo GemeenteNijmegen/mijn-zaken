@@ -98,7 +98,6 @@ export class OpenZaakClient {
     if (data.next) {
       // request next page
       const page = await this.requestPaginated(data.next);
-      console.error(page);
       if (page.results) {
         data.results = [...data.results, ...page.results];
       }
