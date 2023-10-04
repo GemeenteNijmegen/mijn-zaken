@@ -8,7 +8,13 @@
             {{#zaak}}
                 <h1>{{zaak_type}}</h1>
                 <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>. We verwachten uw aanvraag af te ronden op {{verwachtte_einddatum}}.</p>
-                
+                {{#has_taken}}
+                <h2>Taken</h2>
+                <ul>
+                {{#taken}}
+                        <li><a href="{{url}}">{{titel}}</a></li>
+                {{/taken}}
+                {{/has_taken}}
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="denhaag-process-steps">
                 {{#status_list}}

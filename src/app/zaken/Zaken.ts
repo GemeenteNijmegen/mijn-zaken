@@ -1,5 +1,10 @@
 import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
+import { Taken } from './Taken';
+
+interface Config {
+  taken?: Taken;
+}
 
 export class Zaken {
   private client: OpenZaakClient;
@@ -17,7 +22,9 @@ export class Zaken {
 
   private allowedDomains?: string[];
 
-  constructor(client: OpenZaakClient, bsn: Bsn) {
+  private taken?: Taken;
+
+  constructor(client: OpenZaakClient, bsn: Bsn, config?: Config) {
     this.client = client;
     this.bsn = bsn;
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
@@ -25,6 +32,7 @@ export class Zaken {
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
     console.time('zaken status');
+    this.taken = config?.taken;
   }
 
   /**
@@ -76,6 +84,7 @@ export class Zaken {
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
     const documentPromise = this.documents(zaakId);
+    const taken = this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
     console.debug('resolved promises', status, resultaat, documents);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
@@ -93,6 +102,8 @@ export class Zaken {
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
         documenten: documents,
+        taken: taken,
+        has_taken: taken ? true : false,
       };
     }
     return false;
@@ -252,5 +263,10 @@ export class Zaken {
       console.error(error);
       return [];
     }
+  }
+
+  private getTaken(zaakId: string) {
+    if (!this.taken) { return null; }
+    return this.taken.get(zaakId);
   }
 }

@@ -146,6 +146,8 @@ describe('Zaken', () => {
               url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
             },
           ],
+          taken: null,
+          has_taken: false,
         });
     });
 
@@ -201,6 +203,8 @@ describe('Zaken', () => {
           url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
         },
       ],
+      taken: null,
+      has_taken: false,
     });
   });
 
@@ -234,6 +238,8 @@ describe('Zaken', () => {
           url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
         },
       ],
+      taken: null,
+      has_taken: false,
     });
   });
 
@@ -370,6 +376,8 @@ describe('Filtering domains', () => {
               url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
             },
           ],
+          taken: null,
+          has_taken: false,
         });
     });
   test('a single zaak is filtered correctly (APV)',
