@@ -105,5 +105,5 @@ export class OpenZaakClient {
     }
     // return merged data
     return data;
-  }
+  } 
 }
