@@ -68,6 +68,11 @@ export class ssmParamsConstruct extends Construct {
     });
 
     new Secret(this, 'secret_1', {
+      secretName: Statics.vipJwtSecret,
+      description: 'VIP JWT token secret',
+    });
+
+    new Secret(this, 'secret_2', {
       secretName: Statics.vipTakenSecret,
       description: 'VIP Taken token secret',
     });
