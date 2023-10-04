@@ -62,9 +62,14 @@ export class ssmParamsConstruct extends Construct {
       parameterName: Statics.ssmClientId,
     });
 
+    new StringParameter(this, 'ssm_zaken_4', {
+      stringValue: '-',
+      parameterName: Statics.ssmTokenBaseUrl,
+    });
+
     new Secret(this, 'secret_1', {
-      secretName: Statics.vipJwtSecret,
-      description: 'VIP JWT token secret',
+      secretName: Statics.vipTakenSecret,
+      description: 'VIP Taken token secret',
     });
   }
 }

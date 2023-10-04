@@ -22,6 +22,8 @@ const getItemOutput: Partial<GetItemCommandOutput> = {
 };
 ddbMock.on(GetItemCommand).resolves(getItemOutput);
 const secret = process.env.VIP_JWT_SECRET ?? 'fakesecret';
+process.env.VIP_TOKEN_BASE_URL = 'http://localhost';
+
 let baseUrl = new URL('http://localhost');
 if (process.env.VIP_BASE_URL) {
   baseUrl = new URL(process.env.VIP_BASE_URL);
@@ -49,7 +51,7 @@ const client = new OpenZaakClient({ baseUrl, axiosInstance });
 describe('Request handler', () => {
   test('returns 200', async () => {
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
@@ -65,7 +67,7 @@ describe('Request handler', () => {
 describe('Request handler single zaak', () => {
   test('returns 200', async () => {
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {

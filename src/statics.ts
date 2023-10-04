@@ -13,11 +13,13 @@ export abstract class Statics {
   static readonly ssmUserId: string = '/cdk/mijn-zaken/vip-jwt-userid';
   static readonly ssmClientId: string = '/cdk/mijn-zaken/vip-jwt-clientid';
   static readonly ssmBaseUrl: string = '/cdk/mijn-zaken/vip-base-url';
+  static readonly ssmTokenBaseUrl: string = '/cdk/mijn-zaken/taken-base-url';
 
   /**
    * Secret for VIP jwt token
    */
   static readonly vipJwtSecret: string = '/cdk/mijn-zaken/vip-jwttoken';
+  static readonly vipTakenSecret: string = '/cdk/mijn-zaken/vip-takentoken';
 
   /*
    * Environments (old lz)

@@ -48,6 +48,7 @@ export class ZakenApiStack extends Stack {
     const readOnlyRole = Role.fromRoleArn(this, 'readonly', SSM.StringParameter.valueForStringParameter(this, Statics.ssmReadOnlyRoleArn));
 
     const jwtSecret = Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret);
+    const tokenSecret = Secret.fromSecretNameV2(this, 'taken-token-secret', Statics.vipTakenSecret);
     const zakenFunction = new ApiFunction(this, 'zaken-function', {
       description: 'Zaken-lambda voor de Mijn Nijmegen-applicatie.',
       codePath: 'app/zaken',
@@ -55,9 +56,11 @@ export class ZakenApiStack extends Stack {
       tablePermissions: 'ReadWrite',
       environment: {
         VIP_JWT_SECRET_ARN: jwtSecret.secretArn,
+        VIP_TAKEN_SECRET_ARN: tokenSecret.secretArn,
         VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
         VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
         VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
+        VIP_TOKEN_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
       },
       readOnlyRole,
       apiFunction: ZakenFunction,

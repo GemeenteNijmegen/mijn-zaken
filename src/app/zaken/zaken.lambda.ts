@@ -10,10 +10,13 @@ const dynamoDBClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 let openZaakClient: OpenZaakClient | false;
 
 async function initSecret() {
-  if (!process.env.VIP_JWT_SECRET_ARN) {
+  if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN) {
     throw Error('No secret ARN provided');
   }
-  return AWS.getSecret(process.env.VIP_JWT_SECRET_ARN);
+  return {
+    vipSecret: await AWS.getSecret(process.env.VIP_JWT_SECRET_ARN),
+    takenSecret: await AWS.getSecret(process.env.VIP_TAKEN_SECRET_ARN),
+  };
 }
 
 const initPromise = initSecret();
@@ -28,14 +31,14 @@ function parseEvent(event: APIGatewayProxyEventV2): any {
 export async function handler(event: any, _context: any):Promise<ApiGatewayV2Response> {
   try {
     const params = parseEvent(event);
-    const secret = await initPromise;
-    const zakenClient = sharedOpenZaakClient(secret);
-    return await zakenRequestHandler(params.cookies, dynamoDBClient, { zakenClient, zaak: params.zaak });
+    const secrets = await initPromise;
+    const zakenClient = sharedOpenZaakClient(secrets.vipSecret);
+    return await zakenRequestHandler(params.cookies, dynamoDBClient, { zakenClient, zaak: params.zaak, takenSecret: secrets.takenSecret });
   } catch (err) {
     console.debug(err);
     return Response.error(500);
   }
-};
+}
 
 function sharedOpenZaakClient(secret: string): OpenZaakClient {
   if (!openZaakClient) {

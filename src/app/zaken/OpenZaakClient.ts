@@ -95,11 +95,11 @@ export class OpenZaakClient {
 
   async requestPaginated(endpoint: string, params?: URLSearchParams): Promise<any> {
     const data = await this.request(endpoint, params);
-    if(data.next) {
+    if (data.next) {
       // request next page
       const page = await this.requestPaginated(data.next);
       console.error(page);
-      if(page.results) {
+      if (page.results) {
         data.results = [...data.results, ...page.results];
       }
     }

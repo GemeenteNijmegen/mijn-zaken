@@ -2,13 +2,18 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
+import axios from 'axios';
 import { OpenZaakClient } from './OpenZaakClient';
+import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Zaken } from './Zaken';
 import { render } from '../../shared/render';
 
-export async function zakenRequestHandler(cookies: string, dynamoDBClient: DynamoDBClient, config: { zakenClient: OpenZaakClient; zaak?: string }) {
+export async function zakenRequestHandler(
+  cookies: string,
+  dynamoDBClient: DynamoDBClient,
+  config: { zakenClient: OpenZaakClient; zaak?: string; takenSecret: string }) {
 
   console.time('request');
   console.timeLog('request', 'start request');
@@ -23,7 +28,7 @@ export async function zakenRequestHandler(cookies: string, dynamoDBClient: Dynam
     try {
       let response;
       if (config.zaak) {
-        response = await singleZaakRequest(session, config.zakenClient, config.zaak);
+        response = await singleZaakRequest(session, config.zakenClient, config.zaak, config.takenSecret);
       } else {
         response = await listZakenRequest(session, config.zakenClient);
       }
@@ -63,7 +68,7 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
 }
 
 
-async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak: string) {
+async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak: string, takenSecret: string) {
 
   console.timeLog('request', 'Api Client init');
 
@@ -75,7 +80,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
   };
 
   const bsn = new Bsn(session.getValue('bsn'));
-  const statuses = new Zaken(client, bsn);
+  const statuses = new Zaken(client, bsn, { taken: taken(takenSecret) });
   statuses.allowDomains(['APV']);
   data.zaak = await statuses.get(zaak);
   console.debug('zaak', data.zaak);
@@ -86,3 +91,23 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
   return Response.html(html, 200, session.getCookie());
 }
 
+
+function taken(secret: string): Taken {
+  if (!process.env.VIP_TOKEN_BASE_URL) {
+    throw Error('No VIP_TOKEN_BASE_URL provided');
+  }
+  const instance = axios.create(
+    {
+      headers: {
+        Authorization: 'Token ' + secret,
+      },
+    },
+  );
+  const openZaakClient = new OpenZaakClient({
+    baseUrl: new URL(process.env.VIP_TOKEN_BASE_URL),
+    axiosInstance: instance,
+  });
+
+  return new Taken(openZaakClient);
+
+}
