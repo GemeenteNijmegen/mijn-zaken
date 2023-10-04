@@ -244,7 +244,6 @@ export class Zaken {
   private async documents(zaakId: string) {
     try {
       const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
-      console.error(zaakinformatieobjecten);
 
       if (!zaakinformatieobjecten || zaakinformatieobjecten.length <= 0) { return false; }
       const documentUrls = zaakinformatieobjecten

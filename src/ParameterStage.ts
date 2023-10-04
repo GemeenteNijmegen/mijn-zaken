@@ -71,5 +71,10 @@ export class ssmParamsConstruct extends Construct {
       secretName: Statics.vipTakenSecret,
       description: 'VIP Taken token secret',
     });
+
+    new Secret(this, 'secret_2', {
+      secretName: Statics.vipTakenSecret,
+      description: 'VIP Taken token secret',
+    });
   }
 }
