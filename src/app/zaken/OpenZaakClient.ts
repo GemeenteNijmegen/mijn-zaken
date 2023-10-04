@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 export class OpenZaakClient {
   private axios: Axios;
   public baseUrl: URL;
+
   constructor(config: {
     baseUrl: URL;
     axiosInstance?: AxiosInstance;
@@ -90,5 +91,19 @@ export class OpenZaakClient {
       console.log(error.config);
       return error;
     }
+  }
+
+  async requestPaginated(endpoint: string, params?: URLSearchParams): Promise<any> {
+    const data = await this.request(endpoint, params);
+    if(data.next) {
+      // request next page
+      const page = await this.requestPaginated(data.next);
+      console.error(page);
+      if(page.results) {
+        data.results = [...data.results, ...page.results];
+      }
+    }
+    // return merged data
+    return data;
   }
 }

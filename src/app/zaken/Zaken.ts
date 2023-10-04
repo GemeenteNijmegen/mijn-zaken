@@ -22,7 +22,7 @@ export class Zaken {
     this.bsn = bsn;
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
-    this.statusTypesPromise = this.client.request('/catalogi/api/v1/statustypen');
+    this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
     console.time('zaken status');
   }
