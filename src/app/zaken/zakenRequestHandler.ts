@@ -83,7 +83,6 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
   const statuses = new Zaken(client, bsn, { taken: taken(takenSecret) });
   statuses.allowDomains(['APV']);
   data.zaak = await statuses.get(zaak);
-  console.debug('zaak', data.zaak);
   console.timeLog('request', 'zaak received');
 
   // render page

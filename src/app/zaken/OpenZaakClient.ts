@@ -65,7 +65,7 @@ export class OpenZaakClient {
     const paramString = params ? `?${params}` : '';
     const url =`${endpoint}${paramString}`;
     try {
-      console.debug('getting ', this.axios.getUri({ url, params }));
+      // console.debug('getting ', this.axios.getUri({ url, params }));
       const response = await this.axios.get(url);
       if (response.status != 200) {
         console.debug(response.request.responseURL);

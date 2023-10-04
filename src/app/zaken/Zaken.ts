@@ -86,7 +86,6 @@ export class Zaken {
     const documentPromise = this.documents(zaakId);
     const taken = this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
-    console.debug('resolved promises', status, resultaat, documents);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
 
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
@@ -109,13 +108,11 @@ export class Zaken {
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
-    console.debug('getting status types');
     if (!status) {
       console.debug('no status, return null');
       return null;
     }
     const statusTypenUrls = zaakType.statustypen;
-    console.debug('urls', statusTypenUrls);
     const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
     statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
     let before_current = true;
@@ -130,7 +127,6 @@ export class Zaken {
         current,
       };
     });
-    console.debug('urls', status_list);
     return status_list;
   }
 
