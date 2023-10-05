@@ -9,12 +9,27 @@
                 <h1>{{zaak_type}}</h1>
                 <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>. We verwachten uw aanvraag af te ronden op {{verwachtte_einddatum}}.</p>
                 {{#has_taken}}
-                <h2>Taken</h2>
-                <ul>
                 {{#taken}}
-                        <li><a href="{{url}}">{{title}}</a></li>
+                <div class="denhaag-action">
+                <div class="denhaag-action__content">
+                    {{record.data.zaak.title}}
+                </div>
+                <div class="denhaag-action__details">
+                    <div class="denhaag-action__date">
+                    <span>
+                        voor {{record.data.zaak.verloopdatum}}
+                    </span>
+                    </div>
+                    <div class="denhaag-action__actions">
+                    <a
+                        class="denhaag-button"
+                        href="record.data.zaak.formulier.value"
+                    >
+                        Actie
+                    </a>
+                    </div>
+                </div>
                 {{/taken}}
-                </ul>
                 {{/has_taken}}
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="denhaag-process-steps">
