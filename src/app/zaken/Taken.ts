@@ -20,6 +20,9 @@ export class Taken {
             title: result.record.data.title,
             url: result.record.data.formulier.value,
             einddatum: this.formattedDate(result.record.data.verloopdatum),
+            is_open: result.record.data.status == 'open',
+            is_ingediend: result.record.data.status == 'ingediend',
+            is_gesloten: result.record.data.status == 'gesloten',
           };
         });
     } else {

@@ -14,6 +14,8 @@
                         {{title}}
                     </div>
                     <div class="denhaag-action__details">
+
+                    {{#is_open}}
                         <div class="denhaag-action__date">
                         <span>
                             voor {{einddatum}}
@@ -27,8 +29,24 @@
                             Toevoegen
                         </a>
                         </div>
+                    {{#is_open}}
+                    {{#is_ingediend}}
+                    <div class="denhaag-action__date">
+                        </div>
+                        <div class="denhaag-action__actions">
+                        Ingediend ✅
+                        </div>
+                    {{/is_ingediend}}
+                    {{#is_gesloten}}
+                    <div class="denhaag-action__date">
+                        </div>
+                        <div class="denhaag-action__actions">
+                        Gesloten ✅
+                        </div>
+                    {{/is_gesloten}}
                     </div>
                 </div>
+                {{/is_open}}
                 {{/taken}}
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="denhaag-process-steps">
