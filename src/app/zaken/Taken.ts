@@ -22,8 +22,9 @@ export class Taken {
             einddatum: this.formattedDate(result.record.data.verloopdatum),
           };
         });
+    } else {
+      return null;
     }
-    return data ? data : null;
   }
 
   private formattedDate(dateString: string) {
