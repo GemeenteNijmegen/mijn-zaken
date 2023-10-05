@@ -102,8 +102,8 @@ export class Zaken {
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
         documenten: documents,
-        taken: taken,
-        has_taken: taken ? true : false,
+        taken: taken?.results,
+        has_taken: taken?.count > 0 ? true : false,
       };
     }
     return false;
