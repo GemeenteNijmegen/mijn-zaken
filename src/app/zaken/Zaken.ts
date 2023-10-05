@@ -84,7 +84,7 @@ export class Zaken {
     const statusPromise = zaak.status ? this.client.request(zaak.status) : null;
     const resultaatPromise = zaak.resultaat ? this.client.request(zaak.resultaat) : null;
     const documentPromise = this.documents(zaakId);
-    const taken = this.getTaken(zaakId);
+    const taken = await this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
     console.debug('resolved promises', status, resultaat, documents);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
@@ -264,7 +264,7 @@ export class Zaken {
     }
   }
 
-  private getTaken(zaakId: string) {
+  async getTaken(zaakId: string) {
     if (!this.taken) { return null; }
     return this.taken.get(zaakId);
   }
