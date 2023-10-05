@@ -102,7 +102,7 @@ export class Zaken {
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
         documenten: documents,
-        taken: taken?.results,
+        taken: taken?.results ? taken.results : null,
         has_taken: taken?.count > 0 ? true : false,
       };
     }
