@@ -14,6 +14,7 @@
                 {{#taken}}
                         <li><a href="{{url}}">{{titel}}</a></li>
                 {{/taken}}
+                </ul>
                 {{/has_taken}}
                 <h2>Het verloop van uw aanvraag</h2>
                 <ol class="denhaag-process-steps">
@@ -41,7 +42,6 @@
                         {{#is_eind}}<div>Verwacht op {{verwachtte_einddatum}}</div>{{/is_eind}}
                         {{^is_eind}}
                             <div class="denhaag-step-marker__connector denhaag-step-marker__connector--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}} denhaag-step-marker__connector--main-to-main">{{/is_eind}}
-                        </div>
                         </div>
                     </li>
                 {{/status_list}}
