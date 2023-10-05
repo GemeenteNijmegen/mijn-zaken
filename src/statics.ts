@@ -19,7 +19,7 @@ export abstract class Statics {
    * Secret for VIP jwt token
    */
   static readonly vipJwtSecret: string = '/cdk/mijn-zaken/vip-jwttoken-new';
-  static readonly vipTakenSecret: string = '/cdk/mijn-zaken/vip-takentoken';
+  static readonly vipTakenSecret: string = '/cdk/mijn-zaken/vip-takentoken-new';
 
   /*
    * Environments (old lz)
