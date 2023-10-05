@@ -12,18 +12,18 @@
                 {{#taken}}
                 <div class="denhaag-action">
                 <div class="denhaag-action__content">
-                    {{record.data.zaak.title}}
+                    {{title}}
                 </div>
                 <div class="denhaag-action__details">
                     <div class="denhaag-action__date">
                     <span>
-                        voor {{record.data.zaak.verloopdatum}}
+                        voor {{einddatum}}
                     </span>
                     </div>
                     <div class="denhaag-action__actions">
                     <a
                         class="denhaag-button"
-                        href="record.data.zaak.formulier.value"
+                        href="{{url}}"
                     >
                         Actie
                     </a>

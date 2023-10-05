@@ -29,6 +29,6 @@ describe('Taken tests', () => {
     const client = new OpenZaakClient({ baseUrl, axiosInstance: instance });
     const taken = new Taken(client);
     const takenForZaak = await taken.get('testZaak');
-    expect(takenForZaak.results).toHaveLength(4);
+    expect(takenForZaak).toHaveLength(1);
   });
 });
