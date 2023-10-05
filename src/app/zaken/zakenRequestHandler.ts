@@ -98,6 +98,7 @@ function taken(secret: string): Taken {
   }
   const instance = axios.create(
     {
+      baseURL: process.env.VIP_TOKEN_BASE_URL,
       headers: {
         Authorization: 'Token ' + secret,
       },
