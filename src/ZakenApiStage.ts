@@ -14,6 +14,6 @@ export class ZakenApiStage extends Stage {
     super(scope, id, props);
     Aspects.of(this).add(new PermissionsBoundaryAspect());
 
-    new ZakenApiStack(this, 'zaken-api');
+    new ZakenApiStack(this, 'zaken-api', { configuration: props.configuration });
   }
 }

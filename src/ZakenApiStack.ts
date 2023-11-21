@@ -1,22 +1,26 @@
 import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpRouteKey } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { Stack, aws_ssm as SSM, aws_kms } from 'aws-cdk-lib';
+import { Stack, aws_ssm as SSM, aws_kms, StackProps } from 'aws-cdk-lib';
 import { ITable, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { ApiFunction } from './ApiFunction';
 import { ZakenFunction } from './app/zaken/zaken-function';
+import { Configurable, Configuration } from './Configuration';
 import { Statics } from './statics';
+
+interface ZakenApiStackProps extends StackProps, Configurable {}
 
 export class ZakenApiStack extends Stack {
   private sessionsTable: ITable;
   private api: apigatewayv2.IHttpApi;
+  private configuration: Configuration;
 
-  constructor(scope: Construct, id: string) {
-    super(scope, id);
-
+  constructor(scope: Construct, id: string, props: ZakenApiStackProps) {
+    super(scope, id, props);
+    this.configuration = props.configuration;
     const sessionsTableArn = SSM.StringParameter.fromStringParameterName(this, 'sessions-table-arn', Statics.ssmSessionsTableArn).stringValue;
     const keyArn = SSM.StringParameter.fromStringParameterName(this, 'key-arn', Statics.ssmDataKeyArn).stringValue;
 
@@ -37,14 +41,9 @@ export class ZakenApiStack extends Stack {
 
   /**
    * Create and configure lambda's for all api routes, and
-   * add routes to the gateway.
+   * add routes to the existing gateway.
    */
   setFunctions() {
-
-    //const secretMTLSPrivateKey = aws_secretsmanager.Secret.fromSecretNameV2(this, 'tls-key-secret', Statics.secretMTLSPrivateKey);
-    //const tlskeyParam = SSM.StringParameter.fromStringParameterName(this, 'tlskey', Statics.ssmMTLSClientCert);
-    //const tlsRootCAParam = SSM.StringParameter.fromStringParameterName(this, 'tlsrootca', Statics.ssmMTLSRootCA);
-
     const readOnlyRole = Role.fromRoleArn(this, 'readonly', SSM.StringParameter.valueForStringParameter(this, Statics.ssmReadOnlyRoleArn));
 
     const jwtSecret = Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret);
@@ -61,6 +60,8 @@ export class ZakenApiStack extends Stack {
         VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
         VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
         VIP_TOKEN_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmTokenBaseUrl),
+        IS_LIVE: this.configuration.isLive ? 'true' : 'false',
+        USE_TAKEN: this.configuration.useTaken ? 'true' : 'false',
       },
       readOnlyRole,
       apiFunction: ZakenFunction,

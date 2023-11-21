@@ -35,5 +35,9 @@ export abstract class Statics {
     region: 'eu-central-1',
   };
 
+  static readonly productionEnvironment = {
+    account: '740606269759',
+    region: 'eu-central-1',
+  };
 
 }

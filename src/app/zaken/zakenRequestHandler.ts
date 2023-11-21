@@ -45,7 +45,6 @@ export async function zakenRequestHandler(
 }
 
 async function listZakenRequest(session: Session, client: OpenZaakClient) {
-
   console.timeLog('request', 'Api Client init');
 
   let data = {
@@ -91,8 +90,16 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
   return Response.html(html, 200, session.getCookie());
 }
 
-
-function taken(secret: string): Taken {
+/**
+ * Return taken object, or undefined if the taken functionality
+ * is not yet live. (controlled by the USE_TAKEN env. param).
+ *
+ * @param secret secret for the taken endpoint
+ */
+function taken(secret: string): Taken|undefined {
+  if (!TakenIsAllowed()) {
+    return;
+  }
   if (!process.env.VIP_TOKEN_BASE_URL) {
     throw Error('No VIP_TOKEN_BASE_URL provided');
   }
@@ -110,5 +117,14 @@ function taken(secret: string): Taken {
   });
 
   return new Taken(openZaakClient);
+}
 
+/**
+ * Check if the taken functionality should be live
+ */
+function TakenIsAllowed() {
+  if (process.env.USE_TAKEN === 'true') {
+    return true;
+  }
+  return false;
 }
