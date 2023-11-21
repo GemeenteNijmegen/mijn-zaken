@@ -29,6 +29,9 @@ function parseEvent(event: APIGatewayProxyEventV2): any {
 }
 
 export async function handler(event: any, _context: any):Promise<ApiGatewayV2Response> {
+  if (!isAllowed()) {
+    return Response.error(404);
+  }
   try {
     const params = parseEvent(event);
     const secrets = await initPromise;
@@ -53,4 +56,12 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
     });
   }
   return openZaakClient;
+}
+
+/** Check if this function is live */
+function isAllowed() {
+  if (process.env.IS_LIVE == 'true') {
+    return true;
+  }
+  return false;
 }
