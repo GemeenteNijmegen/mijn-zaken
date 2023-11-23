@@ -11,6 +11,7 @@ const dummyEnv = {
 
 const config: Configuration = {
   branchName: 'test',
+  name: 'test',
   deployFromEnvironment: dummyEnv,
   deployToEnvironment: dummyEnv,
 }
@@ -21,6 +22,7 @@ test('Snapshot', () => {
     env: dummyEnv,
     configuration: {
       branchName: 'test', 
+      name: 'test',
       deployToEnvironment: dummyEnv,
       deployFromEnvironment: dummyEnv,
     },
