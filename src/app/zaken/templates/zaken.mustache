@@ -1,6 +1,6 @@
 {{>header}}
 
-<main>
+<main id="denhaag-theme">
     <!-- START: template component(s) -->
     <div class="container" id="section-1">
         <div class="row">
@@ -26,85 +26,57 @@
                     <!-- Tab Content -->
                     <div class="tab-content" tabindex="0" role="tabpanel" id="example-1-tab" aria-labelledby="example-1">
                         <div class="cards">
-                            <div class="card card-services">
-                                <div class="card-body">
-                                    <h3 class="card-title">Klacht</h3>
-                                    <p class="card-text">Zaaknummer: <strong>DMS11.1253</strong><br />
-                                    Status: <strong>Ontvangen</strong></p>
-                                    <p>Geregistreerd op 3 september 2022</p>
-                                    <p class="card-read-more text-right mb-0 text-uppercase">
-                                        <a href="/voorbeeld-zaak.html">Open zaak</a>
-                                    </p>
-                                </div>
+                        {{#zaken.open}}
+                            <div class="denhaag-card denhaag-case-card">
+                        <div class="denhaag-card__wrapper">
+                            <div class="denhaag-card__background"></div>
+                            <div class="denhaag-card__content">
+                            <div class="denhaag-card__text-wrapper">
+                                <p class="utrecht-paragraph denhaag-card__title">{{zaak_type}}</p>
+                                <p class="utrecht-paragraph denhaag-card__subtitle">{{status}}</p>
                             </div>
-                                <div class="card card-services">
-                                    <div class="card-body">
-                                        <h3 class="card-title">Aanvraag evenementenvergunning</h3>
-                                        <p class="card-text">Zaaknummer: <strong>APV10.1324</strong><br />
-                                            Status: <strong>In behandeling</strong></p>
-                                            <p>Geregistreerd op 2 april 2022</p>
-                                        <p class="card-read-more text-right mb-0 text-uppercase">
-                                            <a href="/voorbeeld-zaak-2.html">Open zaak</a>
-                                        </p>
-                                    </div>
-                                </div>
+                            <div class="denhaag-card__actions">
+                                <div class="denhaag-card__date-wrapper"><time datetime="2020-01-21T00:00:00.000Z">{{registratiedatum}}</time></div><a
+                                href="/zaken/{{uuid}}" class="denhaag-card__action-link"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="denhaag-icon denhaag-card__arrow-icon" focusable="false"
+                                    aria-hidden="true" shape-rendering="auto">
+                                    <path
+                                    d="M12.293 5.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L16.586 13H5a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                    fill="currentColor"></path>
+                                </svg></a>
+                            </div>
                             </div>
                         </div>
-<!--                         
-                        <table class="responsive-table">
-                            <caption>Open zaken</caption>
-                            <thead>
-                                <tr>
-                                    <th>Zaaknummer</th>
-                                    <th>Registratiedatum</th>
-                                    <th>Zaaktype</th>
-                                    <th>Status</th>
-                                    <th>Actie</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Z23.000202</td>
-                                    <td>2023-03-09</td>
-                                    <td>Klacht</td>
-                                    <td>Ontvangen</td>
-                                    <td><a class="btn" href="/">Openen</a></td>
-                                </tr>
-                            </tbody>
-                        </table> -->
+                        </div>
+                        {{/zaken.open}}
+                        </div>
                     </div>
                     <div class="tab-content" tabindex="0" role="tabpanel" id="example-2-tab" aria-labelledby="example-2" hidden="">
-                        <table class="responsive-table">
-                            <caption>Afgesloten zaken</caption>
-                            <thead>
-                                <tr>
-                                    <th>Zaaknummer</th>
-                                    <th>Registratiedatum</th>
-                                    <th>Einddatum</th>
-                                    <th>Zaaktype</th>
-                                    <th>Status</th>
-                                    <th>Resultaat</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Z23.000036</td>
-                                    <td>2023-01-18</td>
-                                    <td>2023-01-27</td>
-                                    <td>Bezwaar</td>
-                                    <td>Afgerond</td>
-                                    <td>Ingetrokken na BIA</td>
-                                </tr>
-                                <tr>
-                                    <td>Z23.000007</td>
-                                    <td>2022-12-18</td>
-                                    <td>2023-01-12</td>
-                                    <td>Bezwaar</td>
-                                    <td>Afgerond</td>
-                                    <td>Niet ontvankelijk</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="cards">
+                        {{#zaken.gesloten}}
+                            <div class="denhaag-card denhaag-case-card">
+                        <div class="denhaag-card__wrapper">
+                            <div class="denhaag-card__background"></div>
+                            <div class="denhaag-card__content">
+                            <div class="denhaag-card__text-wrapper">
+                                <p class="utrecht-paragraph denhaag-card__title">{{zaak_type}}</p>
+                                <p class="utrecht-paragraph denhaag-card__subtitle">{{status}}</p>
+                            </div>
+                            <div class="denhaag-card__actions">
+                                <div class="denhaag-card__date-wrapper"><time datetime="2020-01-21T00:00:00.000Z">{{registratiedatum}}</time></div><a
+                                href="/zaken/{{uuid}}" class="denhaag-card__action-link"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="denhaag-icon denhaag-card__arrow-icon" focusable="false"
+                                    aria-hidden="true" shape-rendering="auto">
+                                    <path
+                                    d="M12.293 5.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L16.586 13H5a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                    fill="currentColor"></path>
+                                </svg></a>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        {{/zaken.gesloten}}
+                        </div>
                     </div>
                 </div>
             </div>

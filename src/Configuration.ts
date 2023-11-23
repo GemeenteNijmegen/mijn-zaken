@@ -13,7 +13,19 @@ export interface Configuration {
   branchName: string;
   deployFromEnvironment: Environment;
   deployToEnvironment: Environment;
-  codeStarConnectionArn: string;
+
+  /**
+   * Feature flag: if this is not true, the lambda will
+   * return 404.
+   */
+  readonly isLive?: boolean;
+
+  /**
+   * Feature flag: The taken functionality is experimental
+   * If this flag is not true, the taken-functionality will
+   * always exit immediately.
+   */
+  readonly useTaken?: boolean;
 }
 
 export const configurations: {[key: string]: Configuration} = {
@@ -21,7 +33,15 @@ export const configurations: {[key: string]: Configuration} = {
     branchName: 'acceptance',
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.acceptanceEnvironment,
-    codeStarConnectionArn: Statics.codeStarConnectionArn,
+    useTaken: true,
+    isLive: true,
+  },
+  production: {
+    branchName: 'main',
+    deployFromEnvironment: Statics.deploymentEnvironment,
+    deployToEnvironment: Statics.productionEnvironment,
+    useTaken: false,
+    isLive: false,
   },
 };
 

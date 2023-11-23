@@ -1,0 +1,101 @@
+{{>header}}
+
+<main id="denhaag-theme">
+    <!-- START: template component(s) -->
+    <div class="container denhaag-theme" id="section-1">
+        <div class="row">
+            <div class="col-12">
+            {{#zaak}}
+                <h1>{{zaak_type}}</h1>
+                <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>. We verwachten uw aanvraag af te ronden op {{verwachtte_einddatum}}.</p>
+                {{#taken}}
+                <div class="denhaag-action">
+                    <div class="denhaag-action__content">
+                        {{title}}
+                    </div>
+                    <div class="denhaag-action__details">
+
+                    {{#is_open}}
+                        <div class="denhaag-action__date">
+                        <span>
+                            voor {{einddatum}}
+                        </span>
+                        </div>
+                        <div class="denhaag-action__actions">
+                        <a
+                            class="btn btn-primary"
+                            href="{{url}}"
+                        >
+                            Toevoegen
+                        </a>
+                        </div>
+                    {{/is_open}}
+                    {{#is_ingediend}}
+                    <div class="denhaag-action__date">
+                        </div>
+                        <div class="denhaag-action__actions">
+                        Ingediend ✅
+                        </div>
+                    {{/is_ingediend}}
+                    {{#is_gesloten}}
+                    <div class="denhaag-action__date">
+                        </div>
+                        <div class="denhaag-action__actions">
+                        Gesloten ✅
+                        </div>
+                    {{/is_gesloten}}
+                    </div>
+                </div>
+                {{/taken}}
+                <h2>Het verloop van uw aanvraag</h2>
+                <ol class="denhaag-process-steps">
+                {{#status_list}}
+                    <li class="denhaag-process-steps__step denhaag-process-steps__step--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">  
+                        <div class="denhaag-process-steps__step-header">
+                        <div class="denhaag-step-marker denhaag-step-marker--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">
+                        {{#completed}}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" class="denhaag-icon"
+                            focusable="false" aria-hidden="true" shape-rendering="auto">
+                            <path
+                                d="M20.664 5.253a1 1 0 01.083 1.411l-10.666 12a1 1 0 01-1.495 0l-5.333-6a1 1 0 011.494-1.328l4.586 5.159 9.92-11.16a1 1 0 011.411-.082z"
+                                stroke="currentColor" stroke-width="1.75"></path>
+                            </svg>
+                        {{/completed}}
+                        {{^completed}}
+                            {{volgnummer}}
+                        {{/completed}}
+                        </div>
+                        <p class="denhaag-process-steps__step-heading denhaag-process-steps__step-heading--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}}">
+                            {{name}}
+                        </p>
+                        </div>
+                        <div class="denhaag-process-steps__step-body">
+                        {{#is_eind}}<div>Verwacht op {{verwachtte_einddatum}}</div>{{/is_eind}}
+                        {{^is_eind}}
+                            <div class="denhaag-step-marker__connector denhaag-step-marker__connector--{{#current}}current{{/current}}{{^current}}{{#completed}}checked{{/completed}}{{^completed}}not-checked{{/completed}}{{/current}} denhaag-step-marker__connector--main-to-main">{{/is_eind}}
+                        </div>
+                    </li>
+                {{/status_list}}
+                </ol>
+
+                <h2>Documenten</h2>
+                <ul>
+                {{#documenten}}
+                        <li><a href="{{url}}">{{titel}}</a></li>
+                {{/documenten}}
+                </ul>
+                {{^documenten}}
+                <p>Er zijn geen documenten bij deze zaak te tonen.</p>
+                {{/documenten}}
+            {{/zaak}}
+            {{^zaak}}
+                <h1>Geen zaak gevonden</h1>
+                <p>We konden geen zaak vinden met dit kenmerk.</p>
+            {{/zaak}}
+            </div>
+        </div>
+    </div>
+
+    <!-- END: template component(s) -->
+</main>
+{{>footer}}
