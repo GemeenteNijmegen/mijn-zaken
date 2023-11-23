@@ -9,7 +9,7 @@ const app = new App();
 const deployBranch = process.env.BRANCH_NAME ?? 'acceptance';
 const configuration = getConfiguration(deployBranch);
 
-new PipelineStack(app, `mijn-zaken-pipeline-${configuration.branchName}`,
+new PipelineStack(app, `mijn-zaken-pipeline-${configuration.name}`,
   {
     env: configuration.deployFromEnvironment,
     configuration,

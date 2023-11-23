@@ -10,7 +10,8 @@ export interface Configurable {
 }
 
 export interface Configuration {
-  branchName: string;
+  name: string; // Name (for the pipeline)
+  branchName: string; // Branch (for the source)
   deployFromEnvironment: Environment;
   deployToEnvironment: Environment;
 
@@ -31,6 +32,7 @@ export interface Configuration {
 export const configurations: {[key: string]: Configuration} = {
   acceptance: {
     branchName: 'acceptance',
+    name: 'acceptance',
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.acceptanceEnvironment,
     useTaken: true,
@@ -38,6 +40,7 @@ export const configurations: {[key: string]: Configuration} = {
   },
   production: {
     branchName: 'main',
+    name: 'production',
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.productionEnvironment,
     useTaken: false,
@@ -45,10 +48,17 @@ export const configurations: {[key: string]: Configuration} = {
   },
 };
 
-export function getConfiguration(branchName: string) {
-  const config = configurations[branchName];
-  if (!config) {
-    throw new Error(`Configuration for branch ${branchName} not found`);
+/**
+ * Get a configuration object based on the `branchName` key
+ * @param branchName branch Name for which to get config
+ */
+export function getConfiguration(branchName: string): Configuration {
+  const configName = Object.keys(configurations).find((configurationName) => {
+    const config = configurations[configurationName];
+    return config.branchName == branchName;
+  });
+  if (configName) {
+    return configurations[configName];
   }
-  return config;
+  throw Error(`No configuration found for branch name ${branchName}`);
 }
