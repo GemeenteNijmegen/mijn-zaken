@@ -4,20 +4,20 @@
   "previous": null,
   "results": [
       {
-          "url": "https://objects-api.woweb.app/api/v2/objects/2948a837-0731-4684-8a43-894c9e1724a8",
+          "url": "/api/v2/objects/2948a837-0731-4684-8a43-894c9e1724a8",
           "uuid": "2948a837-0731-4684-8a43-894c9e1724a8",
-          "type": "https://objecttypes-api.woweb.app/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
+          "type": "/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
           "record": {
               "index": 1,
               "typeVersion": 1,
               "data": {
-                  "zaak": "https://openzaak.woweb.app/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
+                  "zaak": "/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
                   "soort": "bestand",
                   "title": "Test taak vanuit VIP",
                   "status": "open",
                   "formulier": {
                       "type": "url",
-                      "value": "htpps://www.woweb.nl"
+                      "value": "htpps://www.example.com"
                   },
                   "verloopdatum": "2023-10-18 13:36:14",
                   "identificatie": {
@@ -35,14 +35,14 @@
           }
       },
       {
-          "url": "https://objects-api.woweb.app/api/v2/objects/6809a651-17b8-4386-b7bd-d5a9d226bfb1",
+          "url": "/api/v2/objects/6809a651-17b8-4386-b7bd-d5a9d226bfb1",
           "uuid": "6809a651-17b8-4386-b7bd-d5a9d226bfb1",
-          "type": "https://objecttypes-api.woweb.app/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
+          "type": "/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
           "record": {
               "index": 3,
               "typeVersion": 1,
               "data": {
-                  "zaak": "https://openzaak.woweb.app/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
+                  "zaak": "/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
                   "title": "Test taak vanuit VIP",
                   "status": "ingediend",
                   "verloopdatum": "2023-10-18 11:21:05",
@@ -61,14 +61,14 @@
           }
       },
       {
-          "url": "https://objects-api.woweb.app/api/v2/objects/b7ca5a16-8620-484f-af50-c2194ce44c0c",
+          "url": "/api/v2/objects/b7ca5a16-8620-484f-af50-c2194ce44c0c",
           "uuid": "b7ca5a16-8620-484f-af50-c2194ce44c0c",
-          "type": "https://objecttypes-api.woweb.app/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
+          "type": "/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
           "record": {
               "index": 1,
               "typeVersion": 1,
               "data": {
-                  "zaak": "https://openzaak.woweb.app/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
+                  "zaak": "/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
                   "title": "Test taak via Postman 2",
                   "status": "open",
                   "verloopdatum": "2023-10-20T18:25:43.524Z",
@@ -87,14 +87,14 @@
           }
       },
       {
-          "url": "https://objects-api.woweb.app/api/v2/objects/3e80bd59-ac9c-4fe7-bcd8-49f5967f82bd",
+          "url": "/api/v2/objects/3e80bd59-ac9c-4fe7-bcd8-49f5967f82bd",
           "uuid": "3e80bd59-ac9c-4fe7-bcd8-49f5967f82bd",
-          "type": "https://objecttypes-api.woweb.app/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
+          "type": "/api/v2/objecttypes/27b38b08-35a8-42ee-b829-633722850992",
           "record": {
               "index": 1,
               "typeVersion": 1,
               "data": {
-                  "zaak": "https://openzaak.woweb.app/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
+                  "zaak": "/zaken/api/v1/zaken/0cb4f028-7d08-4161-b94c-49eaf9c647f8",
                   "title": "Test taak via Postman",
                   "status": "open",
                   "identificatie": {
