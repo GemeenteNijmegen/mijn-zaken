@@ -1,11 +1,11 @@
 {
-    "url": "https://openzaak.woweb.app/zaken/api/v1/zaken/84352c68-a444-4594-92f8-99b437d20b77",
+    "url": "/zaken/api/v1/zaken/84352c68-a444-4594-92f8-99b437d20b77",
     "uuid": "84352c68-a444-4594-92f8-99b437d20b77",
     "identificatie": "Z23.001736",
     "bronorganisatie": "001479179",
     "omschrijving": "",
     "toelichting": "test notificaties",
-    "zaaktype": "https://openzaak.woweb.app/catalogi/api/v1/zaaktypen/1a37500b-4954-4c75-b5d3-e1f5151516ad",
+    "zaaktype": "/catalogi/api/v1/zaaktypen/1a37500b-4954-4c75-b5d3-e1f5151516ad",
     "registratiedatum": "2023-10-02",
     "verantwoordelijkeOrganisatie": "001479179",
     "startdatum": "2023-10-02",
@@ -33,10 +33,10 @@
     "deelzaken": [],
     "relevanteAndereZaken": [],
     "eigenschappen": [
-        "https://openzaak.woweb.app/zaken/api/v1/zaken/84352c68-a444-4594-92f8-99b437d20b77/zaakeigenschappen/759db100-046a-4085-bd2a-4b309a5928af",
-        "https://openzaak.woweb.app/zaken/api/v1/zaken/84352c68-a444-4594-92f8-99b437d20b77/zaakeigenschappen/4f48761f-3799-44b1-87ac-c98b97cda08e"
+        "/zaken/api/v1/zaken/84352c68-a444-4594-92f8-99b437d20b77/zaakeigenschappen/759db100-046a-4085-bd2a-4b309a5928af",
+        "/zaken/api/v1/zaken/84352c68-a444-4594-92f8-99b437d20b77/zaakeigenschappen/4f48761f-3799-44b1-87ac-c98b97cda08e"
     ],
-    "status": "https://openzaak.woweb.app/zaken/api/v1/statussen/c5c34a37-6318-423a-b4a3-3766faedd1ca",
+    "status": "/zaken/api/v1/statussen/c5c34a37-6318-423a-b4a3-3766faedd1ca",
     "kenmerken": [
         {
             "kenmerk": "2f45ba6b-0394-46e0-8de7-cf465a1b5f32",

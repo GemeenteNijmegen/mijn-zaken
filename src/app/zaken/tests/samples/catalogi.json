@@ -59,9 +59,9 @@
           "url": "/catalogi/api/v1/catalogussen/84f9e30d-8a3e-4ca0-8011-556ae3cbdd41",
           "domein": "APV",
           "rsin": "001479179",
-          "contactpersoonBeheerNaam": "Woweb B.V.",
+          "contactpersoonBeheerNaam": "Bedrijf B.V.",
           "contactpersoonBeheerTelefoonnummer": "",
-          "contactpersoonBeheerEmailadres": "info@woweb.nl",
+          "contactpersoonBeheerEmailadres": "info@example.com",
           "zaaktypen": [
               "/catalogi/api/v1/zaaktypen/a70f14ec-ea84-47dc-ae6d-e079ab60e14b",
               "/catalogi/api/v1/zaaktypen/5073ace2-f11b-407b-8e74-6cba3e35a99f",
