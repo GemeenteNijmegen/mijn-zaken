@@ -36,7 +36,7 @@ export class PipelineStack extends Stack {
     const source = pipelines.CodePipelineSource.connection('GemeenteNijmegen/mijn-zaken', branch, {
       connectionArn: codeStarConnectionArn,
     });
-    const pipeline = new pipelines.CodePipeline(this, `mijnzaken-${branch}`, {
+    const pipeline = new pipelines.CodePipeline(this, `mijnzaken-${props.configuration.name}`, {
       pipelineName: `mijnzaken-${branch}`,
       crossAccountKeys: true,
       synth: new pipelines.ShellStep('Synth', {
