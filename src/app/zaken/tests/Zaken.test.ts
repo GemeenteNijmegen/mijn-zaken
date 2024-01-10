@@ -132,20 +132,8 @@ describe('Zaken', () => {
               volgnummer: 3,
             },
           ],
-          documenten: [
-            {
-              beschrijving: '',
-              registratieDatum: '2023-10-03T11:33:45.683874Z',
-              titel: 'test docx',
-              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
-            },
-            {
-              beschrijving: '',
-              registratieDatum: '2023-10-03T11:33:45.683874Z',
-              titel: 'test docx',
-              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
-            },
-          ],
+          documenten: null,
+          has_documenten: false,
           taken: null,
           has_taken: false,
         });
@@ -154,7 +142,7 @@ describe('Zaken', () => {
   test('a single zaak has several statusses, which are available in the zaak', async () => {
     const bsn = new Bsn('900026236');
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const ZakenResults = new Zaken(client, bsn);
+    const ZakenResults = new Zaken(client, bsn, { show_documents: true });
     const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
     expect(results).toStrictEqual({
       id: 'Z23.001592',
@@ -189,6 +177,7 @@ describe('Zaken', () => {
       ],
       uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
       zaak_type: 'Bezwaar',
+      has_documenten: true,
       documenten: [
         {
           beschrijving: '',
@@ -224,20 +213,8 @@ describe('Zaken', () => {
       status_list: null,
       uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
       zaak_type: 'Bezwaar',
-      documenten: [
-        {
-          beschrijving: '',
-          registratieDatum: '2023-10-03T11:33:45.683874Z',
-          titel: 'test docx',
-          url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
-        },
-        {
-          beschrijving: '',
-          registratieDatum: '2023-10-03T11:33:45.683874Z',
-          titel: 'test docx',
-          url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
-        },
-      ],
+      has_documenten: false,
+      documenten: null,
       taken: null,
       has_taken: false,
     });
@@ -362,20 +339,8 @@ describe('Filtering domains', () => {
               volgnummer: 3,
             },
           ],
-          documenten: [
-            {
-              beschrijving: '',
-              registratieDatum: '2023-10-03T11:33:45.683874Z',
-              titel: 'test docx',
-              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
-            },
-            {
-              beschrijving: '',
-              registratieDatum: '2023-10-03T11:33:45.683874Z',
-              titel: 'test docx',
-              url: '/documenten/api/v1/enkelvoudiginformatieobjecten/634d7c96-9fe2-4dee-b389-fcd2c5beb2d0',
-            },
-          ],
+          has_documenten: false,
+          documenten: null,
           taken: null,
           has_taken: false,
         });
