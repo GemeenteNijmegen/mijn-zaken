@@ -77,7 +77,7 @@
                     </li>
                 {{/status_list}}
                 </ol>
-
+            {{#has_documenten}}
                 <h2>Documenten</h2>
                 <ul>
                 {{#documenten}}
@@ -87,6 +87,7 @@
                 {{^documenten}}
                 <p>Er zijn geen documenten bij deze zaak te tonen.</p>
                 {{/documenten}}
+            {{/has_documenten}}
             {{/zaak}}
             {{^zaak}}
                 <h1>Geen zaak gevonden</h1>
