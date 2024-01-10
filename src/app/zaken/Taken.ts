@@ -15,7 +15,6 @@ export class Taken {
           return result?.record?.data?.title && result?.record?.data?.formulier && result?.record?.data?.verloopdatum;
         })
         .map((result: any) => {
-          console.debug(result);
           return {
             title: result.record.data.title,
             url: result.record.data.formulier.value,
