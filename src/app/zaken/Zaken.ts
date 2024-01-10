@@ -6,7 +6,7 @@ interface Config {
   taken?: Taken;
 
   /**
-   * Feature flag: Unless this is true, we will not 
+   * Feature flag: Unless this is true, we will not
    * call the documents endpoint (and thus won't show documents).
    */
   show_documents?: boolean;
