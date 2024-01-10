@@ -4,6 +4,12 @@ import { Taken } from './Taken';
 
 interface Config {
   taken?: Taken;
+
+  /**
+   * Feature flag: Unless this is true, we will not 
+   * call the documents endpoint (and thus won't show documents).
+   */
+  show_documents?: boolean;
 }
 
 export class Zaken {
@@ -24,6 +30,8 @@ export class Zaken {
 
   private taken?: Taken;
 
+  private show_documents?: boolean;
+
   constructor(client: OpenZaakClient, bsn: Bsn, config?: Config) {
     this.client = client;
     this.bsn = bsn;
@@ -33,6 +41,7 @@ export class Zaken {
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
     console.time('zaken status');
     this.taken = config?.taken;
+    this.show_documents = config?.show_documents;
   }
 
   /**
@@ -86,7 +95,6 @@ export class Zaken {
     const documentPromise = this.documents(zaakId);
     const taken = await this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
-    console.debug('resolved promises', status, resultaat, documents);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
 
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
@@ -102,6 +110,7 @@ export class Zaken {
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
         documenten: documents,
+        has_documenten: documents && documents.length > 0 ? true : false,
         taken: taken,
         has_taken: taken?.count > 0 ? true : false,
       };
@@ -109,13 +118,10 @@ export class Zaken {
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
-    console.debug('getting status types');
     if (!status) {
-      console.debug('no status, return null');
       return null;
     }
     const statusTypenUrls = zaakType.statustypen;
-    console.debug('urls', statusTypenUrls);
     const statusTypen = this.statusTypes?.results.filter((statusType: any) => statusTypenUrls.indexOf(statusType.url) > -1);
     statusTypen.sort((a: any, b: any) => { return a.volgnummer > b.volgnummer ? 1 : -1; });
     let before_current = true;
@@ -130,7 +136,6 @@ export class Zaken {
         current,
       };
     });
-    console.debug('urls', status_list);
     return status_list;
   }
 
@@ -242,6 +247,7 @@ export class Zaken {
   }
 
   private async documents(zaakId: string) {
+    if (!this.show_documents) { return null; }
     try {
       const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
 
