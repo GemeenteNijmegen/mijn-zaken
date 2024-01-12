@@ -55,7 +55,7 @@ describe('Request handler', () => {
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
-        writeFile(path.join(__dirname, 'output', 'test.html'), result.body, () => { });
+        writeFile(path.join(__dirname, 'output', 'test-zaken.html'), result.body, () => { });
       } catch (error) {
         console.debug(error);
       }
