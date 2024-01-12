@@ -5,10 +5,10 @@
     <div class="container" id="section-1">
         <div class="row">
             <div class="col-12">
-                <h1>Mijn gegevens</h1>
+                <h1>Mijn zaken</h1>
                 <p class="lead">Hier vindt u een overzicht van uw zaken.</p>
+                <div class="alert alert-info">Op dit moment vindt u in Mijn Nijmegen informatie over uw aanvragen/meldingen voor bepaalde vergunningen. Uiteindelijk vindt u in Nijmegen al uw online zaken met ons terug, hier werken we aan.</div>
                 <div class="tabs-wrapper">
-
                     <!-- Tab List -->
                     <div class="nav classic-tabs-no-line" role="tablist">
                         <div class="nav-item">
@@ -49,6 +49,9 @@
                         </div>
                         </div>
                         {{/zaken.open}}
+                        {{^zaken.open}}
+                        <p>Er zijn geen open zaken gevonden.</p>
+                        {{/zaken.open}}
                         </div>
                     </div>
                     <div class="tab-content" tabindex="0" role="tabpanel" id="example-2-tab" aria-labelledby="example-2" hidden="">
@@ -75,6 +78,9 @@
                             </div>
                         </div>
                         </div>
+                        {{/zaken.gesloten}}
+                        {{^zaken.gesloten}}
+                        <p>Er zijn geen open zaken gevonden.</p>
                         {{/zaken.gesloten}}
                         </div>
                     </div>
