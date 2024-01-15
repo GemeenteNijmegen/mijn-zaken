@@ -16,6 +16,7 @@ import zaaktypen from './samples/zaaktypen.json';
 import zaken from './samples/zaken.json';
 import { OpenZaakClient } from '../OpenZaakClient';
 import { Zaken } from '../Zaken';
+import { Person } from '../User';
 
 let baseUrl = new URL('http://localhost');
 if (process.env.VIP_BASE_URL) {
@@ -40,16 +41,16 @@ beforeAll(() => {
 });
 
 describe('Zaken', () => {
+  const person = new Person(new Bsn('900222670'));
+  const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('constructing object succeeds', async () => {
     axiosMock.onGet().reply(200, []);
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    expect(() => { new Zaken(client, new Bsn('900222670')); }).not.toThrow();
+    expect(() => { new Zaken(client,new Person(new Bsn('900222670'))); }).not.toThrow();
   });
 
   test('zaken are processed correctly', async () => {
-    const bsn = new Bsn('900026236');
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const statusResults = new Zaken(client, bsn);
+    const statusResults = new Zaken(client, person);
     const results = await statusResults.list();
     expect(results).toStrictEqual({
       open: [
@@ -94,10 +95,10 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const bsn = new Bsn('900026236');
+      const person = new Person(new Bsn('900222670'));
       const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-      const ZakenResults = new Zaken(client, bsn);
-      const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      const statusResults = new Zaken(client, person);
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
       expect(results).toStrictEqual(
         {
           id: 'Z23.001592',
@@ -140,10 +141,10 @@ describe('Zaken', () => {
     });
 
   test('a single zaak has several statusses, which are available in the zaak', async () => {
-    const bsn = new Bsn('900026236');
+    const person = new Person(new Bsn('900222670'));
     const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const ZakenResults = new Zaken(client, bsn, { show_documents: true });
-    const results = await ZakenResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+    const statusResults = new Zaken(client, person, { show_documents: true });
+    const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
     expect(results).toStrictEqual({
       id: 'Z23.001592',
       registratiedatum: '9 juni 2023',
@@ -198,10 +199,8 @@ describe('Zaken', () => {
   });
 
   test('a single zaak can have a null status', async () => {
-    const bsn = new Bsn('900026236');
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const ZakenResults = new Zaken(client, bsn);
-    const results = await ZakenResults.get('noStatus');
+    const statusResults = new Zaken(client, person);
+    const results = await statusResults.get('noStatus');
     expect(results).toStrictEqual({
       id: 'Z23.001592',
       registratiedatum: '9 juni 2023',
@@ -240,10 +239,10 @@ describe('Zaken', () => {
 });
 
 describe('Filtering domains', () => {
+  const person = new Person(new Bsn('900222670'));
+  const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('zaken are filtered (APV)', async () => {
-    const bsn = new Bsn('900026236');
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const statusResults = new Zaken(client, bsn);
+    const statusResults = new Zaken(client, person);
     statusResults.allowDomains(['APV']);
     const results = await statusResults.list();
     expect(results).toStrictEqual({
@@ -263,9 +262,7 @@ describe('Filtering domains', () => {
   });
 
   test('zaken are filtered (JZ)', async () => {
-    const bsn = new Bsn('900026236');
-    const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-    const statusResults = new Zaken(client, bsn);
+    const statusResults = new Zaken(client, person);
     statusResults.allowDomains(['JZ']);
     const results = await statusResults.list();
     expect(results).toStrictEqual({
@@ -300,9 +297,9 @@ describe('Filtering domains', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const bsn = new Bsn('900026236');
+      const person = new Person(new Bsn('900222670'));
       const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-      const statusResults = new Zaken(client, bsn);
+      const statusResults = new Zaken(client, person);
       statusResults.allowDomains(['JZ']);
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
       expect(results).toStrictEqual(
@@ -347,9 +344,9 @@ describe('Filtering domains', () => {
     });
   test('a single zaak is filtered correctly (APV)',
     async () => {
-      const bsn = new Bsn('900026236');
+      const person = new Person(new Bsn('900222670'));
       const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
-      const statusResults = new Zaken(client, bsn);
+      const statusResults = new Zaken(client, person);
       statusResults.allowDomains(['APV']);
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
       expect(results).toBeFalsy();

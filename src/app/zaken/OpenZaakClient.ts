@@ -61,7 +61,6 @@ export class OpenZaakClient {
   }
 
   async request(endpoint: string, params?: URLSearchParams): Promise<any> {
-    console.count('aantal requests');
     const paramString = params ? `?${params}` : '';
     const url =`${endpoint}${paramString}`;
     try {
@@ -76,7 +75,6 @@ export class OpenZaakClient {
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        console.log(error.response.data);
         console.log(error.response.status);
         console.log(error.response.headers);
       } else if (error.request) {

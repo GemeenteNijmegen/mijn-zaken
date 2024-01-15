@@ -1,6 +1,6 @@
-import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
+import { User } from './User';
 
 interface Config {
   taken?: Taken;
@@ -24,7 +24,7 @@ export class Zaken {
   private resultaatTypes?: any;
   private catalogi?: any;
 
-  private bsn: Bsn;
+  private user: User;
 
   private allowedDomains?: string[];
 
@@ -32,9 +32,9 @@ export class Zaken {
 
   private show_documents?: boolean;
 
-  constructor(client: OpenZaakClient, bsn: Bsn, config?: Config) {
+  constructor(client: OpenZaakClient, user: User, config?: Config) {
     this.client = client;
-    this.bsn = bsn;
+    this.user = user;
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
@@ -64,13 +64,42 @@ export class Zaken {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
     const params = new URLSearchParams({
-      rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.bsn.bsn,
+      rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.user.identifier,
       ordering: '-startdatum',
       page: '1',
     });
 
     // Get all zaken
     const zaken = await this.client.request('/zaken/api/v1/zaken', params);
+    //TODO: For companies, we need to use the 'rol' endpoint for now ({{baseUrl}}/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=<kvknummer>) to get zaken urls, then create a list of zaken
+    // {
+    //   "results": [
+    //       {
+    //           "url": "https://openzaak.woweb.app/zaken/api/v1/rollen/703fb21a-88b3-45c5-b9e0-81a3909a0ce0",
+    //           "uuid": "703fb21a-88b3-45c5-b9e0-81a3909a0ce0",
+    //           "zaak": "https://openzaak.woweb.app/zaken/api/v1/zaken/58d86807-f8e7-42de-9db0-869ea44b8bd5",
+    //           "betrokkene": "",
+    //           "betrokkeneType": "niet_natuurlijk_persoon",
+    //           "roltype": "https://openzaak.woweb.app/catalogi/api/v1/roltypen/b9d8dd80-e163-4df7-9d91-83c76ff93f96",
+    //           "omschrijving": "Bezwaarmaker",
+    //           "omschrijvingGeneriek": "initiator",
+    //           "roltoelichting": "Bezwaarmaker",
+    //           "registratiedatum": "2023-06-13T07:45:25.012348Z",
+    //           "indicatieMachtiging": "",
+    //           "betrokkeneIdentificatie": {
+    //               "innNnpId": "",
+    //               "annIdentificatie": "<kvk>",
+    //               "statutaireNaam": "<name>",
+    //               "innRechtsvorm": "",
+    //               "bezoekadres": "",
+    //               "subVerblijfBuitenland": null
+    //           }
+    //       },
+
+    // Get all rollen from endpoint rollen
+    // Gather all zaken-information (per zaak?)
+
+
     console.timeLog('zaken status', 'received zaken');
     if (zaken.results) {
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
@@ -85,7 +114,7 @@ export class Zaken {
     await this.metaData();
     const [zaak, rol] = await Promise.all([
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
-      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
+      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
     ]);
     // Only process zaken in allowed catalogi
     if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { return false; }
@@ -168,6 +197,7 @@ export class Zaken {
       if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
+      console.debug(this.zaakTypes);
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
       let status_type = null;
       if (status) {
@@ -221,6 +251,7 @@ export class Zaken {
         this.catalogiPromise,
       ]);
     }
+    console.debug('zaaktypes 123', this.zaakTypes);
   }
 
   /**
