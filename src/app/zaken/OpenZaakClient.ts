@@ -29,7 +29,7 @@ export class OpenZaakClient {
     clientId?: string | undefined;
     userId?: string | undefined;
     secret?: string | undefined;
-    }) {
+  }) {
     if (config.axiosInstance) {
       return config.axiosInstance;
     } else {

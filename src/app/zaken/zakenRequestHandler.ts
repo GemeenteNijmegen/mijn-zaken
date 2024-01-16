@@ -7,9 +7,9 @@ import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
+import { Organisation, Person, User } from './User';
 import { Zaken } from './Zaken';
 import { render } from '../../shared/render';
-import { Organisation, Person, User } from './User';
 
 export async function zakenRequestHandler(
   cookies: string,

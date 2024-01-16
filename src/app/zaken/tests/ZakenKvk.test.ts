@@ -9,13 +9,13 @@ import statustypen from './samples/statustypen.json';
 import statusvoorbeeld from './samples/statusvoorbeeld.json';
 import statusvoorbeeld2 from './samples/statusvoorbeeld2.json';
 import zaak1 from './samples/zaak1.json';
-import zaak2 from './samples/zaak2.json';
 import zaak1noStatus from './samples/zaak1noStatus.json';
+import zaak2 from './samples/zaak2.json';
 import zaakinformatieobjecten from './samples/zaakinformatieobjecten.json';
 import zaaktypen from './samples/zaaktypen.json';
 import { OpenZaakClient } from '../OpenZaakClient';
-import { Zaken } from '../Zaken';
 import { Organisation } from '../User';
+import { Zaken } from '../Zaken';
 
 let baseUrl = '/';
 const axiosMock = new MockAdapter(axios);

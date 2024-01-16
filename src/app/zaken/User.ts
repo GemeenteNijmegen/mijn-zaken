@@ -1,4 +1,4 @@
-import { Bsn } from "@gemeentenijmegen/utils";
+import { Bsn } from '@gemeentenijmegen/utils';
 
 /**
  * Several types of user exist:

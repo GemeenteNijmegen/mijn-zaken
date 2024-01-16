@@ -11,11 +11,11 @@ describe('User types', () => {
     const organisation = new Organisation('69599084');
     expect(organisation.identifier).toBe('69599084');
     expect(organisation.type).toBe('organisation');
-  })
+  });
 
   test('Persons identify as such', async() => {
     const person = new Person(new Bsn('900222670'));
     expect(person.identifier).toBe('900222670');
     expect(person.type).toBe('person');
-  })
+  });
 });

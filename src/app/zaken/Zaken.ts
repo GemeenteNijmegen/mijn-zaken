@@ -65,7 +65,7 @@ export class Zaken {
     await this.metaData();
 
     let zaken;
-    if(this.user.type == 'person') {
+    if (this.user.type == 'person') {
       const params = new URLSearchParams({
         rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.user.identifier,
         ordering: '-startdatum',
@@ -74,14 +74,14 @@ export class Zaken {
 
       // Get all zaken
       zaken = await this.client.request('/zaken/api/v1/zaken', params);
-      
-    } else if(this.user.type == 'organisation') {
+
+    } else if (this.user.type == 'organisation') {
       const params = new URLSearchParams({
         betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie: this.user.identifier,
       });
       const roles = await this.client.request('/zaken/api/v1/rollen', params);
       const zaakUrls = roles?.results?.map((role: any) => role.zaak);
-      if(zaakUrls) {
+      if (zaakUrls) {
         const zakenResults = await Promise.all(zaakUrls.map((zaakUrl: string) => this.client.request(zaakUrl)));
         zaken = { results: zakenResults };
       }
@@ -101,7 +101,7 @@ export class Zaken {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
     let roleUrl;
-    if(this.user.type == 'person') {
+    if (this.user.type == 'person') {
       roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
     } else {
       roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
@@ -212,7 +212,7 @@ export class Zaken {
         status: status_type,
         resultaat: resultaat_type,
       };
-      console.debug('summary', summary)
+      console.debug('summary', summary);
       if (resultaat) {
         zaak_summaries.gesloten.push(summary);
       } else {

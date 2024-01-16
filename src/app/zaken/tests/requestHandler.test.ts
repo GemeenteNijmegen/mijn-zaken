@@ -62,9 +62,9 @@ describe('Request handler', () => {
       }
     }
   });
-  
+
   test('returns 200 for organisation', async () => {
-    const getItemOutput: Partial<GetItemCommandOutput> = {
+    const getItemOutputForOrganisation: Partial<GetItemCommandOutput> = {
       Item: {
         data: {
           M: {
@@ -75,7 +75,7 @@ describe('Request handler', () => {
         },
       },
     };
-    ddbMock.on(GetItemCommand).resolves(getItemOutput);
+    ddbMock.on(GetItemCommand).resolves(getItemOutputForOrganisation);
 
     const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
