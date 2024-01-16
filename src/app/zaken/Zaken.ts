@@ -63,45 +63,33 @@ export class Zaken {
   async list() {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
-    const params = new URLSearchParams({
-      rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.user.identifier,
-      ordering: '-startdatum',
-      page: '1',
-    });
 
-    // Get all zaken
-    const zaken = await this.client.request('/zaken/api/v1/zaken', params);
-    //TODO: For companies, we need to use the 'rol' endpoint for now ({{baseUrl}}/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=<kvknummer>) to get zaken urls, then create a list of zaken
-    // {
-    //   "results": [
-    //       {
-    //           "url": "https://openzaak.woweb.app/zaken/api/v1/rollen/703fb21a-88b3-45c5-b9e0-81a3909a0ce0",
-    //           "uuid": "703fb21a-88b3-45c5-b9e0-81a3909a0ce0",
-    //           "zaak": "https://openzaak.woweb.app/zaken/api/v1/zaken/58d86807-f8e7-42de-9db0-869ea44b8bd5",
-    //           "betrokkene": "",
-    //           "betrokkeneType": "niet_natuurlijk_persoon",
-    //           "roltype": "https://openzaak.woweb.app/catalogi/api/v1/roltypen/b9d8dd80-e163-4df7-9d91-83c76ff93f96",
-    //           "omschrijving": "Bezwaarmaker",
-    //           "omschrijvingGeneriek": "initiator",
-    //           "roltoelichting": "Bezwaarmaker",
-    //           "registratiedatum": "2023-06-13T07:45:25.012348Z",
-    //           "indicatieMachtiging": "",
-    //           "betrokkeneIdentificatie": {
-    //               "innNnpId": "",
-    //               "annIdentificatie": "<kvk>",
-    //               "statutaireNaam": "<name>",
-    //               "innRechtsvorm": "",
-    //               "bezoekadres": "",
-    //               "subVerblijfBuitenland": null
-    //           }
-    //       },
+    let zaken;
+    if(this.user.type == 'person') {
+      const params = new URLSearchParams({
+        rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.user.identifier,
+        ordering: '-startdatum',
+        page: '1',
+      });
 
-    // Get all rollen from endpoint rollen
-    // Gather all zaken-information (per zaak?)
-
+      // Get all zaken
+      zaken = await this.client.request('/zaken/api/v1/zaken', params);
+      
+    } else if(this.user.type == 'organisation') {
+      const params = new URLSearchParams({
+        betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie: this.user.identifier,
+      });
+      const roles = await this.client.request('/zaken/api/v1/rollen', params);
+      const zaakUrls = roles?.results?.map((role: any) => role.zaak);
+      if(zaakUrls) {
+        const zakenResults = await Promise.all(zaakUrls.map((zaakUrl: string) => this.client.request(zaakUrl)));
+        zaken = { results: zakenResults };
+      }
+    }
 
     console.timeLog('zaken status', 'received zaken');
-    if (zaken.results) {
+    if (zaken?.results) {
+      console.debug('zaken results,', zaken.results);
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
       console.timeLog('zaken status', 'received zaakmetadata');
       return this.summarizeZaken(zaken, statussen, resultaten);
@@ -112,9 +100,15 @@ export class Zaken {
   async get(zaakId: string) {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
+    let roleUrl;
+    if(this.user.type == 'person') {
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+    } else {
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+    }
     const [zaak, rol] = await Promise.all([
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
-      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
+      this.client.request(roleUrl),
     ]);
     // Only process zaken in allowed catalogi
     if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { return false; }
@@ -125,7 +119,7 @@ export class Zaken {
     const taken = await this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
-
+    console.debug('check role', rol);
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
         uuid: zaak.uuid,
@@ -218,7 +212,7 @@ export class Zaken {
         status: status_type,
         resultaat: resultaat_type,
       };
-
+      console.debug('summary', summary)
       if (resultaat) {
         zaak_summaries.gesloten.push(summary);
       } else {
