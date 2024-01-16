@@ -1,6 +1,6 @@
-import { Bsn } from '@gemeentenijmegen/utils';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
+import { User } from './User';
 
 interface Config {
   taken?: Taken;
@@ -24,7 +24,7 @@ export class Zaken {
   private resultaatTypes?: any;
   private catalogi?: any;
 
-  private bsn: Bsn;
+  private user: User;
 
   private allowedDomains?: string[];
 
@@ -32,9 +32,9 @@ export class Zaken {
 
   private show_documents?: boolean;
 
-  constructor(client: OpenZaakClient, bsn: Bsn, config?: Config) {
+  constructor(client: OpenZaakClient, user: User, config?: Config) {
     this.client = client;
-    this.bsn = bsn;
+    this.user = user;
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
@@ -63,16 +63,33 @@ export class Zaken {
   async list() {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
-    const params = new URLSearchParams({
-      rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.bsn.bsn,
-      ordering: '-startdatum',
-      page: '1',
-    });
 
-    // Get all zaken
-    const zaken = await this.client.request('/zaken/api/v1/zaken', params);
+    let zaken;
+    if (this.user.type == 'person') {
+      const params = new URLSearchParams({
+        rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.user.identifier,
+        ordering: '-startdatum',
+        page: '1',
+      });
+
+      // Get all zaken
+      zaken = await this.client.request('/zaken/api/v1/zaken', params);
+
+    } else if (this.user.type == 'organisation') {
+      const params = new URLSearchParams({
+        betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie: this.user.identifier,
+      });
+      const roles = await this.client.request('/zaken/api/v1/rollen', params);
+      const zaakUrls = roles?.results?.map((role: any) => role.zaak);
+      if (zaakUrls) {
+        const zakenResults = await Promise.all(zaakUrls.map((zaakUrl: string) => this.client.request(zaakUrl)));
+        zaken = { results: zakenResults };
+      }
+    }
+
     console.timeLog('zaken status', 'received zaken');
-    if (zaken.results) {
+    if (zaken?.results) {
+      console.debug('zaken results,', zaken.results);
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
       console.timeLog('zaken status', 'received zaakmetadata');
       return this.summarizeZaken(zaken, statussen, resultaten);
@@ -83,9 +100,15 @@ export class Zaken {
   async get(zaakId: string) {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
+    let roleUrl;
+    if (this.user.type == 'person') {
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+    } else {
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+    }
     const [zaak, rol] = await Promise.all([
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
-      this.client.request(`/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.bsn.bsn}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`),
+      this.client.request(roleUrl),
     ]);
     // Only process zaken in allowed catalogi
     if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { return false; }
@@ -96,7 +119,7 @@ export class Zaken {
     const taken = await this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
-
+    console.debug('check role', rol);
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
         uuid: zaak.uuid,
@@ -168,6 +191,7 @@ export class Zaken {
       if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
+      console.debug(this.zaakTypes);
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
       let status_type = null;
       if (status) {
@@ -188,7 +212,7 @@ export class Zaken {
         status: status_type,
         resultaat: resultaat_type,
       };
-
+      console.debug('summary', summary);
       if (resultaat) {
         zaak_summaries.gesloten.push(summary);
       } else {
@@ -221,6 +245,7 @@ export class Zaken {
         this.catalogiPromise,
       ]);
     }
+    console.debug('zaaktypes 123', this.zaakTypes);
   }
 
   /**

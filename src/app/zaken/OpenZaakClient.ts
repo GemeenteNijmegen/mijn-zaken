@@ -3,16 +3,16 @@ import jwt from 'jsonwebtoken';
 
 export class OpenZaakClient {
   private axios: Axios;
-  public baseUrl: URL;
+  public baseUrl: string;
 
   constructor(config: {
-    baseUrl: URL;
+    baseUrl: URL | string;
     axiosInstance?: AxiosInstance;
     clientId?: string;
     userId?: string;
     secret?: string;
   }) {
-    this.baseUrl = config.baseUrl;
+    this.baseUrl = config.baseUrl.toString();
     this.axios = this.initAxios(config);
     if (process.env.DEBUG) {
       this.axios.interceptors.request.use(function (configuration) {
@@ -29,7 +29,7 @@ export class OpenZaakClient {
     clientId?: string | undefined;
     userId?: string | undefined;
     secret?: string | undefined;
-    baseUrl: URL;}) {
+  }) {
     if (config.axiosInstance) {
       return config.axiosInstance;
     } else {
@@ -38,7 +38,7 @@ export class OpenZaakClient {
       }
       return axios.create(
         {
-          baseURL: config.baseUrl.toString(),
+          baseURL: this.baseUrl,
           headers: {
             'Authorization': 'Bearer ' + this.jwtToken(config.clientId, config.userId, config.secret),
             'Accept-Crs': 'EPSG:4326',
@@ -61,7 +61,6 @@ export class OpenZaakClient {
   }
 
   async request(endpoint: string, params?: URLSearchParams): Promise<any> {
-    console.count('aantal requests');
     const paramString = params ? `?${params}` : '';
     const url =`${endpoint}${paramString}`;
     try {
@@ -76,7 +75,6 @@ export class OpenZaakClient {
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        console.log(error.response.data);
         console.log(error.response.status);
         console.log(error.response.headers);
       } else if (error.request) {

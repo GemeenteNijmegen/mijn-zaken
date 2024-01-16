@@ -15,7 +15,8 @@ const getItemOutput: Partial<GetItemCommandOutput> = {
     data: {
       M: {
         loggedin: { BOOL: true },
-        bsn: { S: '900026236' },
+        identifier: { S: '900026236' },
+        user_type: { S: 'person' },
       },
     },
   },
@@ -60,6 +61,24 @@ describe('Request handler', () => {
         console.debug(error);
       }
     }
+  });
+
+  test('returns 200 for organisation', async () => {
+    const getItemOutputForOrganisation: Partial<GetItemCommandOutput> = {
+      Item: {
+        data: {
+          M: {
+            loggedin: { BOOL: true },
+            identifier: { S: '69599084' },
+            user_type: { S: 'organisation' },
+          },
+        },
+      },
+    };
+    ddbMock.on(GetItemCommand).resolves(getItemOutputForOrganisation);
+
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, takenSecret: 'test' });
+    expect(result.statusCode).toBe(200);
   });
 });
 

@@ -7,6 +7,7 @@ import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
+import { Organisation, Person, User } from './User';
 import { Zaken } from './Zaken';
 import { render } from '../../shared/render';
 
@@ -53,8 +54,8 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
     zaken: <any>[],
   };
 
-  const bsn = new Bsn(session.getValue('bsn'));
-  const statuses = new Zaken(client, bsn);
+  const user = getUser(session);
+  const statuses = new Zaken(client, user);
   statuses.allowDomains(['APV']);
   const zaken = await statuses.list();
   data.zaken = zaken;
@@ -65,6 +66,17 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
   return Response.html(html, 200, session.getCookie());
 }
 
+
+function getUser(session: Session) {
+  const userType = session.getValue('user_type');
+  let user: User;
+  if (userType == 'organisation') {
+    user = new Organisation(session.getValue('identifier'));
+  } else {
+    user = new Person(new Bsn(session.getValue('identifier')));
+  }
+  return user;
+}
 
 async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak: string, takenSecret: string) {
 
@@ -77,8 +89,8 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
     zaak: <any>null,
   };
 
-  const bsn = new Bsn(session.getValue('bsn'));
-  const statuses = new Zaken(client, bsn, { taken: taken(takenSecret) });
+  const user = getUser(session);
+  const statuses = new Zaken(client, user, { taken: taken(takenSecret) });
   statuses.allowDomains(['APV']);
   data.zaak = await statuses.get(zaak);
   console.debug('zaak', JSON.stringify(data.zaak));
