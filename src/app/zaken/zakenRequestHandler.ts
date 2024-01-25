@@ -9,6 +9,7 @@ import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Organisation, Person, User } from './User';
 import { Zaken } from './Zaken';
+import { Navigation } from '../../shared/Navigation';
 import { render } from '../../shared/render';
 
 export async function zakenRequestHandler(
@@ -47,19 +48,21 @@ export async function zakenRequestHandler(
 async function listZakenRequest(session: Session, client: OpenZaakClient) {
   console.timeLog('request', 'Api Client init');
 
+  const user = getUser(session);
+
+  const statuses = new Zaken(client, user);
+  statuses.allowDomains(['APV']);
+  const zaken = await statuses.list();
+  console.timeLog('request', 'zaken received');
+
+  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/' });
   let data = {
     volledigenaam: session.getValue('username'),
     title: 'Lopende zaken',
     shownav: true,
-    zaken: <any>[],
+    nav: navigation.items,
+    zaken: zaken,
   };
-
-  const user = getUser(session);
-  const statuses = new Zaken(client, user);
-  statuses.allowDomains(['APV']);
-  const zaken = await statuses.list();
-  data.zaken = zaken;
-  console.timeLog('request', 'zaken received');
 
   // render page
   const html = await render(data, zakenTemplate.default);
@@ -82,17 +85,19 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
 
   console.timeLog('request', 'Api Client init');
 
+  const user = getUser(session);
+  const statuses = new Zaken(client, user, { taken: taken(takenSecret) });
+  statuses.allowDomains(['APV']);
+
+  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/' });
+
   let data = {
     volledigenaam: session.getValue('username'),
     title: 'Zaak',
     shownav: true,
-    zaak: <any>null,
+    nav: navigation.items,
+    zaak: await statuses.get(zaak),
   };
-
-  const user = getUser(session);
-  const statuses = new Zaken(client, user, { taken: taken(takenSecret) });
-  statuses.allowDomains(['APV']);
-  data.zaak = await statuses.get(zaak);
   console.debug('zaak', JSON.stringify(data.zaak));
   console.timeLog('request', 'zaak received');
 
