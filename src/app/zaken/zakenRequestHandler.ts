@@ -55,7 +55,7 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
   const zaken = await statuses.list();
   console.timeLog('request', 'zaken received');
 
-  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/' });
+  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
   let data = {
     volledigenaam: session.getValue('username'),
     title: 'Lopende zaken',
@@ -89,7 +89,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
   const statuses = new Zaken(client, user, { taken: taken(takenSecret) });
   statuses.allowDomains(['APV']);
 
-  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/' });
+  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
 
   let data = {
     volledigenaam: session.getValue('username'),
