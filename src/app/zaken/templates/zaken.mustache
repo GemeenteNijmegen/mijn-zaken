@@ -2,90 +2,100 @@
 
 <main id="denhaag-theme">
     <!-- START: template component(s) -->
-    <div class="container" id="section-1">
+    <div class="container">
         <div class="row">
-            <div class="col-12">
-                <h1>Mijn zaken</h1>
-                <p class="lead">Hier vindt u een overzicht van uw zaken.</p>
-                <div class="alert alert-info">Op dit moment vindt u in Mijn Nijmegen informatie over uw aanvragen/meldingen voor bepaalde vergunningen. Uiteindelijk vindt u in Nijmegen al uw online zaken met ons terug, hier werken we aan.</div>
-                <div class="tabs-wrapper">
-                    <!-- Tab List -->
-                    <div class="nav classic-tabs-no-line" role="tablist">
-                        <div class="nav-item">
-                            <button class="nav-link active" role="tab" aria-selected="true" aria-controls="example-1-tab" id="example-1">
-                                Lopende zaken
-                            </button>
+        <nav class="nijmegen-sidenav col-lg-3 col-md-12">
+                <ul class="nijmegen-sidenav__list">
+                {{#nav}}
+                    <li class="nijmegen-sidenav__item {{#current}}active{{/current}}">
+                        {{{icon}}}
+                        <a href="{{{url}}}">{{title}}</a>
+                    </li>
+                {{/nav}}
+                </ul>
+        </nav>
+        <div class="col-lg-9 col-md-12">
+            <h1>Mijn zaken</h1>
+            <p class="lead">Hier vindt u een overzicht van uw zaken.</p>
+            <div class="alert alert-info">Op dit moment vindt u in Mijn Nijmegen informatie over uw aanvragen/meldingen voor bepaalde vergunningen. Uiteindelijk vindt u in Mijn Nijmegen al uw online zaken met ons terug, hier werken we aan.</div>
+            <div class="tabs-wrapper">
+                <!-- Tab List -->
+                <div class="nav classic-tabs-no-line" role="tablist">
+                    <div class="nav-item">
+                        <button class="nav-link active" role="tab" aria-selected="true" aria-controls="example-1-tab" id="example-1">
+                            Lopende zaken
+                        </button>
+                    </div>
+                    <div class="nav-item">
+                        <button class="nav-link" role="tab" aria-selected="false" aria-controls="example-2-tab" id="example-2" tabindex="-1">
+                            Afgeronde zaken
+                        </button>
+                    </div>
+                </div>
+            
+                <!-- Tab Content -->
+                <div class="tab-content" tabindex="0" role="tabpanel" id="example-1-tab" aria-labelledby="example-1">
+                    <div class="cards">
+                    {{#zaken.open}}
+                        <div class="denhaag-card denhaag-case-card">
+                    <div class="denhaag-card__wrapper">
+                        <div class="denhaag-card__background"></div>
+                        <div class="denhaag-card__content">
+                        <div class="denhaag-card__text-wrapper">
+                            <p class="utrecht-paragraph denhaag-card__title">{{zaak_type}}</p>
+                            <p class="utrecht-paragraph denhaag-card__subtitle">{{status}}</p>
                         </div>
-                        <div class="nav-item">
-                            <button class="nav-link" role="tab" aria-selected="false" aria-controls="example-2-tab" id="example-2" tabindex="-1">
-                                Afgeronde zaken
-                            </button>
+                        <div class="denhaag-card__actions">
+                            <div class="denhaag-card__date-wrapper"><time datetime="2020-01-21T00:00:00.000Z">{{registratiedatum}}</time></div><a
+                            href="/zaken/{{uuid}}" class="denhaag-card__action-link"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" class="denhaag-icon denhaag-card__arrow-icon" focusable="false"
+                                aria-hidden="true" shape-rendering="auto">
+                                <path
+                                d="M12.293 5.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L16.586 13H5a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                fill="currentColor"></path>
+                            </svg></a>
+                        </div>
                         </div>
                     </div>
-                
-                    <!-- Tab Content -->
-                    <div class="tab-content" tabindex="0" role="tabpanel" id="example-1-tab" aria-labelledby="example-1">
-                        <div class="cards">
-                        {{#zaken.open}}
-                            <div class="denhaag-card denhaag-case-card">
-                        <div class="denhaag-card__wrapper">
-                            <div class="denhaag-card__background"></div>
-                            <div class="denhaag-card__content">
-                            <div class="denhaag-card__text-wrapper">
-                                <p class="utrecht-paragraph denhaag-card__title">{{zaak_type}}</p>
-                                <p class="utrecht-paragraph denhaag-card__subtitle">{{status}}</p>
-                            </div>
-                            <div class="denhaag-card__actions">
-                                <div class="denhaag-card__date-wrapper"><time datetime="2020-01-21T00:00:00.000Z">{{registratiedatum}}</time></div><a
-                                href="/zaken/{{uuid}}" class="denhaag-card__action-link"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" class="denhaag-icon denhaag-card__arrow-icon" focusable="false"
-                                    aria-hidden="true" shape-rendering="auto">
-                                    <path
-                                    d="M12.293 5.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L16.586 13H5a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                    fill="currentColor"></path>
-                                </svg></a>
-                            </div>
-                            </div>
+                    </div>
+                    {{/zaken.open}}
+                    {{^zaken.open}}
+                    <p>Er zijn geen open zaken gevonden.</p>
+                    {{/zaken.open}}
+                    </div>
+                </div>
+                <div class="tab-content" tabindex="0" role="tabpanel" id="example-2-tab" aria-labelledby="example-2" hidden="">
+                    <div class="cards">
+                    {{#zaken.gesloten}}
+                        <div class="denhaag-card denhaag-case-card">
+                    <div class="denhaag-card__wrapper">
+                        <div class="denhaag-card__background"></div>
+                        <div class="denhaag-card__content">
+                        <div class="denhaag-card__text-wrapper">
+                            <p class="utrecht-paragraph denhaag-card__title">{{zaak_type}}</p>
+                            <p class="utrecht-paragraph denhaag-card__subtitle">{{status}}</p>
                         </div>
+                        <div class="denhaag-card__actions">
+                            <div class="denhaag-card__date-wrapper"><time datetime="2020-01-21T00:00:00.000Z">{{registratiedatum}}</time></div><a
+                            href="/zaken/{{uuid}}" class="denhaag-card__action-link"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" class="denhaag-icon denhaag-card__arrow-icon" focusable="false"
+                                aria-hidden="true" shape-rendering="auto">
+                                <path
+                                d="M12.293 5.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L16.586 13H5a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                fill="currentColor"></path>
+                            </svg></a>
                         </div>
-                        {{/zaken.open}}
-                        {{^zaken.open}}
-                        <p>Er zijn geen open zaken gevonden.</p>
-                        {{/zaken.open}}
                         </div>
                     </div>
-                    <div class="tab-content" tabindex="0" role="tabpanel" id="example-2-tab" aria-labelledby="example-2" hidden="">
-                        <div class="cards">
-                        {{#zaken.gesloten}}
-                            <div class="denhaag-card denhaag-case-card">
-                        <div class="denhaag-card__wrapper">
-                            <div class="denhaag-card__background"></div>
-                            <div class="denhaag-card__content">
-                            <div class="denhaag-card__text-wrapper">
-                                <p class="utrecht-paragraph denhaag-card__title">{{zaak_type}}</p>
-                                <p class="utrecht-paragraph denhaag-card__subtitle">{{status}}</p>
-                            </div>
-                            <div class="denhaag-card__actions">
-                                <div class="denhaag-card__date-wrapper"><time datetime="2020-01-21T00:00:00.000Z">{{registratiedatum}}</time></div><a
-                                href="/zaken/{{uuid}}" class="denhaag-card__action-link"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" class="denhaag-icon denhaag-card__arrow-icon" focusable="false"
-                                    aria-hidden="true" shape-rendering="auto">
-                                    <path
-                                    d="M12.293 5.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L16.586 13H5a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                    fill="currentColor"></path>
-                                </svg></a>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                        {{/zaken.gesloten}}
-                        {{^zaken.gesloten}}
-                        <p>Er zijn geen open zaken gevonden.</p>
-                        {{/zaken.gesloten}}
-                        </div>
+                    </div>
+                    {{/zaken.gesloten}}
+                    {{^zaken.gesloten}}
+                    <p>Er zijn geen open zaken gevonden.</p>
+                    {{/zaken.gesloten}}
                     </div>
                 </div>
             </div>
+        
         </div>
     </div>
 

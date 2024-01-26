@@ -2,9 +2,19 @@
 
 <main id="denhaag-theme">
     <!-- START: template component(s) -->
-    <div class="container denhaag-theme" id="section-1">
+    <div class="container denhaag-theme">
         <div class="row">
-            <div class="col-12">
+        <nav class="nijmegen-sidenav col-lg-3 col-md-12">
+                <ul class="nijmegen-sidenav__list">
+                {{#nav}}
+                    <li class="nijmegen-sidenav__item {{#current}}active{{/current}}">
+                        {{{icon}}}
+                        <a href="{{{url}}}">{{title}}</a>
+                    </li>
+                {{/nav}}
+                </ul>
+        </nav>
+        <div class="col-lg-9 col-md-12">
             {{#zaak}}
                 <h1>{{zaak_type}}</h1>
                 <p class="lead">Uw aanvraag met kenmerk <strong>{{id}}</strong> is door ons ontvangen op <strong>{{registratiedatum}}</strong>. De status is <strong>{{status}}</strong>. We verwachten uw aanvraag af te ronden op {{verwachtte_einddatum}}.</p>
