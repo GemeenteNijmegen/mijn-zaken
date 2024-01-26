@@ -92,14 +92,17 @@ export class Zaken {
       console.debug('zaken results,', zaken.results);
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
       console.timeLog('zaken status', 'received zaakmetadata');
+      console.timeEnd('zaken status');
       return this.summarizeZaken(zaken, statussen, resultaten);
     }
+    console.timeEnd('zaken status');
     return [];
   }
 
   async get(zaakId: string) {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
+    console.timeLog('zaken status', 'retrieved metadata');
     let roleUrl;
     if (this.user.type == 'person') {
       roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
@@ -138,6 +141,7 @@ export class Zaken {
         has_taken: taken?.count > 0 ? true : false,
       };
     }
+    console.timeEnd('zaken status');
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
@@ -159,6 +163,7 @@ export class Zaken {
         current,
       };
     });
+    console.timeEnd('zaken status');
     return status_list;
   }
 
