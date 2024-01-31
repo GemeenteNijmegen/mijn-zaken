@@ -45,12 +45,12 @@ describe('Zaken', () => {
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('constructing object succeeds', async () => {
     axiosMock.onGet().reply(200, []);
-    expect(() => { new Zaken(client, new Person(new Bsn('900222670'))); }).not.toThrow();
+    expect(() => { new Zaken(client); }).not.toThrow();
   });
 
   test('zaken are processed correctly', async () => {
-    const statusResults = new Zaken(client, person);
-    const results = await statusResults.list();
+    const statusResults = new Zaken(client);
+    const results = await statusResults.list(person);
     expect(results).toStrictEqual({
       open: [
         {
@@ -94,8 +94,8 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client, person);
-      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      const statusResults = new Zaken(client);
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toStrictEqual(
         {
           id: 'Z23.001592',
@@ -138,8 +138,8 @@ describe('Zaken', () => {
     });
 
   test('a single zaak has several statusses, which are available in the zaak', async () => {
-    const statusResults = new Zaken(client, person, { show_documents: true });
-    const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+    const statusResults = new Zaken(client, { show_documents: true });
+    const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
     expect(results).toStrictEqual({
       id: 'Z23.001592',
       registratiedatum: '9 juni 2023',
@@ -194,8 +194,8 @@ describe('Zaken', () => {
   });
 
   test('a single zaak can have a null status', async () => {
-    const statusResults = new Zaken(client, person);
-    const results = await statusResults.get('noStatus');
+    const statusResults = new Zaken(client);
+    const results = await statusResults.get('noStatus', person);
     expect(results).toStrictEqual({
       id: 'Z23.001592',
       registratiedatum: '9 juni 2023',
@@ -237,9 +237,9 @@ describe('Filtering domains', () => {
   const person = new Person(new Bsn('900222670'));
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('zaken are filtered (APV)', async () => {
-    const statusResults = new Zaken(client, person);
+    const statusResults = new Zaken(client);
     statusResults.allowDomains(['APV']);
-    const results = await statusResults.list();
+    const results = await statusResults.list(person);
     expect(results).toStrictEqual({
       open: [{
         einddatum: null,
@@ -257,9 +257,9 @@ describe('Filtering domains', () => {
   });
 
   test('zaken are filtered (JZ)', async () => {
-    const statusResults = new Zaken(client, person);
+    const statusResults = new Zaken(client);
     statusResults.allowDomains(['JZ']);
-    const results = await statusResults.list();
+    const results = await statusResults.list(person);
     expect(results).toStrictEqual({
       open: [
         {
@@ -292,9 +292,9 @@ describe('Filtering domains', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client, person);
+      const statusResults = new Zaken(client);
       statusResults.allowDomains(['JZ']);
-      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toStrictEqual(
         {
           id: 'Z23.001592',
@@ -337,9 +337,9 @@ describe('Filtering domains', () => {
     });
   test('a single zaak is filtered correctly (APV)',
     async () => {
-      const statusResults = new Zaken(client, person);
+      const statusResults = new Zaken(client);
       statusResults.allowDomains(['APV']);
-      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toBeFalsy();
     });
 });

@@ -50,9 +50,9 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
 
   const user = getUser(session);
 
-  const statuses = new Zaken(client, user);
+  const statuses = new Zaken(client);
   statuses.allowDomains(['APV']);
-  const zaken = await statuses.list();
+  const zaken = await statuses.list(user);
   console.timeLog('request', 'zaken received');
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
@@ -68,7 +68,6 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
   const html = await render(data, zakenTemplate.default);
   return Response.html(html, 200, session.getCookie());
 }
-
 
 function getUser(session: Session) {
   const userType = session.getValue('user_type');
@@ -86,7 +85,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
-  const statuses = new Zaken(client, user, { taken: taken(takenSecret) });
+  const statuses = new Zaken(client, { taken: taken(takenSecret) });
   statuses.allowDomains(['APV']);
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
@@ -96,7 +95,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
     title: 'Zaak',
     shownav: true,
     nav: navigation.items,
-    zaak: await statuses.get(zaak),
+    zaak: await statuses.get(zaak, user),
   };
   console.debug('zaak', JSON.stringify(data.zaak));
   console.timeLog('request', 'zaak received');
