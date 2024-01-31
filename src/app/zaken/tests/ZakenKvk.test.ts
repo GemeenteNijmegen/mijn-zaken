@@ -40,8 +40,8 @@ describe('Zaken', () => {
   const user = new Organisation('12345678');
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('zaken are processed correctly', async () => {
-    const statusResults = new Zaken(client, user);
-    const results = await statusResults.list();
+    const statusResults = new Zaken(client);
+    const results = await statusResults.list(user);
     expect(results).toStrictEqual({
       open: [
         {
@@ -74,8 +74,8 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client, user);
-      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
+      const statusResults = new Zaken(client);
+      const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', user);
       expect(results).toStrictEqual(
         {
           id: 'Z23.001592',
