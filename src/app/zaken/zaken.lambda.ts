@@ -39,7 +39,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const secrets = await initPromise;
     const zakenClient = sharedOpenZaakClient(secrets.vipSecret);
     return await zakenRequestHandler(params.cookies, dynamoDBClient, {
-      zaken: sharedZaken(zakenClient),
+      zaken: await sharedZaken(zakenClient),
       zaak: params.zaak,
       takenSecret: secrets.takenSecret,
     });
@@ -64,9 +64,10 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
   return openZaakClient;
 }
 
-function sharedZaken(client: OpenZaakClient) {
+async function sharedZaken(client: OpenZaakClient) {
   if (!zaken) {
     zaken = new Zaken(client);
+    await zaken.metaData();
   }
   return zaken;
 }
