@@ -233,7 +233,8 @@ export class Zaken {
   }
 
   /** Guarantee metadata promises are resolved */
-  private async metaData() {
+  async metaData() {
+    console.debug('getting metadata');
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
       [
         this.zaakTypes,
@@ -247,7 +248,7 @@ export class Zaken {
         this.catalogiPromise,
       ]);
     }
-    console.debug('zaaktypes 123', this.zaakTypes);
+    console.debug('has metadata');
   }
 
   /**
