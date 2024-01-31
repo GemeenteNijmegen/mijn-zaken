@@ -3,11 +3,13 @@ import { ApiGatewayV2Response, Response } from '@gemeentenijmegen/apigateway-htt
 import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { OpenZaakClient } from './OpenZaakClient';
+import { Zaken } from './Zaken';
 import { zakenRequestHandler } from './zakenRequestHandler';
 
 const dynamoDBClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 
 let openZaakClient: OpenZaakClient | false;
+let zaken: Zaken | false;
 
 async function initSecret() {
   if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN) {
@@ -36,7 +38,11 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const params = parseEvent(event);
     const secrets = await initPromise;
     const zakenClient = sharedOpenZaakClient(secrets.vipSecret);
-    return await zakenRequestHandler(params.cookies, dynamoDBClient, { zakenClient, zaak: params.zaak, takenSecret: secrets.takenSecret });
+    return await zakenRequestHandler(params.cookies, dynamoDBClient, {
+      zaken: await sharedZaken(zakenClient),
+      zaak: params.zaak,
+      takenSecret: secrets.takenSecret,
+    });
   } catch (err) {
     console.debug(err);
     return Response.error(500);
@@ -56,6 +62,14 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
     });
   }
   return openZaakClient;
+}
+
+async function sharedZaken(client: OpenZaakClient) {
+  if (!zaken) {
+    zaken = new Zaken(client);
+    await zaken.metaData();
+  }
+  return zaken;
 }
 
 /** Check if this function is live */

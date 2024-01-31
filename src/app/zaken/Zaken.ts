@@ -24,17 +24,14 @@ export class Zaken {
   private resultaatTypes?: any;
   private catalogi?: any;
 
-  private user: User;
-
   private allowedDomains?: string[];
 
   private taken?: Taken;
 
   private show_documents?: boolean;
 
-  constructor(client: OpenZaakClient, user: User, config?: Config) {
+  constructor(client: OpenZaakClient, config?: Config) {
     this.client = client;
-    this.user = user;
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
@@ -60,14 +57,14 @@ export class Zaken {
    *
    * @returns
    */
-  async list() {
+  async list(user: User) {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
 
     let zaken;
-    if (this.user.type == 'person') {
+    if (user.type == 'person') {
       const params = new URLSearchParams({
-        rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: this.user.identifier,
+        rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn: user.identifier,
         ordering: '-startdatum',
         page: '1',
       });
@@ -75,9 +72,9 @@ export class Zaken {
       // Get all zaken
       zaken = await this.client.request('/zaken/api/v1/zaken', params);
 
-    } else if (this.user.type == 'organisation') {
+    } else if (user.type == 'organisation') {
       const params = new URLSearchParams({
-        betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie: this.user.identifier,
+        betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie: user.identifier,
       });
       const roles = await this.client.request('/zaken/api/v1/rollen', params);
       const zaakUrls = roles?.results?.map((role: any) => role.zaak);
@@ -99,15 +96,15 @@ export class Zaken {
     return [];
   }
 
-  async get(zaakId: string) {
+  async get(zaakId: string, user: User) {
     console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
     console.timeLog('zaken status', 'retrieved metadata');
     let roleUrl;
-    if (this.user.type == 'person') {
-      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+    if (user.type == 'person') {
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
     } else {
-      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${this.user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
     }
     const [zaak, rol] = await Promise.all([
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
@@ -236,7 +233,8 @@ export class Zaken {
   }
 
   /** Guarantee metadata promises are resolved */
-  private async metaData() {
+  async metaData() {
+    console.debug('getting metadata');
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
       [
         this.zaakTypes,
@@ -250,7 +248,7 @@ export class Zaken {
         this.catalogiPromise,
       ]);
     }
-    console.debug('zaaktypes 123', this.zaakTypes);
+    console.debug('has metadata');
   }
 
   /**

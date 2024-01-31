@@ -15,7 +15,11 @@ import { render } from '../../shared/render';
 export async function zakenRequestHandler(
   cookies: string,
   dynamoDBClient: DynamoDBClient,
-  config: { zakenClient: OpenZaakClient; zaak?: string; takenSecret: string }) {
+  config: {
+    zaken: Zaken;
+    zaak?: string;
+    takenSecret: string;
+  }) {
 
   console.time('request');
   console.timeLog('request', 'start request');
@@ -29,9 +33,9 @@ export async function zakenRequestHandler(
     try {
       let response;
       if (config.zaak) {
-        response = await singleZaakRequest(session, config.zakenClient, config.zaak, config.takenSecret);
+        response = await singleZaakRequest(session, config.zaken, config.zaak);
       } else {
-        response = await listZakenRequest(session, config.zakenClient);
+        response = await listZakenRequest(session, config.zaken);
       }
       console.timeEnd('request');
       return response;
@@ -45,14 +49,13 @@ export async function zakenRequestHandler(
   return Response.redirect('/login');
 }
 
-async function listZakenRequest(session: Session, client: OpenZaakClient) {
+async function listZakenRequest(session: Session, statuses: Zaken) {
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
 
-  const statuses = new Zaken(client, user);
   statuses.allowDomains(['APV']);
-  const zaken = await statuses.list();
+  const zaken = await statuses.list(user);
   console.timeLog('request', 'zaken received');
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
@@ -69,7 +72,6 @@ async function listZakenRequest(session: Session, client: OpenZaakClient) {
   return Response.html(html, 200, session.getCookie());
 }
 
-
 function getUser(session: Session) {
   const userType = session.getValue('user_type');
   let user: User;
@@ -81,12 +83,11 @@ function getUser(session: Session) {
   return user;
 }
 
-async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak: string, takenSecret: string) {
+async function singleZaakRequest(session: Session, statuses: Zaken, zaak: string) {
 
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
-  const statuses = new Zaken(client, user, { taken: taken(takenSecret) });
   statuses.allowDomains(['APV']);
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
@@ -96,7 +97,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
     title: 'Zaak',
     shownav: true,
     nav: navigation.items,
-    zaak: await statuses.get(zaak),
+    zaak: await statuses.get(zaak, user),
   };
   console.debug('zaak', JSON.stringify(data.zaak));
   console.timeLog('request', 'zaak received');
@@ -112,6 +113,7 @@ async function singleZaakRequest(session: Session, client: OpenZaakClient, zaak:
  *
  * @param secret secret for the taken endpoint
  */
+//@ts-ignore Unused for now, may be required later. Should be moved to handler?
 function taken(secret: string): Taken|undefined {
   if (!TakenIsAllowed()) {
     return;
