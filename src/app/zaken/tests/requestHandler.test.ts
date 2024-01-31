@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { OpenZaakClient } from '../OpenZaakClient';
+import { Zaken } from '../Zaken';
 import { zakenRequestHandler } from '../zakenRequestHandler';
 dotenv.config();
 
@@ -48,11 +49,12 @@ const axiosInstance = axios.create(
     },
   });
 const client = new OpenZaakClient({ baseUrl, axiosInstance });
+const zaken = new Zaken(client);
 
 describe('Request handler', () => {
   test('returns 200', async () => {
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, takenSecret: 'test' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
@@ -77,7 +79,7 @@ describe('Request handler', () => {
     };
     ddbMock.on(GetItemCommand).resolves(getItemOutputForOrganisation);
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, takenSecret: 'test' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
   });
 });
@@ -86,7 +88,7 @@ describe('Request handler', () => {
 describe('Request handler single zaak', () => {
   test('returns 200', async () => {
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zakenClient: client, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
