@@ -32,13 +32,16 @@ export class Zaken {
 
   constructor(client: OpenZaakClient, config?: Config) {
     this.client = client;
+    this.taken = config?.taken;
+    this.show_documents = config?.show_documents;
+
+    // Cache metadata
+    console.time('metadata');
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
-    console.time('zaken status');
-    this.taken = config?.taken;
-    this.show_documents = config?.show_documents;
+
   }
 
   /**
@@ -58,9 +61,9 @@ export class Zaken {
    * @returns
    */
   async list(user: User) {
-    console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
 
+    console.time('list zaken');
     let zaken;
     if (user.type == 'person') {
       const params = new URLSearchParams({
@@ -84,22 +87,22 @@ export class Zaken {
       }
     }
 
-    console.timeLog('zaken status', 'received zaken');
+    console.timeLog('list zaken', 'received zaken');
     if (zaken?.results) {
       console.debug('zaken results,', zaken.results);
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
-      console.timeLog('zaken status', 'received zaakmetadata');
-      console.timeEnd('zaken status');
+      console.timeLog('list zaken', 'received zaakmetadata');
+      console.timeEnd('list zaken');
       return this.summarizeZaken(zaken, statussen, resultaten);
     }
-    console.timeEnd('zaken status');
+    console.timeEnd('list zaken');
     return [];
   }
 
   async get(zaakId: string, user: User) {
-    console.timeLog('zaken status', 'awaiting metadata');
     await this.metaData();
-    console.timeLog('zaken status', 'retrieved metadata');
+
+    console.time('get zaak');
     let roleUrl;
     if (user.type == 'person') {
       roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
@@ -138,7 +141,8 @@ export class Zaken {
         has_taken: taken?.count > 0 ? true : false,
       };
     }
-    console.timeEnd('zaken status');
+    console.timeLog('get zaak', 'zaak opgehaald');
+    console.timeEnd('get zaak');
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
@@ -160,7 +164,6 @@ export class Zaken {
         current,
       };
     });
-    console.timeEnd('zaken status');
     return status_list;
   }
 
@@ -234,6 +237,7 @@ export class Zaken {
 
   /** Guarantee metadata promises are resolved */
   async metaData() {
+    console.timeLog('metadata', 'awaiting metadata');
     console.debug('getting metadata');
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
       [
@@ -249,6 +253,8 @@ export class Zaken {
       ]);
     }
     console.debug('has metadata');
+    console.timeLog('metadata', 'retreived metadata');
+    console.timeEnd('metadata');
   }
 
   /**
