@@ -36,7 +36,6 @@ export class Zaken {
     this.show_documents = config?.show_documents;
 
     // Cache metadata
-    console.time('metadata');
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
@@ -237,6 +236,7 @@ export class Zaken {
 
   /** Guarantee metadata promises are resolved */
   async metaData() {
+    console.time('metadata');
     console.timeLog('metadata', 'awaiting metadata');
     console.debug('getting metadata');
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
