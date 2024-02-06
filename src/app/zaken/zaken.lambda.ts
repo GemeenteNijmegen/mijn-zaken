@@ -66,8 +66,10 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
 
 async function sharedZaken(client: OpenZaakClient) {
   if (!zaken) {
+    console.time('metadata');
     zaken = new Zaken(client);
     await zaken.metaData();
+    console.timeEnd('metadata');
   }
   return zaken;
 }

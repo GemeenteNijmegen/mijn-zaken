@@ -236,8 +236,6 @@ export class Zaken {
 
   /** Guarantee metadata promises are resolved */
   async metaData() {
-    console.time('metadata');
-    console.timeLog('metadata', 'awaiting metadata');
     console.debug('getting metadata');
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
       [
@@ -253,8 +251,6 @@ export class Zaken {
       ]);
     }
     console.debug('has metadata');
-    console.timeLog('metadata', 'retreived metadata');
-    console.timeEnd('metadata');
   }
 
   /**
