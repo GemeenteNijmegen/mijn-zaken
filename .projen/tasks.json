@@ -159,7 +159,8 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src src/app/zaken/tests /test /build-tools .projenrc.js"
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src src/app/zaken/tests /test /build-tools .projenrc.js",
+          "receiveArgs": true
         }
       ]
     },
@@ -299,16 +300,13 @@
       },
       "steps": [
         {
-          "exec": "yarn upgrade npm-check-updates"
-        },
-        {
-          "exec": "npm-check-updates --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-sdk/client-ssm,@glen/jest-raw-loader,@types/aws-lambda,@types/jest,@types/jsonwebtoken,@types/node,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,aws-cdk,aws-sdk-client-mock,axios-mock-adapter,copyfiles,esbuild,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint,jest,jest-junit,npm-check-updates,projen,standard-version,ts-jest,ts-node,typescript,@aws-cdk/aws-apigatewayv2-alpha,@aws-cdk/aws-apigatewayv2-integrations-alpha,@aws-sdk/client-dynamodb,@aws-sdk/client-secrets-manager,@aws-solutions-constructs/aws-lambda-dynamodb,@gemeentenijmegen/apiclient,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/session,@gemeentenijmegen/utils,aws-cdk-lib,axios,constructs,dotenv,jsonwebtoken,mustache"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-sdk/client-ssm,@glen/jest-raw-loader,@types/aws-lambda,@types/jest,@types/jsonwebtoken,aws-sdk-client-mock,axios-mock-adapter,copyfiles,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-cdk/aws-apigatewayv2-alpha,@aws-cdk/aws-apigatewayv2-integrations-alpha,@aws-sdk/client-dynamodb,@aws-sdk/client-secrets-manager,@aws-solutions-constructs/aws-lambda-dynamodb,@gemeentenijmegen/apiclient,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/session,@gemeentenijmegen/utils,axios,dotenv,jsonwebtoken,mustache"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-ssm @glen/jest-raw-loader @types/aws-lambda @types/jest @types/jsonwebtoken @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk aws-sdk-client-mock axios-mock-adapter copyfiles esbuild eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit npm-check-updates projen standard-version ts-jest ts-node typescript @aws-cdk/aws-apigatewayv2-alpha @aws-cdk/aws-apigatewayv2-integrations-alpha @aws-sdk/client-dynamodb @aws-sdk/client-secrets-manager @aws-solutions-constructs/aws-lambda-dynamodb @gemeentenijmegen/apiclient @gemeentenijmegen/apigateway-http @gemeentenijmegen/aws-constructs @gemeentenijmegen/projen-project-type @gemeentenijmegen/session @gemeentenijmegen/utils aws-cdk-lib axios constructs dotenv jsonwebtoken mustache"
+          "exec": "yarn upgrade @aws-sdk/client-ssm @glen/jest-raw-loader @types/aws-lambda @types/jest @types/jsonwebtoken @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk aws-sdk-client-mock axios-mock-adapter copyfiles esbuild eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen standard-version ts-jest ts-node typescript @aws-cdk/aws-apigatewayv2-alpha @aws-cdk/aws-apigatewayv2-integrations-alpha @aws-sdk/client-dynamodb @aws-sdk/client-secrets-manager @aws-solutions-constructs/aws-lambda-dynamodb @gemeentenijmegen/apiclient @gemeentenijmegen/apigateway-http @gemeentenijmegen/aws-constructs @gemeentenijmegen/projen-project-type @gemeentenijmegen/session @gemeentenijmegen/utils aws-cdk-lib axios constructs dotenv jsonwebtoken mustache"
         },
         {
           "exec": "npx projen"
