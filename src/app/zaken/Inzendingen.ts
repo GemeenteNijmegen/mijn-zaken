@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosInstance } from 'axios';
-import { Inzending, InzendingenSchema } from './Inzending';
+import { Inzending, InzendingSchema, InzendingenSchema } from './Inzending';
 import { User } from './User';
 
 export class Inzendingen {
@@ -87,6 +87,16 @@ export class Inzendingen {
     const results = await this.request('submissions', params);
     return InzendingenSchema.parse(results);
   }
+
+  async get(key: string, user: User): Promise<Inzending> {
+    const params = new URLSearchParams({
+      user_id: user.identifier,
+      user_type: user.type,
+    });
+    const results = await this.request(`submissions/${key}`, params);
+    return InzendingSchema.parse(results);
+  }
+
 
   async download(key: string) {
     const params = new URLSearchParams({
