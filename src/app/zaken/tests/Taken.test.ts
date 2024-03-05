@@ -1,6 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import takenByZaak from './samples/taken-by-zaak.json';
+import takenByZaak from './samples/taken-by-user.json';
 import { OpenZaakClient } from '../OpenZaakClient';
 import { Taken } from '../Taken';
 const instance = axios.create(
@@ -28,7 +28,7 @@ describe('Taken tests', () => {
   test('Getting taken by zaakId returns results', async() => {
     const client = new OpenZaakClient({ baseUrl, axiosInstance: instance });
     const taken = new Taken(client);
-    const takenForZaak = await taken.get('testZaak');
-    expect(takenForZaak).toHaveLength(1);
+    const takenForZaak = await taken.get('0cb4f028-7d08-4161-b94c-49eaf9c647f8');
+    expect(takenForZaak).toHaveLength(2);
   });
 });

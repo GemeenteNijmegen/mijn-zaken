@@ -12,7 +12,12 @@ export class Taken {
     if (data?.count > 0) {
       return data.results
         .filter((result: any) => {
-          return result?.record?.data?.title && result?.record?.data?.formulier && result?.record?.data?.verloopdatum;
+          return (
+            result?.record?.data?.zaak &&
+            (result?.record?.data?.zaak as string).endsWith(zaakId) &&
+            result?.record?.data?.title &&
+            result?.record?.data?.formulier &&
+            result?.record?.data?.verloopdatum);
         })
         .map((result: any) => {
           return {
@@ -28,6 +33,7 @@ export class Taken {
       return null;
     }
   }
+
 
   private formattedDate(dateString: string) {
     const date = new Date(dateString);
