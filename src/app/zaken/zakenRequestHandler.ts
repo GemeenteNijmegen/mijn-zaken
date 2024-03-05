@@ -3,6 +3,7 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
+import { Inzendingen } from './Inzendingen';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
@@ -17,6 +18,7 @@ export async function zakenRequestHandler(
   dynamoDBClient: DynamoDBClient,
   config: {
     zaken: Zaken;
+    inzendingen?: Inzendingen;
     zaak?: string;
     takenSecret: string;
   }) {
@@ -42,7 +44,7 @@ export async function zakenRequestHandler(
       if (config.zaak) {
         response = await singleZaakRequest(session, config.zaken, config.zaak);
       } else {
-        response = await listZakenRequest(session, config.zaken);
+        response = await listZakenRequest(session, config.zaken, config.inzendingen);
       }
       console.timeEnd('request');
       return response;
@@ -56,14 +58,18 @@ export async function zakenRequestHandler(
   return Response.redirect('/login');
 }
 
-async function listZakenRequest(session: Session, statuses: Zaken) {
+async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?: Inzendingen) {
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
 
   statuses.allowDomains(['APV']);
-  const zaken = await statuses.list(user);
-  console.timeLog('request', 'zaken received');
+  let zaken, _submissions;
+  if (inzendingen) {
+    [zaken, _submissions] = await Promise.all([statuses.list(user), inzendingen.list(user)]);
+  } else {
+    zaken = statuses.list(user);
+  }
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
   let data = {
