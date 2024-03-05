@@ -21,6 +21,13 @@ export async function zakenRequestHandler(
     takenSecret: string;
   }) {
 
+  let takenObj = undefined;
+  if (config.takenSecret) {
+    takenObj = taken(config.takenSecret);
+    if (takenObj) {
+      config.zaken.setTaken(takenObj);
+    }
+  }
   console.time('request');
   console.timeLog('request', 'start request');
   console.timeLog('request', 'finished init');
