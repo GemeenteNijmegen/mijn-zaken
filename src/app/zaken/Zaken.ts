@@ -43,6 +43,10 @@ export class Zaken {
 
   }
 
+  setTaken(taken: Taken) {
+    this.taken = taken;
+  }
+
   /**
    * If this method is called, all further requests are matched
    * for this list of domains. The domains can be found in the zaaktypecatalogus

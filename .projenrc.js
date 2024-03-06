@@ -21,6 +21,7 @@ const project = new GemeenteNijmegenCdkApp({
     'axios',
     'dotenv',
     'jsonwebtoken',
+    'zod',
   ],
   devDeps: [
     '@types/aws-lambda',
