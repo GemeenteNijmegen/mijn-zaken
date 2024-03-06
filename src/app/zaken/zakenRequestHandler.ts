@@ -68,7 +68,7 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
   if (inzendingen) {
     [zaken, submissions] = await Promise.all([statuses.list(user), inzendingen.list(user)]);
   } else {
-    zaken = statuses.list(user);
+    zaken = await statuses.list(user);
   }
   console.debug(submissions);
 
