@@ -68,10 +68,10 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
 }
 
 function inzendingen(accessKey: string) {
-  if (process.env.SUBMISSIONSTORAGE_BASE_URL) {
+  if (process.env.SUBMISSIONSTORAGE_BASE_URL && process.env.SUBMISSIONS_LIVE == 'true') {
     return new Inzendingen({ baseUrl: process.env.SUBMISSIONSTORAGE_BASE_URL, accessKey });
   }
-  throw Error('No BASE_URL set for submission storage');
+  return;
 }
 
 async function sharedZaken(client: OpenZaakClient) {
