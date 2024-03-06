@@ -64,12 +64,13 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
   const user = getUser(session);
 
   statuses.allowDomains(['APV']);
-  let zaken, _submissions;
+  let zaken, submissions;
   if (inzendingen) {
-    [zaken, _submissions] = await Promise.all([statuses.list(user), inzendingen.list(user)]);
+    [zaken, submissions] = await Promise.all([statuses.list(user), inzendingen.list(user)]);
   } else {
     zaken = statuses.list(user);
   }
+  console.debug(submissions);
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
   let data = {
