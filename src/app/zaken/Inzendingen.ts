@@ -79,22 +79,28 @@ export class Inzendingen {
     }
   }
 
-  async list(user: User): Promise<Inzending[]> {
+  async list(user: User): Promise<{
+    id: string;
+    key: string;
+    registratiedatum: string;
+    status: string;
+  }[]> {
     const params = new URLSearchParams({
       user_id: user.identifier,
       user_type: user.type,
     });
     const results = await this.request('submissions', params);
-    return InzendingenSchema.parse(results);
+    const inzendingen = InzendingenSchema.parse(results);
+    return inzendingen.map(inzending => this.summarize(inzending));
   }
 
-  async get(key: string, user: User): Promise<Inzending> {
+  async get(key: string, user: User): Promise<any> {
     const params = new URLSearchParams({
       user_id: user.identifier,
       user_type: user.type,
     });
     const results = await this.request(`submissions/${key}`, params);
-    return InzendingSchema.parse(results);
+    return this.summarizeSingle(InzendingSchema.parse(results));
   }
 
 
@@ -104,5 +110,41 @@ export class Inzendingen {
     });
     const results = await this.request('download', params);
     return results;
+  }
+
+  summarize(inzending: Inzending) {
+    return {
+      id: inzending.formTitle,
+      key: inzending.key,
+      registratiedatum: this.humanDate(inzending.dateSubmitted),
+      status: 'ontvangen',
+    };
+  }
+
+  summarizeSingle(inzending: Inzending) {
+    return {
+      id: inzending.formTitle,
+      key: inzending.key,
+      registratiedatum: this.humanDate(inzending.dateSubmitted),
+      status: 'ontvangen',
+      status_list: [],
+      documenten: inzending.attachments.map((attachment) => {
+        return {
+          url: `/download/${attachment}`,
+          titel: attachment,
+          registratieDatum: inzending.dateSubmitted,
+        };
+      }),
+      has_documenten: inzending.attachments.length > 0 ? true : false,
+      has_taken: false,
+    };
+  }
+
+  /**
+   * Convert ISO 8601 datestring to something formatted like '12 september 2023'
+   */
+  private humanDate(dateString: string) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 }
