@@ -10,6 +10,7 @@ export class Taken {
     console.debug(`getting taken for zaak ${zaakId}`);
     const data = await this.client.request(zaakId);
     if (data?.count > 0) {
+      console.debug(`found ${data.count} results`);
       return data.results
         .filter((result: any) => {
           return (
@@ -30,6 +31,7 @@ export class Taken {
           };
         });
     } else {
+      console.debug('found no results');
       return null;
     }
   }
