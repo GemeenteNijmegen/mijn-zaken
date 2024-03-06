@@ -48,6 +48,7 @@ export class ZakenApiStack extends Stack {
 
     const jwtSecret = Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret);
     const tokenSecret = Secret.fromSecretNameV2(this, 'taken-token-secret', Statics.vipTakenSecret);
+    const submissionstorageKey = Secret.fromSecretNameV2(this, 'taken-submission-secret', Statics.submissionstorageKey);
     const zakenFunction = new ApiFunction(this, 'zaken-function', {
       description: 'Zaken-lambda voor de Mijn Nijmegen-applicatie.',
       codePath: 'app/zaken',
@@ -56,6 +57,7 @@ export class ZakenApiStack extends Stack {
       environment: {
         VIP_JWT_SECRET_ARN: jwtSecret.secretArn,
         VIP_TAKEN_SECRET_ARN: tokenSecret.secretArn,
+        SUBMISSIONSTORAGE_SECRET_ARN: submissionstorageKey.secretArn,
         VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
         VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
         VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
@@ -68,6 +70,7 @@ export class ZakenApiStack extends Stack {
     });
     jwtSecret.grantRead(zakenFunction.lambda);
     tokenSecret.grantRead(zakenFunction.lambda);
+    submissionstorageKey.grantRead(zakenFunction.lambda);
 
     new apigatewayv2.HttpRoute(this, 'zaken-route', {
       httpApi: this.api,

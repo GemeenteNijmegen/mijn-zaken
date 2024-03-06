@@ -67,6 +67,11 @@ export class ssmParamsConstruct extends Construct {
       parameterName: Statics.ssmTokenBaseUrl,
     });
 
+    new StringParameter(this, 'ssm_zaken_5', {
+      stringValue: '-',
+      parameterName: Statics.ssmSubmissionstorageBaseUrl,
+    });
+
     new Secret(this, 'secret_1', {
       secretName: Statics.vipJwtSecret,
       description: 'VIP Taken token secret',
@@ -75,6 +80,11 @@ export class ssmParamsConstruct extends Construct {
     new Secret(this, 'secret_2', {
       secretName: Statics.vipTakenSecret,
       description: 'VIP Taken token secret',
+    });
+
+    new Secret(this, 'secret_3', {
+      secretName: Statics.submissionstorageKey,
+      description: 'Submission storage API key',
     });
   }
 }

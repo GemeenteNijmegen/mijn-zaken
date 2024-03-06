@@ -2,6 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { ApiGatewayV2Response, Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { Inzendingen } from './Inzendingen';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Zaken } from './Zaken';
 import { zakenRequestHandler } from './zakenRequestHandler';
@@ -12,12 +13,13 @@ let openZaakClient: OpenZaakClient | false;
 let zaken: Zaken | false;
 
 async function initSecret() {
-  if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN) {
+  if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN || !process.env.SUBMISSIONSTORAGE_SECRET_ARN) {
     throw Error('No secret ARN provided');
   }
   return {
     vipSecret: await AWS.getSecret(process.env.VIP_JWT_SECRET_ARN),
     takenSecret: await AWS.getSecret(process.env.VIP_TAKEN_SECRET_ARN),
+    submissionstorageSecret: await AWS.getSecret(process.env.SUBMISSIONSTORAGE_SECRET_ARN),
   };
 }
 
@@ -42,6 +44,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
       zaken: await sharedZaken(zakenClient),
       zaak: params.zaak,
       takenSecret: secrets.takenSecret,
+      inzendingen: inzendingen(secrets.submissionstorageSecret),
     });
   } catch (err) {
     console.debug(err);
@@ -62,6 +65,13 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
     });
   }
   return openZaakClient;
+}
+
+function inzendingen(accessKey: string) {
+  if (process.env.SUBMISSIONSTORAGE_BASE_URL) {
+    return new Inzendingen({ baseUrl: process.env.SUBMISSIONSTORAGE_BASE_URL, accessKey });
+  }
+  throw Error('No BASE_URL set for submission storage');
 }
 
 async function sharedZaken(client: OpenZaakClient) {

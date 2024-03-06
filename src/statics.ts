@@ -15,11 +15,15 @@ export abstract class Statics {
   static readonly ssmBaseUrl: string = '/cdk/mijn-zaken/vip-base-url';
   static readonly ssmTokenBaseUrl: string = '/cdk/mijn-zaken/taken-base-url';
 
+  static readonly ssmSubmissionstorageBaseUrl: string = '/cdk/mijn-zaken/submissionstorage-base-url';
+
   /**
    * Secret for VIP jwt token
    */
   static readonly vipJwtSecret: string = '/cdk/mijn-zaken/vip-jwttoken-new';
   static readonly vipTakenSecret: string = '/cdk/mijn-zaken/vip-takentoken-new';
+
+  static readonly submissionstorageKey: string = '/cdk/mijn-zaken/submissionstorage-key';
 
   /*
    * Environments (old lz)
