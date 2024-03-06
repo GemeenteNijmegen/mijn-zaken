@@ -44,7 +44,7 @@ export const configurations: {[key: string]: Configuration} = {
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.productionEnvironment,
     useTaken: false,
-    isLive: false,
+    isLive: true,
   },
 };
 
