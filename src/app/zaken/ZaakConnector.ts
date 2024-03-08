@@ -12,6 +12,7 @@ export interface ZaakSummary {
   status: string;
   resultaat?: string;
 }
+
 export interface ZaakConnector {
   list(user: User): Promise<ZaakSummary[]>;
 }

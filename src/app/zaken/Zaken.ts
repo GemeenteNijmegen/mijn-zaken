@@ -129,12 +129,12 @@ export class Zaken implements ZaakConnector {
     console.debug('check role', rol);
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
-        uuid: zaak.uuid,
-        id: zaak.identificatie,
-        registratiedatum: this.humanDate(zaak.registratiedatum),
-        verwachtte_einddatum: this.humanDate(zaak.einddatumGepland),
-        uiterlijke_einddatum: this.humanDate(zaak.uiterlijkeEinddatumAfdoening),
-        einddatum: zaak.einddatum ? this.humanDate(zaak.einddatum) : null,
+        internal_id: zaak.uuid,
+        identifier: zaak.identificatie,
+        registratiedatum: new Date(zaak.registratiedatum),
+        verwachtte_einddatum: new Date(zaak.einddatumGepland),
+        uiterlijke_einddatum: new Date(zaak.uiterlijkeEinddatumAfdoening),
+        einddatum: zaak.einddatum ? new Date(zaak.einddatum) : undefined,
         zaak_type: zaakType?.omschrijving,
         status_list: this.statusTypesForZaakType(zaakType, status),
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
@@ -225,14 +225,6 @@ export class Zaken implements ZaakConnector {
       zaak_summaries.push(summary);
     }
     return zaak_summaries;
-  }
-
-  /**
-   * Convert ISO 8601 datestring to something formatted like '12 september 2023'
-   */
-  private humanDate(dateString: string) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   /** Guarantee metadata promises are resolved */

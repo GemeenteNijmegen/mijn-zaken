@@ -1,17 +1,17 @@
 import { User } from './User';
-import { ZaakConnector } from './ZaakConnector';
+import { ZaakConnector, ZaakSummary } from './ZaakConnector';
 
 interface Config {
   zaakConnectors: ZaakConnector[];
 }
-export class ZaakAggregator {
+export class ZaakAggregator implements ZaakConnector {
   private zaakConnectors;
 
   constructor(config: Config) {
     this.zaakConnectors = config.zaakConnectors;
   }
 
-  async list(user: User) {
+  async list(user: User): Promise<ZaakSummary[]> {
     const listPromises = this.zaakConnectors.map(connector => connector.list(user));
     const results = await Promise.all(listPromises);
 

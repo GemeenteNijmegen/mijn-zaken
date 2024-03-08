@@ -1,8 +1,9 @@
 import axios, { Axios, AxiosInstance } from 'axios';
 import { Inzending, InzendingSchema, InzendingenSchema } from './Inzending';
 import { User } from './User';
+import { ZaakConnector, ZaakSummary } from './ZaakConnector';
 
-export class Inzendingen {
+export class Inzendingen implements ZaakConnector {
   private axios: Axios;
   private baseUrl: string;
   constructor(config: {
@@ -79,21 +80,14 @@ export class Inzendingen {
     }
   }
 
-  async list(user: User): Promise<{
-    open: {
-      id: string;
-      key: string;
-      registratiedatum: string;
-      status: string;
-    }[];
-  }> {
+  async list(user: User): Promise<ZaakSummary[]> {
     const params = new URLSearchParams({
       user_id: user.identifier,
       user_type: user.type,
     });
     const results = await this.request('submissions', params);
     const inzendingen = InzendingenSchema.parse(results);
-    return { open: inzendingen.map(inzending => this.summarize(inzending)) };
+    return inzendingen.map(inzending => this.summarize(inzending));
   }
 
   async get(key: string, user: User): Promise<any> {
@@ -114,11 +108,12 @@ export class Inzendingen {
     return results;
   }
 
-  summarize(inzending: Inzending) {
+  summarize(inzending: Inzending): ZaakSummary {
     return {
-      id: inzending.formTitle,
-      key: inzending.key,
-      registratiedatum: this.humanDate(inzending.dateSubmitted),
+      identifier: inzending.formTitle,
+      internal_id: inzending.key,
+      registratiedatum: new Date(inzending.dateSubmitted),
+      zaak_type: 'formulierinzending',
       status: 'ontvangen',
     };
   }

@@ -19,8 +19,8 @@ const person = new Person(new Bsn('900222670'));
 describe('Inzendingen from submission storage', () => {
   test('Getting a list of submissions', async() => {
     const submissions = await inzendingen.list(person);
-    expect(submissions.open).toHaveLength(23);
-    expect(submissions.open.pop()).toHaveProperty('id');
+    expect(submissions).toHaveLength(23);
+    expect(submissions.pop()).toHaveProperty('identifier');
   });
 
   test('Getting a single submission', async() => {

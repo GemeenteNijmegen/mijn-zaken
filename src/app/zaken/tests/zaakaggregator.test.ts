@@ -1,5 +1,6 @@
 import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
+import { Inzendingen } from '../Inzendingen';
 import { OpenZaakClient } from '../OpenZaakClient';
 import { Person } from '../User';
 import { ZaakAggregator } from '../ZaakAggregator';
@@ -43,6 +44,13 @@ const mockedAggregatedZaken = [
     status: 'open',
     resultaat: 'geen',
   },
+  {
+    identifier: '234',
+    internal_id: 'inzending/234',
+    registratiedatum: sampleDate,
+    zaak_type: 'inzending',
+    status: 'ontvangen',
+  },
 ];
 
 jest.mock('../Zaken', () => {
@@ -57,7 +65,7 @@ jest.mock('../Zaken', () => {
 
 jest.mock('../Inzendingen', () => {
   return {
-    Zaken: jest.fn(() => {
+    Inzendingen: jest.fn(() => {
       return {
         list: jest.fn().mockResolvedValue(mockedInzendingenList),
       };
@@ -68,9 +76,16 @@ jest.mock('../Inzendingen', () => {
 let baseUrl = new URL('http://localhost');
 const person = new Person(new Bsn('900222670'));
 const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
+const inzendingen = new Inzendingen({ baseUrl: 'https://example.com', accessKey: 'test-access-key' });
+const zaken = new Zaken(client);
 describe('Zaakaggregator returns combined zaken', () => {
   test('Zaakaggregator results in summaries useful for listing', async() => {
-    const aggregator = new ZaakAggregator({ zaakConnectors: [new Zaken(client)] });
+    const aggregator = new ZaakAggregator({
+      zaakConnectors: [
+        zaken,
+        inzendingen,
+      ],
+    });
     expect(await aggregator.list(person)).toStrictEqual(mockedAggregatedZaken);
   });
 });

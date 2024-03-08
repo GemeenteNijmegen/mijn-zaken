@@ -6,9 +6,48 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { OpenZaakClient } from '../OpenZaakClient';
+import { ZaakSummary } from '../ZaakConnector';
 import { Zaken } from '../Zaken';
 import { zakenRequestHandler } from '../zakenRequestHandler';
 dotenv.config();
+
+const sampleDate = new Date();
+const mockedZakenList: ZaakSummary[] = [
+  {
+    identifier: '123',
+    internal_id: 'zaak/hiereenuuid',
+    registratiedatum: sampleDate,
+    verwachtte_einddatum: sampleDate,
+    uiterlijke_einddatum: sampleDate,
+    einddatum: sampleDate,
+    zaak_type: 'zaaktype1',
+    status: 'open',
+    resultaat: 'geen',
+  },
+];
+const mockedZaak = {
+  identifier: '123',
+  internal_id: 'zaak/hiereenuuid',
+  registratiedatum: sampleDate,
+  verwachtte_einddatum: sampleDate,
+  uiterlijke_einddatum: sampleDate,
+  einddatum: sampleDate,
+  zaak_type: 'zaaktype1',
+  status: 'open',
+  resultaat: 'geen',
+};
+
+jest.mock('../Zaken', () => {
+  return {
+    Zaken: jest.fn(() => {
+      return {
+        allowDomains: jest.fn(),
+        list: jest.fn().mockResolvedValue(mockedZakenList),
+        get: jest.fn().mockResolvedValue(mockedZaak),
+      };
+    }),
+  };
+});
 
 const ddbMock = mockClient(DynamoDBClient);
 const getItemOutput: Partial<GetItemCommandOutput> = {

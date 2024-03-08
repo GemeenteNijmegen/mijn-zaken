@@ -9,6 +9,8 @@ import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Organisation, Person, User } from './User';
+import { ZaakAggregator } from './ZaakAggregator';
+import { ZaakFormatter } from './ZaakFormatter';
 import { Zaken } from './Zaken';
 import { Navigation } from '../../shared/Navigation';
 import { render } from '../../shared/render';
@@ -64,13 +66,10 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
   const user = getUser(session);
 
   statuses.allowDomains(['APV']);
-  let zaken, submissions;
-  if (inzendingen) {
-    [zaken, submissions] = await Promise.all([statuses.list(user), inzendingen.list(user)]);
-  } else {
-    zaken = await statuses.list(user);
-  }
-  console.debug(submissions);
+  const connectors = (inzendingen) ? [statuses, inzendingen] : [statuses];
+  const aggregator = new ZaakAggregator({ zaakConnectors: connectors });
+  const zaken = await aggregator.list(user);
+  const zaakSummaries = ZaakFormatter.formatList(zaken);
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
   let data = {
@@ -78,7 +77,7 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
     title: 'Lopende zaken',
     shownav: true,
     nav: navigation.items,
-    zaken: zaken,
+    zaken: zaakSummaries,
   };
 
   // render page
