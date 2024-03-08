@@ -1,6 +1,7 @@
 import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import { User } from './User';
+import { ZaakConnector, ZaakSummary } from './ZaakConnector';
 
 interface Config {
   taken?: Taken;
@@ -12,7 +13,7 @@ interface Config {
   show_documents?: boolean;
 }
 
-export class Zaken {
+export class Zaken implements ZaakConnector {
   private client: OpenZaakClient;
   private statusTypesPromise: Promise<any>;
   private zaakTypesPromise: Promise<any>;
@@ -99,10 +100,7 @@ export class Zaken {
       return this.summarizeZaken(zaken, statussen, resultaten);
     }
     console.timeEnd('list zaken');
-    return {
-      open: [],
-      gesloten: [],
-    };
+    return [];
   }
 
   async get(zaakId: string, user: User) {
@@ -195,8 +193,8 @@ export class Zaken {
     ]);
   }
 
-  private summarizeZaken(zaken: any, statussen: any[], resultaten: any[]) {
-    const zaak_summaries: { open: any[]; gesloten: any[] } = { open: [], gesloten: [] };
+  private summarizeZaken(zaken: any, statussen: any[], resultaten: any[]): ZaakSummary[] {
+    const zaak_summaries = [];
     for (const zaak of zaken.results) {
       // Only process zaken in allowed catalogi
       if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
@@ -213,22 +211,18 @@ export class Zaken {
         resultaat_type = this.resultaatTypes.results.find((type: any) => type.url == resultaat.resultaattype)?.omschrijving;
       }
       const summary = {
-        id: zaak.identificatie,
-        uuid: zaak.uuid,
-        registratiedatum: this.humanDate(zaak.registratiedatum),
-        verwachtte_einddatum: this.humanDate(zaak.einddatumGepland),
-        uiterlijke_einddatum: this.humanDate(zaak.uiterlijkeEinddatumAfdoening),
-        einddatum: zaak.einddatum ? this.humanDate(zaak.einddatum) : null,
+        identifier: zaak.identificatie,
+        internal_id: zaak.uuid,
+        registratiedatum: new Date(zaak.registratiedatum),
+        verwachtte_einddatum: new Date(zaak.einddatumGepland),
+        uiterlijke_einddatum: new Date(zaak.uiterlijkeEinddatumAfdoening),
+        einddatum: zaak.einddatum ? new Date(zaak.einddatum) : undefined,
         zaak_type: zaaktype,
         status: status_type,
         resultaat: resultaat_type,
       };
       console.debug('summary', summary);
-      if (resultaat) {
-        zaak_summaries.gesloten.push(summary);
-      } else {
-        zaak_summaries.open.push(summary);
-      }
+      zaak_summaries.push(summary);
     }
     return zaak_summaries;
   }

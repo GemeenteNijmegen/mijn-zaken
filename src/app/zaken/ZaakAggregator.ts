@@ -1,35 +1,25 @@
 import { User } from './User';
-import { Zaken } from './Zaken';
-
-// interface ZaakSummary {
-//   identifier: string;
-//   internal_id: string;
-//   registratiedatum: Date;
-//   verwachtte_einddatum?: Date;
-//   uiterlijke_einddatum?: Date;
-//   einddatum?: Date;
-//   zaak_type: string;
-//   status: string;
-//   resultaat?: string;
-// }
+import { ZaakConnector } from './ZaakConnector';
 
 interface Config {
-  zaken: Zaken;
+  zaakConnectors: ZaakConnector[];
 }
 export class ZaakAggregator {
-  private zaken;
+  private zaakConnectors;
 
   constructor(config: Config) {
-    this.zaken = config.zaken;
+    this.zaakConnectors = config.zaakConnectors;
   }
 
   async list(user: User) {
-    const zaken = await this.zaken.list(user);
-    return zaken;
+    const listPromises = this.zaakConnectors.map(connector => connector.list(user));
+    const results = await Promise.all(listPromises);
+
+    return results.flat();
   }
 
-  async get(zaakId: string, user: User) {
-    const zaak = await this.zaken.get(zaakId, user);
-    return zaak;
-  }
+  // async get(zaakId: string, user: User) {
+  //   const zaak = await this.zaken.get(zaakId, user);
+  //   return zaak;
+  // }
 }
