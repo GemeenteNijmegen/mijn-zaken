@@ -99,7 +99,10 @@ export class Zaken {
       return this.summarizeZaken(zaken, statussen, resultaten);
     }
     console.timeEnd('list zaken');
-    return [];
+    return {
+      open: [],
+      gesloten: [],
+    };
   }
 
   async get(zaakId: string, user: User) {

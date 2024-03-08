@@ -80,18 +80,20 @@ export class Inzendingen {
   }
 
   async list(user: User): Promise<{
-    id: string;
-    key: string;
-    registratiedatum: string;
-    status: string;
-  }[]> {
+    open: {
+      id: string;
+      key: string;
+      registratiedatum: string;
+      status: string;
+    }[];
+  }> {
     const params = new URLSearchParams({
       user_id: user.identifier,
       user_type: user.type,
     });
     const results = await this.request('submissions', params);
     const inzendingen = InzendingenSchema.parse(results);
-    return inzendingen.map(inzending => this.summarize(inzending));
+    return { open: inzendingen.map(inzending => this.summarize(inzending)) };
   }
 
   async get(key: string, user: User): Promise<any> {
