@@ -42,34 +42,32 @@ describe('Zaken', () => {
   test('zaken are processed correctly', async () => {
     const statusResults = new Zaken(client);
     const results = await statusResults.list(user);
-    expect(results).toStrictEqual({
-      open: [
-        {
-          id: 'Z23.001592',
-          registratiedatum: '9 juni 2023',
-          verwachtte_einddatum: '1 september 2023',
-          einddatum: null,
-          uiterlijke_einddatum: '11 oktober 2023',
-          resultaat: null,
-          status: 'In behandeling',
-          uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
-          zaak_type: 'Bezwaar',
-        },
-      ],
-      gesloten: [
-        {
-          id: 'Z23.001438',
-          registratiedatum: '30 maart 2023',
-          einddatum: '28 maart 2023',
-          verwachtte_einddatum: '20 juni 2023',
-          uiterlijke_einddatum: '11 juni 2023',
-          resultaat: 'Ingetrokken na BIA',
-          status: 'In behandeling',
-          uuid: '3720dbc1-6a94-411e-b651-0aeb67330064',
-          zaak_type: 'Klacht',
-        },
-      ],
-    });
+    expect(results).toStrictEqual([
+      {
+        identifier: 'Z23.001592',
+        registratiedatum: new Date('2023-06-09T00:00:00.000Z'),
+        verwachtte_einddatum: new Date('2023-09-01T00:00:00.000Z'),
+        einddatum: undefined,
+        uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
+        resultaat: null,
+        status: 'In behandeling',
+        internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+        zaak_type: 'Bezwaar',
+      },
+
+      {
+        identifier: 'Z23.001438',
+        registratiedatum: new Date('2023-03-30T00:00:00.000Z'),
+        einddatum: new Date('2023-03-28T00:00:00.000Z'),
+        verwachtte_einddatum: new Date('2023-06-20T00:00:00.000Z'),
+        uiterlijke_einddatum: new Date('2023-06-11T00:00:00.000Z'),
+        resultaat: 'Ingetrokken na BIA',
+        status: 'In behandeling',
+        internal_id: '3720dbc1-6a94-411e-b651-0aeb67330064',
+        zaak_type: 'Klacht',
+      },
+    ],
+    );
   });
 
   test('a single zaak is processed correctly',
@@ -78,14 +76,14 @@ describe('Zaken', () => {
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', user);
       expect(results).toStrictEqual(
         {
-          id: 'Z23.001592',
-          registratiedatum: '9 juni 2023',
-          verwachtte_einddatum: '1 september 2023',
-          einddatum: null,
-          uiterlijke_einddatum: '11 oktober 2023',
+          identifier: 'Z23.001592',
+          registratiedatum: new Date('2023-06-09T00:00:00.000Z'),
+          verwachtte_einddatum: new Date('2023-09-01T00:00:00.000Z'),
+          einddatum: undefined,
+          uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
           resultaat: null,
           status: 'In behandeling',
-          uuid: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
           zaak_type: 'Bezwaar',
           status_list: [
             {

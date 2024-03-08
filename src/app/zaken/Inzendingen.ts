@@ -1,8 +1,9 @@
 import axios, { Axios, AxiosInstance } from 'axios';
 import { Inzending, InzendingSchema, InzendingenSchema } from './Inzending';
 import { User } from './User';
+import { ZaakConnector, ZaakSummary } from './ZaakConnector';
 
-export class Inzendingen {
+export class Inzendingen implements ZaakConnector {
   private axios: Axios;
   private baseUrl: string;
   constructor(config: {
@@ -79,12 +80,7 @@ export class Inzendingen {
     }
   }
 
-  async list(user: User): Promise<{
-    id: string;
-    key: string;
-    registratiedatum: string;
-    status: string;
-  }[]> {
+  async list(user: User): Promise<ZaakSummary[]> {
     const params = new URLSearchParams({
       user_id: user.identifier,
       user_type: user.type,
@@ -112,11 +108,12 @@ export class Inzendingen {
     return results;
   }
 
-  summarize(inzending: Inzending) {
+  summarize(inzending: Inzending): ZaakSummary {
     return {
-      id: inzending.formTitle,
-      key: inzending.key,
-      registratiedatum: this.humanDate(inzending.dateSubmitted),
+      identifier: inzending.formTitle,
+      internal_id: inzending.key,
+      registratiedatum: new Date(inzending.dateSubmitted),
+      zaak_type: 'formulierinzending',
       status: 'ontvangen',
     };
   }

@@ -20,7 +20,7 @@ describe('Inzendingen from submission storage', () => {
   test('Getting a list of submissions', async() => {
     const submissions = await inzendingen.list(person);
     expect(submissions).toHaveLength(23);
-    expect(submissions.pop()).toHaveProperty('id');
+    expect(submissions.pop()).toHaveProperty('identifier');
   });
 
   test('Getting a single submission', async() => {
