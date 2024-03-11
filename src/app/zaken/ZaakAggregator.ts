@@ -2,9 +2,9 @@ import { User } from './User';
 import { ZaakConnector, ZaakSummary } from './ZaakConnector';
 
 interface Config {
-  zaakConnectors: ZaakConnector[];
+  zaakConnectors: { [key: string]: ZaakConnector };
 }
-export class ZaakAggregator implements ZaakConnector {
+export class ZaakAggregator {
   private zaakConnectors;
 
   constructor(config: Config) {
@@ -12,14 +12,14 @@ export class ZaakAggregator implements ZaakConnector {
   }
 
   async list(user: User): Promise<ZaakSummary[]> {
-    const listPromises = this.zaakConnectors.map(connector => connector.list(user));
+    const listPromises = Object.values(this.zaakConnectors)
+      .map(connector => connector.list(user));
     const results = await Promise.all(listPromises);
-
     return results.flat();
   }
 
-  // async get(zaakId: string, user: User) {
-  //   const zaak = await this.zaken.get(zaakId, user);
-  //   return zaak;
-  // }
+  async get(zaakId: string, zaakConnectorId: string, user: User) {
+    const zaak = await this.zaakConnectors[zaakConnectorId].get(zaakId, user);
+    return zaak;
+  }
 }

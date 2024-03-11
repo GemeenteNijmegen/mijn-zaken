@@ -45,11 +45,11 @@ describe('Zaken', () => {
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('constructing object succeeds', async () => {
     axiosMock.onGet().reply(200, []);
-    expect(() => { new Zaken(client); }).not.toThrow();
+    expect(() => { new Zaken(client, { zaakConnectorId: 'test' }); }).not.toThrow();
   });
 
   test('zaken are processed correctly', async () => {
-    const statusResults = new Zaken(client);
+    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
     const results = await statusResults.list(person);
     expect(results).toStrictEqual([
       {
@@ -90,7 +90,7 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client);
+      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toStrictEqual(
         {
@@ -126,15 +126,13 @@ describe('Zaken', () => {
               volgnummer: 3,
             },
           ],
-          documenten: null,
-          has_documenten: false,
+          documenten: [],
           taken: null,
-          has_taken: false,
         });
     });
 
   test('a single zaak has several statusses, which are available in the zaak', async () => {
-    const statusResults = new Zaken(client, { show_documents: true });
+    const statusResults = new Zaken(client, { show_documents: true, zaakConnectorId: 'test' });
     const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
     expect(results).toStrictEqual({
       identifier: 'Z23.001592',
@@ -169,7 +167,6 @@ describe('Zaken', () => {
       ],
       internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
       zaak_type: 'Bezwaar',
-      has_documenten: true,
       documenten: [
         {
           beschrijving: '',
@@ -185,12 +182,11 @@ describe('Zaken', () => {
         },
       ],
       taken: null,
-      has_taken: false,
     });
   });
 
   test('a single zaak can have a null status', async () => {
-    const statusResults = new Zaken(client);
+    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
     const results = await statusResults.get('noStatus', person);
     expect(results).toStrictEqual({
       identifier: 'Z23.001592',
@@ -203,10 +199,8 @@ describe('Zaken', () => {
       status_list: null,
       internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
       zaak_type: 'Bezwaar',
-      has_documenten: false,
-      documenten: null,
+      documenten: [],
       taken: null,
-      has_taken: false,
     });
   });
 
@@ -233,7 +227,7 @@ describe('Filtering domains', () => {
   const person = new Person(new Bsn('900222670'));
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('zaken are filtered (APV)', async () => {
-    const statusResults = new Zaken(client);
+    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
     statusResults.allowDomains(['APV']);
     const results = await statusResults.list(person);
     expect(results).toStrictEqual([{
@@ -250,7 +244,7 @@ describe('Filtering domains', () => {
   });
 
   test('zaken are filtered (JZ)', async () => {
-    const statusResults = new Zaken(client);
+    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
     statusResults.allowDomains(['JZ']);
     const results = await statusResults.list(person);
     expect(results).toStrictEqual([
@@ -281,7 +275,7 @@ describe('Filtering domains', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client);
+      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
       statusResults.allowDomains(['JZ']);
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toStrictEqual(
@@ -318,15 +312,13 @@ describe('Filtering domains', () => {
               volgnummer: 3,
             },
           ],
-          has_documenten: false,
-          documenten: null,
+          documenten: [],
           taken: null,
-          has_taken: false,
         });
     });
   test('a single zaak is filtered correctly (APV)',
     async () => {
-      const statusResults = new Zaken(client);
+      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
       statusResults.allowDomains(['APV']);
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toBeFalsy();

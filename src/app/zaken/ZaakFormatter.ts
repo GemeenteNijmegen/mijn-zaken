@@ -1,23 +1,35 @@
-import { ZaakSummary } from './ZaakConnector';
+import { SingleZaak, ZaakSummary } from './ZaakConnector';
 
 export class ZaakFormatter {
   static formatList(zaken: ZaakSummary[]) {
     const sorted = zaken
       .sort((a, b) => a.registratiedatum < b.registratiedatum ? 1 : -1)
-      .map(zaak => this.formatZaak(zaak));
+      .map(zaak => this.formatZaakSummary(zaak));
     return {
-      open: sorted.filter(zaak => zaak.resultaat),
-      gesloten: sorted.filter(zaak => !zaak.resultaat),
+      open: sorted.filter(zaak => !zaak.resultaat),
+      gesloten: sorted.filter(zaak => zaak.resultaat),
     };
   }
 
-  static formatZaak(zaak: ZaakSummary) {
+  static formatZaakSummary(zaak: ZaakSummary) {
     return {
       ...zaak,
       registratiedatum: this.humanDate(zaak.registratiedatum),
       verwachtte_einddatum: this.humanDate(zaak.verwachtte_einddatum),
       uiterlijke_einddatum: this.humanDate(zaak.uiterlijke_einddatum),
       einddatum: this.humanDate(zaak.einddatum),
+    };
+  }
+
+  static formatZaak(zaak: SingleZaak) {
+    return {
+      ...zaak,
+      registratiedatum: this.humanDate(zaak.registratiedatum),
+      verwachtte_einddatum: this.humanDate(zaak.verwachtte_einddatum),
+      uiterlijke_einddatum: this.humanDate(zaak.uiterlijke_einddatum),
+      einddatum: this.humanDate(zaak.einddatum),
+      has_documenten: zaak.documenten && zaak.documenten?.length > 0 ? true : false,
+      has_taken: zaak.taken && zaak.taken?.length > 0 ? true : false,
     };
   }
 

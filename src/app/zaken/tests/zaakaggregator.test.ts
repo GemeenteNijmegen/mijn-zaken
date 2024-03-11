@@ -77,14 +77,14 @@ let baseUrl = new URL('http://localhost');
 const person = new Person(new Bsn('900222670'));
 const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
 const inzendingen = new Inzendingen({ baseUrl: 'https://example.com', accessKey: 'test-access-key' });
-const zaken = new Zaken(client);
+const zaken = new Zaken(client, { zaakConnectorId: 'test' });
 describe('Zaakaggregator returns combined zaken', () => {
   test('Zaakaggregator results in summaries useful for listing', async() => {
     const aggregator = new ZaakAggregator({
-      zaakConnectors: [
-        zaken,
-        inzendingen,
-      ],
+      zaakConnectors: {
+        openzaak: zaken,
+        inzendingen: inzendingen,
+      },
     });
     expect(await aggregator.list(person)).toStrictEqual(mockedAggregatedZaken);
   });
