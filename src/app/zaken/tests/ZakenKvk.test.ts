@@ -40,7 +40,7 @@ describe('Zaken', () => {
   const user = new Organisation('12345678');
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('zaken are processed correctly', async () => {
-    const statusResults = new Zaken(client);
+    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
     const results = await statusResults.list(user);
     expect(results).toStrictEqual([
       {
@@ -72,7 +72,7 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client);
+      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', user);
       expect(results).toStrictEqual(
         {
@@ -108,10 +108,8 @@ describe('Zaken', () => {
               volgnummer: 3,
             },
           ],
-          documenten: null,
-          has_documenten: false,
+          documenten: [],
           taken: null,
-          has_taken: false,
         });
     });
 

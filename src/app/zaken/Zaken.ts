@@ -1,9 +1,10 @@
 import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import { User } from './User';
-import { ZaakConnector, ZaakSummary } from './ZaakConnector';
+import { SingleZaak, ZaakConnector, ZaakSummary } from './ZaakConnector';
 
 interface Config {
+  zaakConnectorId: string;
   taken?: Taken;
 
   /**
@@ -31,17 +32,19 @@ export class Zaken implements ZaakConnector {
 
   private show_documents?: boolean;
 
-  constructor(client: OpenZaakClient, config?: Config) {
+  public zaakConnectorId: string;
+
+  constructor(client: OpenZaakClient, config: Config) {
     this.client = client;
     this.taken = config?.taken;
     this.show_documents = config?.show_documents;
+    this.zaakConnectorId = config.zaakConnectorId;
 
     // Cache metadata
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
-
   }
 
   setTaken(taken: Taken) {
@@ -103,7 +106,7 @@ export class Zaken implements ZaakConnector {
     return [];
   }
 
-  async get(zaakId: string, user: User) {
+  async get(zaakId: string, user: User): Promise<SingleZaak|false> {
     await this.metaData();
 
     console.time('get zaak');
@@ -127,6 +130,9 @@ export class Zaken implements ZaakConnector {
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
     console.debug('check role', rol);
+
+    console.timeLog('get zaak', 'zaak opgehaald');
+    console.timeEnd('get zaak');
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
         internal_id: zaak.uuid,
@@ -140,13 +146,9 @@ export class Zaken implements ZaakConnector {
         status: this.statusTypes.results.find((type: any) => type.url == status?.statustype)?.omschrijving || null,
         resultaat: resultaat?.omschrijving ?? null,
         documenten: documents,
-        has_documenten: documents && documents.length > 0 ? true : false,
         taken: taken,
-        has_taken: taken?.count > 0 ? true : false,
       };
     }
-    console.timeLog('get zaak', 'zaak opgehaald');
-    console.timeEnd('get zaak');
     return false;
   }
   private statusTypesForZaakType(zaakType: any, status: any) {
@@ -274,11 +276,11 @@ export class Zaken implements ZaakConnector {
   }
 
   private async documents(zaakId: string) {
-    if (!this.show_documents) { return null; }
+    if (!this.show_documents) { return []; }
     try {
       const zaakinformatieobjecten = await this.client.request(`/zaken/api/v1/zaakinformatieobjecten?zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`);
 
-      if (!zaakinformatieobjecten || zaakinformatieobjecten.length <= 0) { return false; }
+      if (!zaakinformatieobjecten || zaakinformatieobjecten.length <= 0) { return []; }
       const documentUrls = zaakinformatieobjecten
         .map((zaakinformatieobject: any) => zaakinformatieobject.informatieobject).filter((informatieobject: any) => informatieobject != null,
         );

@@ -10,6 +10,7 @@ import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Organisation, Person, User } from './User';
 import { ZaakAggregator } from './ZaakAggregator';
+import { ZaakConnector } from './ZaakConnector';
 import { ZaakFormatter } from './ZaakFormatter';
 import { Zaken } from './Zaken';
 import { Navigation } from '../../shared/Navigation';
@@ -24,7 +25,7 @@ export async function zakenRequestHandler(
     zaak?: string;
     takenSecret: string;
   }) {
-
+  console.debug('config, ', config);
   let takenObj = undefined;
   if (config.takenSecret) {
     takenObj = taken(config.takenSecret);
@@ -66,8 +67,7 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
   const user = getUser(session);
 
   statuses.allowDomains(['APV']);
-  const connectors = (inzendingen) ? [statuses, inzendingen] : [statuses];
-  const aggregator = new ZaakAggregator({ zaakConnectors: connectors });
+  let aggregator = zakenAggregator(inzendingen, statuses);
   const zaken = await aggregator.list(user);
   const zaakSummaries = ZaakFormatter.formatList(zaken);
 
@@ -79,30 +79,36 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
     nav: navigation.items,
     zaken: zaakSummaries,
   };
-
+  console.debug('data', JSON.stringify(data.zaken));
   // render page
   const html = await render(data, zakenTemplate.default);
   return Response.html(html, 200, session.getCookie());
 }
 
-function getUser(session: Session) {
-  const userType = session.getValue('user_type');
-  let user: User;
-  if (userType == 'organisation') {
-    user = new Organisation(session.getValue('identifier'));
+function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) {
+  let aggregator;
+  if (inzendingen) {
+    aggregator = new ZaakAggregator({
+      zaakConnectors: {
+        openzaak: statuses,
+        submissions: inzendingen,
+      },
+    });
   } else {
-    user = new Person(new Bsn(session.getValue('identifier')));
-  }
-  return user;
+    aggregator = new ZaakAggregator({
+      zaakConnectors: {
+        openzaak: statuses,
+      },
+    });
+  };
+  return aggregator;
 }
 
-async function singleZaakRequest(session: Session, statuses: Zaken, zaak: string) {
+async function singleZaakRequest(session: Session, statuses: ZaakConnector, zaak: string) {
 
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
-  statuses.allowDomains(['APV']);
-
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
 
   let data = {
@@ -118,6 +124,17 @@ async function singleZaakRequest(session: Session, statuses: Zaken, zaak: string
   // render page
   const html = await render(data, zaakTemplate.default);
   return Response.html(html, 200, session.getCookie());
+}
+
+function getUser(session: Session) {
+  const userType = session.getValue('user_type');
+  let user: User;
+  if (userType == 'organisation') {
+    user = new Organisation(session.getValue('identifier'));
+  } else {
+    user = new Person(new Bsn(session.getValue('identifier')));
+  }
+  return user;
 }
 
 /**
