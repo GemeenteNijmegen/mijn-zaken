@@ -49,11 +49,11 @@ export async function zakenRequestHandler(
         let zaakConnector;
         if (config.zaakConnectorId == 'inzendingen') {
           zaakConnector = config.inzendingen;
-        } else if (config.zaakConnectorId == 'zaken') {
+        } else if (config.zaakConnectorId == 'zaak') {
           zaakConnector = config.zaken;
         }
         if (zaakConnector) {
-          response = await singleZaakRequest(session, config.zaken, config.zaak);
+          response = await singleZaakRequest(session, zaakConnector, config.zaak);
         } else {
           throw Error('No suitable zaakconnector found');
         }
