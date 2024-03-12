@@ -23,6 +23,7 @@ export async function zakenRequestHandler(
     zaken: Zaken;
     inzendingen?: Inzendingen;
     zaak?: string;
+    zaakConnectorId?: string;
     takenSecret: string;
   }) {
   console.debug('config, ', config);
@@ -45,7 +46,17 @@ export async function zakenRequestHandler(
     try {
       let response;
       if (config.zaak) {
-        response = await singleZaakRequest(session, config.zaken, config.zaak);
+        let zaakConnector;
+        if (config.zaakConnectorId == 'inzendingen') {
+          zaakConnector = config.inzendingen;
+        } else if (config.zaakConnectorId == 'zaken') {
+          zaakConnector = config.zaken;
+        }
+        if (zaakConnector) {
+          response = await singleZaakRequest(session, config.zaken, config.zaak);
+        } else {
+          throw Error('No suitable zaakconnector found');
+        }
       } else {
         response = await listZakenRequest(session, config.zaken, config.inzendingen);
       }
@@ -90,21 +101,21 @@ function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) 
   if (inzendingen) {
     aggregator = new ZaakAggregator({
       zaakConnectors: {
-        openzaak: statuses,
-        submissions: inzendingen,
+        zaken: statuses,
+        inzendingen: inzendingen,
       },
     });
   } else {
     aggregator = new ZaakAggregator({
       zaakConnectors: {
-        openzaak: statuses,
+        zaken: statuses,
       },
     });
   };
   return aggregator;
 }
 
-async function singleZaakRequest(session: Session, statuses: ZaakConnector, zaak: string) {
+async function singleZaakRequest(session: Session, statuses: ZaakConnector, zaakId: string) {
 
   console.timeLog('request', 'Api Client init');
 
@@ -116,7 +127,7 @@ async function singleZaakRequest(session: Session, statuses: ZaakConnector, zaak
     title: 'Zaak',
     shownav: true,
     nav: navigation.items,
-    zaak: await statuses.get(zaak, user),
+    zaak: await statuses.get(zaakId, user),
   };
   console.debug('zaak', JSON.stringify(data.zaak));
   console.timeLog('request', 'zaak received');

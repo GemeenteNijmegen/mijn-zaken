@@ -25,10 +25,25 @@ async function initSecret() {
 
 const initPromise = initSecret();
 
-function parseEvent(event: APIGatewayProxyEventV2): any {
+function parseEvent(event: APIGatewayProxyEventV2): { cookies: string; zaakId?: string; zaakConnectorId?: string } {
+  if (!event.cookies) {
+    throw Error('no cookies in event');
+  }
+  const cookies = event.cookies.join(';');
+  if (event?.pathParameters?.zaak) {
+    const pathParts = event?.pathParameters?.zaak.split('/');
+    if (pathParts.length > 1) {
+      const zaakConnectorId = pathParts[0];
+      const zaakId = pathParts[1];
+      return {
+        cookies,
+        zaakId,
+        zaakConnectorId,
+      };
+    }
+  }
   return {
-    cookies: event?.cookies?.join(';'),
-    zaak: event?.pathParameters?.zaak,
+    cookies,
   };
 }
 
@@ -42,7 +57,8 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const zakenClient = sharedOpenZaakClient(secrets.vipSecret);
     return await zakenRequestHandler(params.cookies, dynamoDBClient, {
       zaken: await sharedZaken(zakenClient),
-      zaak: params.zaak,
+      zaak: params.zaakId,
+      zaakConnectorId: params.zaakConnectorId,
       takenSecret: secrets.takenSecret,
       inzendingen: inzendingen(secrets.submissionstorageSecret),
     });
