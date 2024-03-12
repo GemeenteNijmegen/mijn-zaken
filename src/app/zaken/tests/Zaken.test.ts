@@ -45,11 +45,13 @@ describe('Zaken', () => {
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('constructing object succeeds', async () => {
     axiosMock.onGet().reply(200, []);
-    expect(() => { new Zaken(client, { zaakConnectorId: 'test' }); }).not.toThrow();
+    const zaakConnectorId = 'testzaak';
+    expect(() => { new Zaken(client, { zaakConnectorId }); }).not.toThrow();
   });
 
   test('zaken are processed correctly', async () => {
-    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+    const zaakConnectorId = 'testzaak';
+    const statusResults = new Zaken(client, { zaakConnectorId });
     const results = await statusResults.list(person);
     expect(results).toStrictEqual([
       {
@@ -60,7 +62,7 @@ describe('Zaken', () => {
         uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
         resultaat: null,
         status: 'In behandeling',
-        internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+        internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
         zaak_type: 'Bezwaar',
       },
       {
@@ -70,7 +72,7 @@ describe('Zaken', () => {
         resultaat: null,
         status: null,
         uiterlijke_einddatum: new Date('2024-09-20T00:00:00.000Z'),
-        internal_id: '30009319-395f-491f-be0e-24c0e0d04a75',
+        internal_id: `${zaakConnectorId}/30009319-395f-491f-be0e-24c0e0d04a75`,
         verwachtte_einddatum: new Date('2024-09-20T00:00:00.000Z'),
         zaak_type: 'Bingo',
       },
@@ -82,7 +84,7 @@ describe('Zaken', () => {
         uiterlijke_einddatum: new Date('2023-06-11T00:00:00.000Z'),
         resultaat: 'Ingetrokken na BIA',
         status: 'In behandeling',
-        internal_id: '3720dbc1-6a94-411e-b651-0aeb67330064',
+        internal_id: `${zaakConnectorId}/3720dbc1-6a94-411e-b651-0aeb67330064`,
         zaak_type: 'Klacht',
       },
     ]);
@@ -90,7 +92,8 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+      const zaakConnectorId = 'testzaak';
+      const statusResults = new Zaken(client, { zaakConnectorId });
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toStrictEqual(
         {
@@ -101,7 +104,7 @@ describe('Zaken', () => {
           uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
           resultaat: null,
           status: 'In behandeling',
-          internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
           zaak_type: 'Bezwaar',
           status_list: [
             {
@@ -132,7 +135,8 @@ describe('Zaken', () => {
     });
 
   test('a single zaak has several statusses, which are available in the zaak', async () => {
-    const statusResults = new Zaken(client, { show_documents: true, zaakConnectorId: 'test' });
+    const zaakConnectorId = 'testzaak';
+    const statusResults = new Zaken(client, { show_documents: true, zaakConnectorId });
     const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
     expect(results).toStrictEqual({
       identifier: 'Z23.001592',
@@ -165,7 +169,7 @@ describe('Zaken', () => {
           volgnummer: 3,
         },
       ],
-      internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+      internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
       zaak_type: 'Bezwaar',
       documenten: [
         {
@@ -186,7 +190,8 @@ describe('Zaken', () => {
   });
 
   test('a single zaak can have a null status', async () => {
-    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+    const zaakConnectorId = 'testzaak2';
+    const statusResults = new Zaken(client, { zaakConnectorId });
     const results = await statusResults.get('noStatus', person);
     expect(results).toStrictEqual({
       identifier: 'Z23.001592',
@@ -197,7 +202,7 @@ describe('Zaken', () => {
       resultaat: null,
       status: null,
       status_list: null,
-      internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+      internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
       zaak_type: 'Bezwaar',
       documenten: [],
       taken: null,
@@ -227,7 +232,8 @@ describe('Filtering domains', () => {
   const person = new Person(new Bsn('900222670'));
   const client = new OpenZaakClient({ baseUrl, axiosInstance: axios });
   test('zaken are filtered (APV)', async () => {
-    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+    const zaakConnectorId = 'testzaak';
+    const statusResults = new Zaken(client, { zaakConnectorId });
     statusResults.allowDomains(['APV']);
     const results = await statusResults.list(person);
     expect(results).toStrictEqual([{
@@ -237,14 +243,15 @@ describe('Filtering domains', () => {
       resultaat: null,
       status: null,
       uiterlijke_einddatum: new Date('2024-09-20T00:00:00.000Z'),
-      internal_id: '30009319-395f-491f-be0e-24c0e0d04a75',
+      internal_id: `${zaakConnectorId}/30009319-395f-491f-be0e-24c0e0d04a75`,
       verwachtte_einddatum: new Date('2024-09-20T00:00:00.000Z'),
       zaak_type: 'Bingo',
     }]);
   });
 
   test('zaken are filtered (JZ)', async () => {
-    const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+    const zaakConnectorId = 'testzaak';
+    const statusResults = new Zaken(client, { zaakConnectorId });
     statusResults.allowDomains(['JZ']);
     const results = await statusResults.list(person);
     expect(results).toStrictEqual([
@@ -256,7 +263,7 @@ describe('Filtering domains', () => {
         uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
         resultaat: null,
         status: 'In behandeling',
-        internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+        internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
         zaak_type: 'Bezwaar',
       },
       {
@@ -267,7 +274,7 @@ describe('Filtering domains', () => {
         uiterlijke_einddatum: new Date('2023-06-11T00:00:00.000Z'),
         resultaat: 'Ingetrokken na BIA',
         status: 'In behandeling',
-        internal_id: '3720dbc1-6a94-411e-b651-0aeb67330064',
+        internal_id: `${zaakConnectorId}/3720dbc1-6a94-411e-b651-0aeb67330064`,
         zaak_type: 'Klacht',
       },
     ]);
@@ -275,7 +282,8 @@ describe('Filtering domains', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+      const zaakConnectorId = 'testzaak';
+      const statusResults = new Zaken(client, { zaakConnectorId });
       statusResults.allowDomains(['JZ']);
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toStrictEqual(
@@ -287,7 +295,7 @@ describe('Filtering domains', () => {
           uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
           resultaat: null,
           status: 'In behandeling',
-          internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
           zaak_type: 'Bezwaar',
           status_list: [
             {
@@ -318,7 +326,8 @@ describe('Filtering domains', () => {
     });
   test('a single zaak is filtered correctly (APV)',
     async () => {
-      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+      const zaakConnectorId = 'testzaak';
+      const statusResults = new Zaken(client, { zaakConnectorId });
       statusResults.allowDomains(['APV']);
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', person);
       expect(results).toBeFalsy();

@@ -111,7 +111,7 @@ export class Inzendingen implements ZaakConnector {
   summarize(inzending: Inzending): ZaakSummary {
     return {
       identifier: inzending.key,
-      internal_id: inzending.key,
+      internal_id: `inzendingen/${inzending.key}`,
       registratiedatum: new Date(inzending.dateSubmitted),
       zaak_type: inzending.formTitle,
       status: 'ontvangen',

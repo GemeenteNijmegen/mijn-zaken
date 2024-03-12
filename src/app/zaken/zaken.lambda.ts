@@ -76,7 +76,7 @@ function inzendingen(accessKey: string) {
 
 async function sharedZaken(client: OpenZaakClient) {
   if (!zaken) {
-    zaken = new Zaken(client, { show_documents: process.env.SHOW_DOCUMENTS == 'True' });
+    zaken = new Zaken(client, { zaakConnectorId: 'zaak', show_documents: process.env.SHOW_DOCUMENTS == 'True' });
     await zaken.metaData();
   }
   return zaken;

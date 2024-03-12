@@ -135,7 +135,7 @@ export class Zaken implements ZaakConnector {
     console.timeEnd('get zaak');
     if (Number(rol?.count) >= 1) { //TODO: Omschrijven (ik gok check of persoon met bsn wel rol heeft in de zaak)
       return {
-        internal_id: zaak.uuid,
+        internal_id: `${this.zaakConnectorId}/${zaak.uuid}`,
         identifier: zaak.identificatie,
         registratiedatum: new Date(zaak.registratiedatum),
         verwachtte_einddatum: new Date(zaak.einddatumGepland),
@@ -214,7 +214,7 @@ export class Zaken implements ZaakConnector {
       }
       const summary = {
         identifier: zaak.identificatie,
-        internal_id: zaak.uuid,
+        internal_id: `${this.zaakConnectorId}/${zaak.uuid}`,
         registratiedatum: new Date(zaak.registratiedatum),
         verwachtte_einddatum: new Date(zaak.einddatumGepland),
         uiterlijke_einddatum: new Date(zaak.uiterlijkeEinddatumAfdoening),

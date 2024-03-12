@@ -51,7 +51,7 @@ describe('Zaken', () => {
         uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
         resultaat: null,
         status: 'In behandeling',
-        internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+        internal_id: 'test/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
         zaak_type: 'Bezwaar',
       },
 
@@ -63,7 +63,7 @@ describe('Zaken', () => {
         uiterlijke_einddatum: new Date('2023-06-11T00:00:00.000Z'),
         resultaat: 'Ingetrokken na BIA',
         status: 'In behandeling',
-        internal_id: '3720dbc1-6a94-411e-b651-0aeb67330064',
+        internal_id: 'test/3720dbc1-6a94-411e-b651-0aeb67330064',
         zaak_type: 'Klacht',
       },
     ],
@@ -72,7 +72,8 @@ describe('Zaken', () => {
 
   test('a single zaak is processed correctly',
     async () => {
-      const statusResults = new Zaken(client, { zaakConnectorId: 'test' });
+      const zaakConnectorId = 'testzaak';
+      const statusResults = new Zaken(client, { zaakConnectorId });
       const results = await statusResults.get('5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', user);
       expect(results).toStrictEqual(
         {
@@ -83,7 +84,7 @@ describe('Zaken', () => {
           uiterlijke_einddatum: new Date('2023-10-11T00:00:00.000Z'),
           resultaat: null,
           status: 'In behandeling',
-          internal_id: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886',
+          internal_id: `${zaakConnectorId}/5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886`,
           zaak_type: 'Bezwaar',
           status_list: [
             {
