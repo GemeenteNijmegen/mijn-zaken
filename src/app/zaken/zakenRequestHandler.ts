@@ -115,26 +115,29 @@ function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) 
   return aggregator;
 }
 
-async function singleZaakRequest(session: Session, statuses: ZaakConnector, zaakId: string) {
+async function singleZaakRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string) {
 
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
-
-  let data = {
-    volledigenaam: session.getValue('username'),
-    title: 'Zaak',
-    shownav: true,
-    nav: navigation.items,
-    zaak: await statuses.get(zaakId, user),
-  };
-  console.debug('zaak', JSON.stringify(data.zaak));
+  const zaak = await zaakConnector.get(zaakId, user);
   console.timeLog('request', 'zaak received');
-
-  // render page
-  const html = await render(data, zaakTemplate.default);
-  return Response.html(html, 200, session.getCookie());
+  if (zaak) {
+    const formattedZaak = ZaakFormatter.formatZaak(zaak);
+    let data = {
+      volledigenaam: session.getValue('username'),
+      title: 'Zaak',
+      shownav: true,
+      nav: navigation.items,
+      zaak: formattedZaak,
+    };
+    // render page
+    const html = await render(data, zaakTemplate.default);
+    return Response.html(html, 200, session.getCookie());
+  } else {
+    return Response.error(404);
+  }
 }
 
 function getUser(session: Session) {
