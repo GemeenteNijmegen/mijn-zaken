@@ -30,6 +30,7 @@ export class ZaakFormatter {
       einddatum: this.humanDate(zaak.einddatum),
       has_documenten: zaak.documenten && zaak.documenten?.length > 0 ? true : false,
       has_taken: zaak.taken && zaak.taken?.length > 0 ? true : false,
+      has_statuses: zaak.status_list && zaak.status_list?.length > 0 ? true : false,
     };
   }
 

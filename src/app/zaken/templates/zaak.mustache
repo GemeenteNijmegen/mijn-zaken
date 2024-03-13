@@ -17,7 +17,7 @@
         <div class="col-lg-9 col-md-12">
             {{#zaak}}
                 <h1>{{zaak_type}}</h1>
-                <p class="lead">Uw aanvraag is op dit moment in de fase: <strong>{{status}}</strong>. Verwachtte einddatum: <strong>{{verwachtte_einddatum}}</strong>.</p>
+                <p class="lead">Uw aanvraag is op dit moment in de fase: <strong>{{status}}</strong>. {{#verwachtte_einddatum}}Verwachtte einddatum: <strong>{{verwachtte_einddatum}}</strong>.{{/verwachtte_einddatum}}</p>
                 {{#taken}}
                 <div class="denhaag-action">
                     <div class="denhaag-action__content">
@@ -57,6 +57,7 @@
                     </div>
                 </div>
                 {{/taken}}
+                {{#has_statuses}}
                 <h2>Huidige status</h2>
                 <ol class="denhaag-process-steps">
                 {{#status_list}}
@@ -87,6 +88,7 @@
                     </li>
                 {{/status_list}}
                 </ol>
+                {{/has_statuses}}
             <h2>Details</h2>
             <p><strong>Datum aanvraag</strong>: {{registratiedatum}}</p>
             <p><strong>Zaaknummer</strong>: {{id}}</p>

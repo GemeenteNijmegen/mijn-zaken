@@ -124,7 +124,6 @@ export class Inzendingen implements ZaakConnector {
       key: inzending.key,
       registratiedatum: this.humanDate(inzending.dateSubmitted),
       status: 'ontvangen',
-      status_list: [],
       documenten: inzending.attachments.map((attachment) => {
         return {
           url: `/download/${attachment}`,
@@ -132,8 +131,6 @@ export class Inzendingen implements ZaakConnector {
           registratieDatum: inzending.dateSubmitted,
         };
       }),
-      has_documenten: inzending.attachments.length > 0 ? true : false,
-      has_taken: false,
     };
   }
 
