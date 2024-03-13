@@ -122,7 +122,7 @@ export class Inzendingen implements ZaakConnector {
     return {
       id: inzending.formTitle,
       key: inzending.key,
-      registratiedatum: this.humanDate(inzending.dateSubmitted),
+      registratiedatum: new Date(inzending.dateSubmitted),
       status: 'ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
@@ -132,13 +132,5 @@ export class Inzendingen implements ZaakConnector {
         };
       }),
     };
-  }
-
-  /**
-   * Convert ISO 8601 datestring to something formatted like '12 september 2023'
-   */
-  private humanDate(dateString: string) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 }
