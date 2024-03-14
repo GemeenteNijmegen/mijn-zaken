@@ -114,7 +114,7 @@ export class Inzendingen implements ZaakConnector {
     return {
       identifier: inzending.key,
       internal_id: `inzendingen/${inzending.key}`,
-      registratiedatum: inzending.dateSubmitted,
+      registratiedatum: inzending?.dateSubmitted,
       zaak_type: inzending.formTitle,
       status: 'ontvangen',
     };
