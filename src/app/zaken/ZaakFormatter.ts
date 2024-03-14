@@ -29,6 +29,7 @@ export class ZaakFormatter {
       uiterlijke_einddatum: this.humanDate(zaak.uiterlijke_einddatum),
       einddatum: this.humanDate(zaak.einddatum),
       has_documenten: zaak.documenten && zaak.documenten?.length > 0 ? true : false,
+      documenten: zaak.documenten?.sort(this.sortDocuments),
       has_taken: zaak.taken && zaak.taken?.length > 0 ? true : false,
       has_statuses: zaak.status_list && zaak.status_list?.length > 0 ? true : false,
     };
@@ -40,5 +41,18 @@ export class ZaakFormatter {
   private static humanDate(date: Date | undefined) {
     if (!date) { return; }
     return date.toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  private static sortDocuments(document_a: any, document_b: any) {
+    if (document_a.sort_order || document_b.sort_order) {
+      console.debug('sorting by order');
+      return document_a.sort_order > document_b.sort_order ? 1 : -1;
+    }
+    if (document_a.registratieDatum !== document_b.registratieDatum) {
+      console.debug('sorting by date');
+      return document_a.registratieDatum < document_b.registratieDatum ? 1 : -1;
+    }
+    console.debug('sorting by title');
+    return document_a.titel < document_b.titel ? 1 : -1;
   }
 }

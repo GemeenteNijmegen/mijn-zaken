@@ -96,7 +96,9 @@ export class Inzendingen implements ZaakConnector {
       user_type: user.type,
     });
     const results = await this.request(`submissions/${key}`, params);
-    return this.summarizeSingle(InzendingSchema.parse(results));
+    const submission = this.summarizeSingle(InzendingSchema.parse(results));
+    console.debug('formatted inzending', submission);
+    return submission;
   }
 
 
@@ -112,29 +114,34 @@ export class Inzendingen implements ZaakConnector {
     return {
       identifier: inzending.key,
       internal_id: `inzendingen/${inzending.key}`,
-      registratiedatum: new Date(inzending.dateSubmitted),
+      registratiedatum: inzending.dateSubmitted,
       zaak_type: inzending.formTitle,
       status: 'ontvangen',
     };
   }
 
   summarizeSingle(inzending: Inzending) {
-    return {
+    const single = {
       id: inzending.formTitle,
       key: inzending.key,
-      registratiedatum: new Date(inzending.dateSubmitted),
+      registratiedatum: inzending.dateSubmitted,
       status: 'ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
-          url: `/download/${inzending.key}/${attachment}`,
+          url: `/download/${inzending.key}/attachments/${attachment}`,
           titel: attachment,
           registratieDatum: inzending.dateSubmitted,
+          sort_order: 1,
         };
-      }).push({
-        url: `/download/${inzending.key}/${inzending.key}.pdf`,
-        titel: 'formulier (PDF)',
-        registratieDatum: inzending.dateSubmitted,
       }),
     };
+    // Add the PDF link to the documenten-list
+    single.documenten.push({
+      url: `/download/${inzending.key}/${inzending.key}.pdf`,
+      titel: 'Formulier (PDF)',
+      registratieDatum: inzending.dateSubmitted,
+      sort_order: 0,
+    });
+    return single;
   }
 }
