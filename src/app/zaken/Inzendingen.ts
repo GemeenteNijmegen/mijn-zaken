@@ -107,7 +107,7 @@ export class Inzendingen implements ZaakConnector {
     console.debug(`found submission for file ${file}`);
     if (submission && submission.documenten?.find((document) => document.url == file)) {
       const params = new URLSearchParams({
-        key: file,
+        key: `${zaakId}/${file}`,
       });
       const results = await this.request('download', params);
       console.debug('found file', results);
@@ -136,7 +136,7 @@ export class Inzendingen implements ZaakConnector {
       status: 'ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
-          url: `/download/${inzending.key}/attachments/${attachment}`,
+          url: `attachments/${attachment}`,
           titel: attachment,
           registratieDatum: inzending.dateSubmitted,
           sort_order: 1,
@@ -145,7 +145,7 @@ export class Inzendingen implements ZaakConnector {
     };
     // Add the PDF link to the documenten-list
     single.documenten.push({
-      url: `/download/${inzending.key}/${inzending.key}.pdf`,
+      url: `${inzending.key}/${inzending.key}.pdf`,
       titel: 'Formulier (PDF)',
       registratieDatum: inzending.dateSubmitted,
       sort_order: 0,
