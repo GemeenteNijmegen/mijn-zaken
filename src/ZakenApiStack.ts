@@ -48,6 +48,7 @@ export class ZakenApiStack extends Stack {
 
     const jwtSecret = Secret.fromSecretNameV2(this, 'jwt-token-secret', Statics.vipJwtSecret);
     const tokenSecret = Secret.fromSecretNameV2(this, 'taken-token-secret', Statics.vipTakenSecret);
+    const submissionstorageKey = Secret.fromSecretNameV2(this, 'taken-submission-secret', Statics.submissionstorageKey);
     const zakenFunction = new ApiFunction(this, 'zaken-function', {
       description: 'Zaken-lambda voor de Mijn Nijmegen-applicatie.',
       codePath: 'app/zaken',
@@ -56,18 +57,22 @@ export class ZakenApiStack extends Stack {
       environment: {
         VIP_JWT_SECRET_ARN: jwtSecret.secretArn,
         VIP_TAKEN_SECRET_ARN: tokenSecret.secretArn,
+        SUBMISSIONSTORAGE_SECRET_ARN: submissionstorageKey.secretArn,
         VIP_JWT_USER_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmUserId),
         VIP_JWT_CLIENT_ID: SSM.StringParameter.valueForStringParameter(this, Statics.ssmClientId),
         VIP_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmBaseUrl),
         VIP_TOKEN_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmTokenBaseUrl),
+        SUBMISSIONSTORAGE_BASE_URL: SSM.StringParameter.valueForStringParameter(this, Statics.ssmSubmissionstorageBaseUrl),
         IS_LIVE: this.configuration.isLive ? 'true' : 'false',
         USE_TAKEN: this.configuration.useTaken ? 'true' : 'false',
+        SUBMISSIONS_LIVE: this.configuration.useSubmissions ? 'true' : 'false',
       },
       readOnlyRole,
       apiFunction: ZakenFunction,
     });
     jwtSecret.grantRead(zakenFunction.lambda);
     tokenSecret.grantRead(zakenFunction.lambda);
+    submissionstorageKey.grantRead(zakenFunction.lambda);
 
     new apigatewayv2.HttpRoute(this, 'zaken-route', {
       httpApi: this.api,
@@ -78,7 +83,7 @@ export class ZakenApiStack extends Stack {
     new apigatewayv2.HttpRoute(this, 'zaak-route', {
       httpApi: this.api,
       integration: new HttpLambdaIntegration('zaak', zakenFunction.lambda),
-      routeKey: HttpRouteKey.with('/zaken/{zaak}', apigatewayv2.HttpMethod.GET),
+      routeKey: HttpRouteKey.with('/zaken/{zaak+}', apigatewayv2.HttpMethod.GET),
     });
   }
 }

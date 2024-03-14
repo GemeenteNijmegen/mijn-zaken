@@ -27,6 +27,13 @@ export interface Configuration {
    * always exit immediately.
    */
   readonly useTaken?: boolean;
+
+  /**
+   * Feature flag: The submissions functionality is experimental
+   * If this flag is not true, the submissions-functionality will
+   * not be called.
+   */
+  readonly useSubmissions?: boolean;
 }
 
 export const configurations: {[key: string]: Configuration} = {
@@ -37,6 +44,7 @@ export const configurations: {[key: string]: Configuration} = {
     deployToEnvironment: Statics.acceptanceEnvironment,
     useTaken: true,
     isLive: true,
+    useSubmissions: true,
   },
   production: {
     branchName: 'main',
@@ -44,7 +52,8 @@ export const configurations: {[key: string]: Configuration} = {
     deployFromEnvironment: Statics.deploymentEnvironment,
     deployToEnvironment: Statics.productionEnvironment,
     useTaken: false,
-    isLive: false,
+    isLive: true,
+    useSubmissions: false,
   },
 };
 

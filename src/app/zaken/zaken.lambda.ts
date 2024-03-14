@@ -2,6 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { ApiGatewayV2Response, Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { Inzendingen } from './Inzendingen';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Zaken } from './Zaken';
 import { zakenRequestHandler } from './zakenRequestHandler';
@@ -12,21 +13,37 @@ let openZaakClient: OpenZaakClient | false;
 let zaken: Zaken | false;
 
 async function initSecret() {
-  if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN) {
+  if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN || !process.env.SUBMISSIONSTORAGE_SECRET_ARN) {
     throw Error('No secret ARN provided');
   }
   return {
     vipSecret: await AWS.getSecret(process.env.VIP_JWT_SECRET_ARN),
     takenSecret: await AWS.getSecret(process.env.VIP_TAKEN_SECRET_ARN),
+    submissionstorageSecret: await AWS.getSecret(process.env.SUBMISSIONSTORAGE_SECRET_ARN),
   };
 }
 
 const initPromise = initSecret();
 
-function parseEvent(event: APIGatewayProxyEventV2): any {
+function parseEvent(event: APIGatewayProxyEventV2): { cookies: string; zaakId?: string; zaakConnectorId?: string } {
+  if (!event.cookies) {
+    throw Error('no cookies in event');
+  }
+  const cookies = event.cookies.join(';');
+  if (event?.pathParameters?.zaak) {
+    const pathParts = event?.pathParameters?.zaak.split('/');
+    if (pathParts.length > 1) {
+      const zaakConnectorId = pathParts[0];
+      const zaakId = pathParts[1];
+      return {
+        cookies,
+        zaakId,
+        zaakConnectorId,
+      };
+    }
+  }
   return {
-    cookies: event?.cookies?.join(';'),
-    zaak: event?.pathParameters?.zaak,
+    cookies,
   };
 }
 
@@ -40,8 +57,10 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const zakenClient = sharedOpenZaakClient(secrets.vipSecret);
     return await zakenRequestHandler(params.cookies, dynamoDBClient, {
       zaken: await sharedZaken(zakenClient),
-      zaak: params.zaak,
+      zaak: params.zaakId,
+      zaakConnectorId: params.zaakConnectorId,
       takenSecret: secrets.takenSecret,
+      inzendingen: inzendingen(secrets.submissionstorageSecret),
     });
   } catch (err) {
     console.debug(err);
@@ -64,9 +83,16 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
   return openZaakClient;
 }
 
+function inzendingen(accessKey: string) {
+  if (process.env.SUBMISSIONSTORAGE_BASE_URL && process.env.SUBMISSIONS_LIVE == 'true') {
+    return new Inzendingen({ baseUrl: process.env.SUBMISSIONSTORAGE_BASE_URL, accessKey });
+  }
+  return;
+}
+
 async function sharedZaken(client: OpenZaakClient) {
   if (!zaken) {
-    zaken = new Zaken(client);
+    zaken = new Zaken(client, { zaakConnectorId: 'zaak', show_documents: process.env.SHOW_DOCUMENTS == 'True' });
     await zaken.metaData();
   }
   return zaken;

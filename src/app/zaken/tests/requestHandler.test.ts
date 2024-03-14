@@ -5,10 +5,80 @@ import { mockClient } from 'aws-sdk-client-mock';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { Inzendingen } from '../Inzendingen';
 import { OpenZaakClient } from '../OpenZaakClient';
+import { ZaakSummary } from '../ZaakConnector';
 import { Zaken } from '../Zaken';
 import { zakenRequestHandler } from '../zakenRequestHandler';
 dotenv.config();
+
+const sampleDate = new Date();
+const mockedZakenList: ZaakSummary[] = [
+  {
+    identifier: '123',
+    internal_id: 'zaak/hiereenuuid',
+    registratiedatum: sampleDate,
+    verwachtte_einddatum: sampleDate,
+    uiterlijke_einddatum: sampleDate,
+    einddatum: sampleDate,
+    zaak_type: 'zaaktype1',
+    status: 'open',
+  }, {
+    identifier: '456',
+    internal_id: 'zaak/nogeenuuid',
+    registratiedatum: sampleDate,
+    verwachtte_einddatum: sampleDate,
+    uiterlijke_einddatum: sampleDate,
+    einddatum: sampleDate,
+    zaak_type: 'zaaktype1',
+    status: 'open',
+    resultaat: 'vergunning verleend',
+  },
+];
+const mockedZaak = {
+  identifier: '1234',
+  internal_id: 'inzending/nogeenuuid',
+  registratiedatum: sampleDate,
+  verwachtte_einddatum: sampleDate,
+  uiterlijke_einddatum: sampleDate,
+  einddatum: sampleDate,
+  zaak_type: 'zaaktype2',
+  status: 'open',
+};
+
+const mockedInzendingenList: ZaakSummary[] = [
+  {
+    identifier: '234',
+    internal_id: 'inzending/234',
+    registratiedatum: sampleDate,
+    zaak_type: 'inzending',
+    status: 'ontvangen',
+  },
+];
+
+jest.mock('../Zaken', () => {
+  return {
+    Zaken: jest.fn(() => {
+      return {
+        allowDomains: jest.fn(),
+        list: jest.fn().mockResolvedValue(mockedZakenList),
+        get: jest.fn().mockResolvedValue(mockedZaak),
+      };
+    }),
+  };
+});
+
+
+jest.mock('../Inzendingen', () => {
+  return {
+    Inzendingen: jest.fn(() => {
+      return {
+        list: jest.fn().mockResolvedValue(mockedInzendingenList),
+        get: jest.fn().mockResolvedValue(mockedZaak),
+      };
+    }),
+  };
+});
 
 const ddbMock = mockClient(DynamoDBClient);
 const getItemOutput: Partial<GetItemCommandOutput> = {
@@ -49,12 +119,13 @@ const axiosInstance = axios.create(
     },
   });
 const client = new OpenZaakClient({ baseUrl, axiosInstance });
-const zaken = new Zaken(client);
+const zaken = new Zaken(client, { zaakConnectorId: 'test' });
+const inzendingen = new Inzendingen({ baseUrl: 'https://localhost', accessKey: 'test' });
 
 describe('Request handler', () => {
-  test('returns 200', async () => {
-
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, takenSecret: 'test' });
+  test('returns 200 for person', async () => {
+    console.debug('inzendingen in test', inzendingen);
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, inzendingen, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
@@ -88,7 +159,7 @@ describe('Request handler', () => {
 describe('Request handler single zaak', () => {
   test('returns 200', async () => {
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test', zaakConnectorId: 'zaak' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {

@@ -20,12 +20,12 @@ describe('Inzendingen from submission storage', () => {
   test('Getting a list of submissions', async() => {
     const submissions = await inzendingen.list(person);
     expect(submissions).toHaveLength(23);
-    expect(submissions.pop()).toHaveProperty('formName');
+    expect(submissions.pop()).toHaveProperty('identifier');
   });
 
   test('Getting a single submission', async() => {
     const submission = await inzendingen.get('APV1.234', person);
-    expect(submission).toHaveProperty('formName');
+    expect(submission).toHaveProperty('id');
   });
 
   test('Getting a single submission download link', async() => {

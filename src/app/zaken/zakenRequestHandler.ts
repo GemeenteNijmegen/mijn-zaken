@@ -3,11 +3,15 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 import axios from 'axios';
+import { Inzendingen } from './Inzendingen';
 import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Organisation, Person, User } from './User';
+import { ZaakAggregator } from './ZaakAggregator';
+import { ZaakConnector } from './ZaakConnector';
+import { ZaakFormatter } from './ZaakFormatter';
 import { Zaken } from './Zaken';
 import { Navigation } from '../../shared/Navigation';
 import { render } from '../../shared/render';
@@ -17,10 +21,12 @@ export async function zakenRequestHandler(
   dynamoDBClient: DynamoDBClient,
   config: {
     zaken: Zaken;
+    inzendingen?: Inzendingen;
     zaak?: string;
+    zaakConnectorId?: string;
     takenSecret: string;
   }) {
-
+  console.debug('config, ', config);
   let takenObj = undefined;
   if (config.takenSecret) {
     takenObj = taken(config.takenSecret);
@@ -40,9 +46,19 @@ export async function zakenRequestHandler(
     try {
       let response;
       if (config.zaak) {
-        response = await singleZaakRequest(session, config.zaken, config.zaak);
+        let zaakConnector;
+        if (config.zaakConnectorId == 'inzendingen') {
+          zaakConnector = config.inzendingen;
+        } else if (config.zaakConnectorId == 'zaak') {
+          zaakConnector = config.zaken;
+        }
+        if (zaakConnector) {
+          response = await singleZaakRequest(session, zaakConnector, config.zaak);
+        } else {
+          throw Error('No suitable zaakconnector found');
+        }
       } else {
-        response = await listZakenRequest(session, config.zaken);
+        response = await listZakenRequest(session, config.zaken, config.inzendingen);
       }
       console.timeEnd('request');
       return response;
@@ -56,14 +72,15 @@ export async function zakenRequestHandler(
   return Response.redirect('/login');
 }
 
-async function listZakenRequest(session: Session, statuses: Zaken) {
+async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?: Inzendingen) {
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
 
   statuses.allowDomains(['APV']);
-  const zaken = await statuses.list(user);
-  console.timeLog('request', 'zaken received');
+  let aggregator = zakenAggregator(inzendingen, statuses);
+  const zaken = await aggregator.list(user);
+  const zaakSummaries = ZaakFormatter.formatList(zaken);
 
   const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
   let data = {
@@ -71,12 +88,56 @@ async function listZakenRequest(session: Session, statuses: Zaken) {
     title: 'Lopende zaken',
     shownav: true,
     nav: navigation.items,
-    zaken: zaken,
+    zaken: zaakSummaries,
   };
-
+  console.debug('data', JSON.stringify(data.zaken));
   // render page
   const html = await render(data, zakenTemplate.default);
   return Response.html(html, 200, session.getCookie());
+}
+
+function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) {
+  let aggregator;
+  if (inzendingen) {
+    aggregator = new ZaakAggregator({
+      zaakConnectors: {
+        zaken: statuses,
+        inzendingen: inzendingen,
+      },
+    });
+  } else {
+    aggregator = new ZaakAggregator({
+      zaakConnectors: {
+        zaken: statuses,
+      },
+    });
+  };
+  return aggregator;
+}
+
+async function singleZaakRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string) {
+
+  console.timeLog('request', 'Api Client init');
+
+  const user = getUser(session);
+  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
+  const zaak = await zaakConnector.get(zaakId, user);
+  console.timeLog('request', 'zaak received');
+  if (zaak) {
+    const formattedZaak = ZaakFormatter.formatZaak(zaak);
+    let data = {
+      volledigenaam: session.getValue('username'),
+      title: 'Zaak',
+      shownav: true,
+      nav: navigation.items,
+      zaak: formattedZaak,
+    };
+    // render page
+    const html = await render(data, zaakTemplate.default);
+    return Response.html(html, 200, session.getCookie());
+  } else {
+    return Response.error(404);
+  }
 }
 
 function getUser(session: Session) {
@@ -88,30 +149,6 @@ function getUser(session: Session) {
     user = new Person(new Bsn(session.getValue('identifier')));
   }
   return user;
-}
-
-async function singleZaakRequest(session: Session, statuses: Zaken, zaak: string) {
-
-  console.timeLog('request', 'Api Client init');
-
-  const user = getUser(session);
-  statuses.allowDomains(['APV']);
-
-  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
-
-  let data = {
-    volledigenaam: session.getValue('username'),
-    title: 'Zaak',
-    shownav: true,
-    nav: navigation.items,
-    zaak: await statuses.get(zaak, user),
-  };
-  console.debug('zaak', JSON.stringify(data.zaak));
-  console.timeLog('request', 'zaak received');
-
-  // render page
-  const html = await render(data, zaakTemplate.default);
-  return Response.html(html, 200, session.getCookie());
 }
 
 /**
