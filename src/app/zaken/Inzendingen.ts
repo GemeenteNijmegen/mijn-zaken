@@ -145,7 +145,7 @@ export class Inzendingen implements ZaakConnector {
     };
     // Add the PDF link to the documenten-list
     single.documenten.push({
-      url: `${inzending.key}/${inzending.key}.pdf`,
+      url: `${inzending.key}.pdf`,
       titel: 'Formulier (PDF)',
       registratieDatum: inzending.dateSubmitted,
       sort_order: 0,
