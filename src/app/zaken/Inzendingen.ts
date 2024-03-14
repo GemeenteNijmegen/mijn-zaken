@@ -124,6 +124,7 @@ export class Inzendingen implements ZaakConnector {
     const single = {
       id: inzending.formTitle,
       key: inzending.key,
+      zaak_type: inzending.formTitle,
       registratiedatum: inzending.dateSubmitted,
       status: 'ontvangen',
       documenten: inzending.attachments.map((attachment) => {
