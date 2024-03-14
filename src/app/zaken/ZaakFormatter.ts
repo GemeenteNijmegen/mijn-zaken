@@ -3,7 +3,7 @@ import { SingleZaak, ZaakSummary } from './ZaakConnector';
 export class ZaakFormatter {
   static formatList(zaken: ZaakSummary[]) {
     const sorted = zaken
-      .sort((a, b) => a.registratiedatum && b.registratiedatum && a.registratiedatum < b.registratiedatum ? 1 : -1)
+      .sort((a, b) => a.registratiedatum < b.registratiedatum ? 1 : -1)
       .map(zaak => this.formatZaakSummary(zaak));
     return {
       open: sorted.filter(zaak => !zaak.resultaat),

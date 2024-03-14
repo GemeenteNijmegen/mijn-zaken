@@ -4,7 +4,7 @@ import { User } from './User';
 export interface ZaakSummary {
   identifier: string;
   internal_id: string;
-  registratiedatum?: Date;
+  registratiedatum: Date;
   verwachtte_einddatum?: Date;
   uiterlijke_einddatum?: Date;
   einddatum?: Date;
