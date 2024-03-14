@@ -46,6 +46,9 @@ export class Zaken implements ZaakConnector {
     this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
   }
+  download(_zaakId: string, _file: string, _user: User): Promise<{ downloadUrl: string }> {
+    throw new Error('Method not implemented.');
+  }
 
   setTaken(taken: Taken) {
     this.taken = taken;

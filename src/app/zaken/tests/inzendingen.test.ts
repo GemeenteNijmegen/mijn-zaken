@@ -25,11 +25,11 @@ describe('Inzendingen from submission storage', () => {
 
   test('Getting a single submission', async() => {
     const submission = await inzendingen.get('APV1.234', person);
-    expect(submission).toHaveProperty('id');
+    expect(submission).toHaveProperty('identifier');
   });
 
   test('Getting a single submission download link', async() => {
-    const submission = await inzendingen.download('APV1.234/APV1.234.pdf');
+    const submission = await inzendingen.download('APV1.234', 'APV1.234/APV1.234.pdf', person);
     expect(submission).toHaveProperty('downloadUrl');
   });
 });

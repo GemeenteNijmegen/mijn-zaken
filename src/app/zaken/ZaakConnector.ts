@@ -22,13 +22,14 @@ export interface SingleZaak {
   einddatum?: Date;
   zaak_type: string;
   status: string;
-  status_list: any[];
+  status_list?: any[];
   resultaat?: string;
   documenten?: any[];
-  taken: any[];
+  taken?: any[];
 }
 
 export interface ZaakConnector {
   list(user: User): Promise<ZaakSummary[]>;
   get(zaakId: string, user: User): Promise<SingleZaak|false>;
+  download(zaakId: string, file: string, user: User): Promise<{downloadUrl: string}>;
 }

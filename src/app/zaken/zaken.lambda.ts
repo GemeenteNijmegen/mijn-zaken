@@ -51,6 +51,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
       zaakConnectorId: params.zaakConnectorId,
       takenSecret: secrets.takenSecret,
       inzendingen: inzendingen(secrets.submissionstorageSecret),
+      file: params.file,
     });
   } catch (err) {
     console.debug(err);
