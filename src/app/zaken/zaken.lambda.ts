@@ -25,25 +25,15 @@ async function initSecret() {
 
 const initPromise = initSecret();
 
-function parseEvent(event: APIGatewayProxyEventV2): { cookies: string; zaakId?: string; zaakConnectorId?: string } {
+function parseEvent(event: APIGatewayProxyEventV2): { cookies: string; zaakId?: string; zaakConnectorId?: string; file?: string } {
   if (!event.cookies) {
     throw Error('no cookies in event');
   }
-  const cookies = event.cookies.join(';');
-  if (event?.pathParameters?.zaak) {
-    const pathParts = event?.pathParameters?.zaak.split('/');
-    if (pathParts.length > 1) {
-      const zaakConnectorId = pathParts[0];
-      const zaakId = pathParts[1];
-      return {
-        cookies,
-        zaakId,
-        zaakConnectorId,
-      };
-    }
-  }
   return {
-    cookies,
+    zaakConnectorId: event?.pathParameters?.zaaksource,
+    zaakId: event?.pathParameters?.zaakid,
+    file: event?.pathParameters?.file,
+    cookies: event.cookies.join(';'),
   };
 }
 
