@@ -4,7 +4,7 @@ export const InzendingSchema = z.object({
   userId: z.string(),
   key: z.string(),
   pdf: z.string(),
-  dateSubmitted: z.coerce.date(),
+  dateSubmitted: z.coerce.date().optional(),
   formName: z.string(),
   formTitle: z.string(),
   attachments: z.array(z.string()),
