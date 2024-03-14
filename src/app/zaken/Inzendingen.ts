@@ -126,10 +126,14 @@ export class Inzendingen implements ZaakConnector {
       status: 'ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
-          url: `/download/${attachment}`,
+          url: `/download/${inzending.key}/${attachment}`,
           titel: attachment,
           registratieDatum: inzending.dateSubmitted,
         };
+      }).push({
+        url: `/download/${inzending.key}/${inzending.key}.pdf`,
+        titel: 'formulier (PDF)',
+        registratieDatum: inzending.dateSubmitted,
       }),
     };
   }
