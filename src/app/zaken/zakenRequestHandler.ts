@@ -23,6 +23,7 @@ export async function zakenRequestHandler(
     zaken: Zaken;
     inzendingen?: Inzendingen;
     zaak?: string;
+    file?: string;
     zaakConnectorId?: string;
     takenSecret: string;
   }) {
@@ -53,7 +54,11 @@ export async function zakenRequestHandler(
           zaakConnector = config.zaken;
         }
         if (zaakConnector) {
-          response = await singleZaakRequest(session, zaakConnector, config.zaak);
+          if (config.file) {
+            response = await downloadRequest(session, zaakConnector, config.zaak, config.file);
+          } else {
+            response = await singleZaakRequest(session, zaakConnector, config.zaak);
+          }
         } else {
           throw Error('No suitable zaakconnector found');
         }
@@ -96,6 +101,53 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
   return Response.html(html, 200, session.getCookie());
 }
 
+async function singleZaakRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string) {
+
+  console.timeLog('request', 'Api Client init');
+
+  const user = getUser(session);
+  const zaak = await zaakConnector.get(zaakId, user);
+  console.timeLog('request', 'zaak received');
+  if (zaak) {
+    const formattedZaak = ZaakFormatter.formatZaak(zaak);
+
+    const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
+    let data = {
+      volledigenaam: session.getValue('username'),
+      title: 'Zaak',
+      shownav: true,
+      nav: navigation.items,
+      zaak: formattedZaak,
+    };
+    // render page
+    const html = await render(data, zaakTemplate.default);
+    return Response.html(html, 200, session.getCookie());
+  } else {
+    return Response.error(404);
+  }
+}
+
+async function downloadRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string, file: string) {
+  const user = getUser(session);
+  const response = await zaakConnector.download(zaakId, file, user);
+  if (response) {
+    return Response.redirect(response.downloadUrl);
+  } else {
+    return Response.error(404);
+  }
+}
+
+function getUser(session: Session) {
+  const userType = session.getValue('user_type');
+  let user: User;
+  if (userType == 'organisation') {
+    user = new Organisation(session.getValue('identifier'));
+  } else {
+    user = new Person(new Bsn(session.getValue('identifier')));
+  }
+  return user;
+}
+
 function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) {
   let aggregator;
   if (inzendingen) {
@@ -113,42 +165,6 @@ function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) 
     });
   };
   return aggregator;
-}
-
-async function singleZaakRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string) {
-
-  console.timeLog('request', 'Api Client init');
-
-  const user = getUser(session);
-  const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
-  const zaak = await zaakConnector.get(zaakId, user);
-  console.timeLog('request', 'zaak received');
-  if (zaak) {
-    const formattedZaak = ZaakFormatter.formatZaak(zaak);
-    let data = {
-      volledigenaam: session.getValue('username'),
-      title: 'Zaak',
-      shownav: true,
-      nav: navigation.items,
-      zaak: formattedZaak,
-    };
-    // render page
-    const html = await render(data, zaakTemplate.default);
-    return Response.html(html, 200, session.getCookie());
-  } else {
-    return Response.error(404);
-  }
-}
-
-function getUser(session: Session) {
-  const userType = session.getValue('user_type');
-  let user: User;
-  if (userType == 'organisation') {
-    user = new Organisation(session.getValue('identifier'));
-  } else {
-    user = new Person(new Bsn(session.getValue('identifier')));
-  }
-  return user;
 }
 
 /**

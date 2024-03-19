@@ -1,7 +1,7 @@
 import axios, { Axios, AxiosInstance } from 'axios';
 import { Inzending, InzendingSchema, InzendingenSchema } from './Inzending';
 import { User } from './User';
-import { ZaakConnector, ZaakSummary } from './ZaakConnector';
+import { SingleZaak, ZaakConnector, ZaakSummary } from './ZaakConnector';
 
 export class Inzendingen implements ZaakConnector {
   private axios: Axios;
@@ -90,7 +90,7 @@ export class Inzendingen implements ZaakConnector {
     return inzendingen.map(inzending => this.summarize(inzending));
   }
 
-  async get(key: string, user: User): Promise<any> {
+  async get(key: string, user: User): Promise<false|SingleZaak> {
     const params = new URLSearchParams({
       user_id: user.identifier,
       user_type: user.type,
@@ -101,13 +101,19 @@ export class Inzendingen implements ZaakConnector {
     return submission;
   }
 
-
-  async download(key: string) {
-    const params = new URLSearchParams({
-      key: key,
-    });
-    const results = await this.request('download', params);
-    return results;
+  async download(zaakId: string, file: string, user: User) {
+    console.debug('downloading file', file);
+    const submission = await this.get(zaakId, user);
+    console.debug(`found submission for file ${file}`);
+    if (submission && submission.documenten?.find((document) => document.url == file)) {
+      const params = new URLSearchParams({
+        key: `${zaakId}/${file}`,
+      });
+      const results = await this.request('download', params);
+      console.debug('found file', results);
+      return results;
+    }
+    return false;
   }
 
   summarize(inzending: Inzending): ZaakSummary {
@@ -122,14 +128,15 @@ export class Inzendingen implements ZaakConnector {
 
   summarizeSingle(inzending: Inzending) {
     const single = {
-      id: inzending.formTitle,
+      identifier: inzending.key,
+      internal_id: `inzendingen/${inzending.key}`,
       key: inzending.key,
       zaak_type: inzending.formTitle,
       registratiedatum: inzending.dateSubmitted,
       status: 'ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
-          url: `/download/${inzending.key}/attachments/${attachment}`,
+          url: `attachments/${attachment}`,
           titel: attachment,
           registratieDatum: inzending.dateSubmitted,
           sort_order: 1,
@@ -138,7 +145,7 @@ export class Inzendingen implements ZaakConnector {
     };
     // Add the PDF link to the documenten-list
     single.documenten.push({
-      url: `/download/${inzending.key}/${inzending.key}.pdf`,
+      url: `${inzending.key}.pdf`,
       titel: 'Formulier (PDF)',
       registratieDatum: inzending.dateSubmitted,
       sort_order: 0,

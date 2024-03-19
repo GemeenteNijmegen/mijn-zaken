@@ -83,7 +83,13 @@ export class ZakenApiStack extends Stack {
     new apigatewayv2.HttpRoute(this, 'zaak-route', {
       httpApi: this.api,
       integration: new HttpLambdaIntegration('zaak', zakenFunction.lambda),
-      routeKey: HttpRouteKey.with('/zaken/{zaak+}', apigatewayv2.HttpMethod.GET),
+      routeKey: HttpRouteKey.with('/zaken/{zaaksource}/{zaakid}', apigatewayv2.HttpMethod.GET),
+    });
+
+    new apigatewayv2.HttpRoute(this, 'download-route', {
+      httpApi: this.api,
+      integration: new HttpLambdaIntegration('zaak', zakenFunction.lambda),
+      routeKey: HttpRouteKey.with('/zaken/{zaaksource}/{zaakid}/download/{file+}', apigatewayv2.HttpMethod.GET),
     });
   }
 }
