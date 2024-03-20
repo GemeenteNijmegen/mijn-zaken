@@ -43,7 +43,7 @@ export class Zaken implements ZaakConnector {
     // Cache metadata
     this.catalogiPromise = this.client.request('/catalogi/api/v1/catalogussen');
     this.zaakTypesPromise = this.client.request('/catalogi/api/v1/zaaktypen');
-    this.statusTypesPromise = this.client.requestPaginated('/catalogi/api/v1/statustypen');
+    this.statusTypesPromise = this.client.request('/catalogi/api/v1/statustypen');
     this.resultaatTypesPromise = this.client.request('/catalogi/api/v1/resultaattypen');
   }
   download(_zaakId: string, _file: string, _user: User): Promise<{ downloadUrl: string }> {
