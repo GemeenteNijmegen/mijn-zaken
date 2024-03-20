@@ -178,7 +178,7 @@ describe('pagination tests', () => {
     axiosMock.onGet('/catalogi/api/v1/statustypen?page=3').reply(200, statusTypenPage3);
 
     const client = new OpenZaakClient({ baseUrl, axiosInstance });
-    const statustypen = await client.requestPaginated('/catalogi/api/v1/statustypen');
+    const statustypen = await client.request('/catalogi/api/v1/statustypen');
     expect(statustypen.results).toHaveLength(6);
   });
 });
