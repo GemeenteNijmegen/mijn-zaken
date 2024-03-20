@@ -60,7 +60,7 @@ export class OpenZaakClient {
     return token;
   }
 
-  async request(endpoint: string, params?: URLSearchParams): Promise<any> {
+  async requestSingle(endpoint: string, params?: URLSearchParams): Promise<any> {
     const paramString = params ? `?${params}` : '';
     const url =`${endpoint}${paramString}`;
     try {
@@ -91,11 +91,11 @@ export class OpenZaakClient {
     }
   }
 
-  async requestPaginated(endpoint: string, params?: URLSearchParams): Promise<any> {
-    const data = await this.request(endpoint, params);
+  async request(endpoint: string, params?: URLSearchParams): Promise<any> {
+    const data = await this.requestSingle(endpoint, params);
     if (data.next) {
       // request next page
-      const page = await this.requestPaginated(data.next);
+      const page = await this.request(data.next);
       if (page.results) {
         data.results = [...data.results, ...page.results];
       }
