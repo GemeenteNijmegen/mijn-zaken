@@ -63,7 +63,6 @@
                     </table>
                 </div>
                 <div class="tab-content" tabindex="0" role="tabpanel" id="example-2-tab" aria-labelledby="example-2" hidden="">
-                    {{#zaken.gesloten}}
                     <table class="responsive-table">
                         <thead>
                         <tr>
@@ -75,6 +74,7 @@
                         </tr>
                         </thead>
                         <tbody>
+                    {{#zaken.gesloten}}
                         <tr>
                             <td>{{zaak_type}}</td>
                             <td>{{identifier}}</td>
@@ -82,12 +82,13 @@
                             <td>{{status}}</td>
                             <td><a href="/zaken/{{internal_id}}">Bekijk</a></td>
                         </tr>
-                        </tbody>
-                    </table>
+                        
                     {{/zaken.gesloten}}
                     {{^zaken.gesloten}}
-                    <p>Er zijn geen open zaken gevonden.</p>
+                        <tr><td colspan="5">Er zijn geen gesloten zaken gevonden.</td></tr>
                     {{/zaken.gesloten}}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         
