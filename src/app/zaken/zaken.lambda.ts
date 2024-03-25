@@ -44,9 +44,8 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
   try {
     const params = parseEvent(event);
     const secrets = await initPromise;
-    const zakenClient = sharedOpenZaakClient(secrets.vipSecret);
     return await zakenRequestHandler(params.cookies, dynamoDBClient, {
-      zaken: await sharedZaken(zakenClient),
+      zaken: await sharedZaken(secrets.vipSecret),
       zaak: params.zaakId,
       zaakConnectorId: params.zaakConnectorId,
       takenSecret: secrets.takenSecret,
@@ -57,6 +56,38 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     console.debug(err);
     return Response.error(500);
   }
+}
+/**
+ * Setup the inzendingen-functionality, which retrieves
+ * submissions from webformulieren-storage.
+ *
+ * @param accessKey API key for inzendingen api
+ */
+function inzendingen(accessKey: string) {
+  if (process.env.SUBMISSIONSTORAGE_BASE_URL && process.env.SUBMISSIONS_LIVE == 'true') {
+    return new Inzendingen({ baseUrl: process.env.SUBMISSIONSTORAGE_BASE_URL, accessKey });
+  }
+  return;
+}
+
+/**
+ * Setup a ZGW-compatible client, which retrieves 'zaken'. This API
+ * is very request-heavy, so we set up a 'shared' object, which caches
+ * metadata (zaaktypen etc.) for the lifetime of the lambda.
+ *
+ * @param secret the JWT token secret for connecting to ZGW
+ */
+async function sharedZaken(secret: string) {
+  const zakenClient = sharedOpenZaakClient(secret);
+  if (!zaken) {
+    zaken = new Zaken(zakenClient, { zaakConnectorId: 'zaak', show_documents: process.env.SHOW_DOCUMENTS == 'True' });
+    await zaken.metaData();
+    if (process.env.ALLOWED_ZAKEN_DOMAINS) {
+      const domains = process.env.ALLOWED_ZAKEN_DOMAINS.split(',').map(domain => domain.trim());
+      zaken.allowDomains(domains);
+    }
+  }
+  return zaken;
 }
 
 function sharedOpenZaakClient(secret: string): OpenZaakClient {
@@ -74,20 +105,6 @@ function sharedOpenZaakClient(secret: string): OpenZaakClient {
   return openZaakClient;
 }
 
-function inzendingen(accessKey: string) {
-  if (process.env.SUBMISSIONSTORAGE_BASE_URL && process.env.SUBMISSIONS_LIVE == 'true') {
-    return new Inzendingen({ baseUrl: process.env.SUBMISSIONSTORAGE_BASE_URL, accessKey });
-  }
-  return;
-}
-
-async function sharedZaken(client: OpenZaakClient) {
-  if (!zaken) {
-    zaken = new Zaken(client, { zaakConnectorId: 'zaak', show_documents: process.env.SHOW_DOCUMENTS == 'True' });
-    await zaken.metaData();
-  }
-  return zaken;
-}
 
 /** Check if this function is live */
 function isAllowed() {

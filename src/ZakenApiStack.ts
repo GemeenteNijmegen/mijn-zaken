@@ -66,6 +66,7 @@ export class ZakenApiStack extends Stack {
         IS_LIVE: this.configuration.isLive ? 'true' : 'false',
         USE_TAKEN: this.configuration.useTaken ? 'true' : 'false',
         SUBMISSIONS_LIVE: this.configuration.useSubmissions ? 'true' : 'false',
+        ALLOWED_ZAKEN_DOMAINS: this.configuration.allowZakenDomains.join(','),
       },
       readOnlyRole,
       apiFunction: ZakenFunction,

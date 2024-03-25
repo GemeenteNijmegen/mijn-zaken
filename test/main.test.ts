@@ -1,8 +1,8 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
+import { Configuration } from '../src/Configuration';
 import { PipelineStack } from '../src/PipelineStack';
 import { ZakenApiStack } from '../src/ZakenApiStack';
-import { Configuration } from '../src/Configuration';
 
 const dummyEnv = {
   account: '123456789012',
@@ -14,18 +14,14 @@ const config: Configuration = {
   name: 'test',
   deployFromEnvironment: dummyEnv,
   deployToEnvironment: dummyEnv,
-}
+  allowZakenDomains: ['APV', 'JZ'],
+};
 
 test('Snapshot', () => {
   const app = new App();
-  const stack = new PipelineStack(app, 'test', { 
+  const stack = new PipelineStack(app, 'test', {
     env: dummyEnv,
-    configuration: {
-      branchName: 'test', 
-      name: 'test',
-      deployToEnvironment: dummyEnv,
-      deployFromEnvironment: dummyEnv,
-    },
+    configuration: config,
   });
   const template = Template.fromStack(stack);
   expect(template.toJSON()).toMatchSnapshot();
@@ -33,8 +29,8 @@ test('Snapshot', () => {
 
 test('StackHasLambdas', () => {
   const app = new App();
-  
-  const stack = new ZakenApiStack(app, 'api', {configuration: config});
+
+  const stack = new ZakenApiStack(app, 'api', { configuration: config });
   const template = Template.fromStack(stack);
   template.resourceCountIs('AWS::Lambda::Function', 2); //Setting log retention creates a lambda
 });
