@@ -81,8 +81,6 @@ async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?:
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
-
-  statuses.allowDomains(['APV']);
   let aggregator = zakenAggregator(inzendingen, statuses);
   const zaken = await aggregator.list(user);
   const zaakSummaries = ZaakFormatter.formatList(zaken);
