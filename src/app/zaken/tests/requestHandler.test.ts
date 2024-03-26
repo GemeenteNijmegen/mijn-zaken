@@ -42,8 +42,9 @@ const mockedZaak = {
   verwachtte_einddatum: sampleDate,
   uiterlijke_einddatum: sampleDate,
   einddatum: sampleDate,
-  zaak_type: 'zaaktype2',
+  zaak_type: 'zaaktype 2',
   status: 'open',
+  behandelaars: ['Jan Jansen', 'Andries Fietst'],
 };
 
 const mockedInzendingenList: ZaakSummary[] = [
