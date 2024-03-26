@@ -114,10 +114,11 @@ export class Zaken implements ZaakConnector {
 
     console.time('get zaak');
     let roleUrl;
+    const zaakUrl = `${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
     if (user.type == 'person') {
-      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__natuurlijkPersoon__inpBsn=${user.identifier}&zaak=${zaakUrl}`;
     } else {
-      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${user.identifier}&zaak=${this.client.baseUrl}zaken/api/v1/zaken/${zaakId}`;
+      roleUrl = `/zaken/api/v1/rollen?betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie=${user.identifier}&zaak=${zaakUrl}`;
     }
     const [zaak, rol] = await Promise.all([
       this.client.request(`/zaken/api/v1/zaken/${zaakId}`),
@@ -132,7 +133,7 @@ export class Zaken implements ZaakConnector {
     const taken = await this.getTaken(zaakId);
     const [status, resultaat, documents] = await Promise.all([statusPromise, resultaatPromise, documentPromise]);
     const zaakType = this.zaakTypes?.results?.find((type: any) => type.url == zaak.zaaktype);
-    console.debug('check role', rol);
+    const behandelaars = await this.getBehandelaars(zaakUrl);
 
     console.timeLog('get zaak', 'zaak opgehaald');
     console.timeEnd('get zaak');
@@ -150,10 +151,17 @@ export class Zaken implements ZaakConnector {
         resultaat: resultaat?.omschrijving ?? null,
         documenten: documents,
         taken: taken,
+        behandelaars,
       };
     }
     return false;
   }
+
+  private async getBehandelaars(zaakUrl: string) {
+    const behandelaars = await this.client.request(`/zaken/api/v1/rollen?zaak=${zaakUrl}&omschrijvingGeneriek=behandelaar`);
+    return behandelaars?.results?.filter((behandelaar: any) => behandelaar?.omschrijvingGeneriek == 'behandelaar').map((behandelaar: any) => behandelaar.betrokkeneIdentificatie.achternaam);
+  }
+
   private statusTypesForZaakType(zaakType: any, status: any) {
     if (!status) {
       return null;

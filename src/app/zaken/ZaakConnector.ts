@@ -26,6 +26,7 @@ export interface SingleZaak {
   resultaat?: string;
   documenten?: any[];
   taken?: any[];
+  behandelaars?: string[];
 }
 
 export interface ZaakConnector {
