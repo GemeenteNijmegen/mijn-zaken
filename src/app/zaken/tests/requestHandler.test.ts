@@ -7,6 +7,7 @@ import * as dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { Inzendingen } from '../Inzendingen';
 import { OpenZaakClient } from '../OpenZaakClient';
+import { ZaakAggregator } from '../ZaakAggregator';
 import { ZaakSummary } from '../ZaakConnector';
 import { Zaken } from '../Zaken';
 import { zakenRequestHandler } from '../zakenRequestHandler';
@@ -64,6 +65,7 @@ jest.mock('../Zaken', () => {
         allowDomains: jest.fn(),
         list: jest.fn().mockResolvedValue(mockedZakenList),
         get: jest.fn().mockResolvedValue(mockedZaak),
+        setTaken: jest.fn(),
       };
     }),
   };
@@ -122,11 +124,13 @@ const axiosInstance = axios.create(
 const client = new OpenZaakClient({ baseUrl, axiosInstance });
 const zaken = new Zaken(client, { zaakConnectorId: 'test' });
 const inzendingen = new Inzendingen({ baseUrl: 'https://localhost', accessKey: 'test' });
+const zaakAggregator = new ZaakAggregator({ zaakConnectors: { inzendingen, zaken } });
+const zakenOnlyAggregator = new ZaakAggregator({ zaakConnectors: { zaken } });
 
 describe('Request handler', () => {
   test('returns 200 for person', async () => {
     console.debug('inzendingen in test', inzendingen);
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, inzendingen, takenSecret: 'test' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, inzendingen, zaakAggregator, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
@@ -151,7 +155,7 @@ describe('Request handler', () => {
     };
     ddbMock.on(GetItemCommand).resolves(getItemOutputForOrganisation);
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, takenSecret: 'test' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, zaakAggregator: zakenOnlyAggregator, takenSecret: 'test' });
     expect(result.statusCode).toBe(200);
   });
 });
@@ -160,7 +164,7 @@ describe('Request handler', () => {
 describe('Request handler single zaak', () => {
   test('returns 200', async () => {
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test', zaakConnectorId: 'zaak' });
+    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaken, zaakAggregator: zakenOnlyAggregator, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', takenSecret: 'test', zaakConnectorId: 'zaak' });
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {

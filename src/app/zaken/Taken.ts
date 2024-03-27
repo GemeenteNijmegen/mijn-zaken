@@ -1,7 +1,39 @@
+import axios from 'axios';
 import { OpenZaakClient } from './OpenZaakClient';
 
 export class Taken {
+
+  /**
+   * Create a new Taken object using the provided API key.
+   *
+   * @param key The api token for openzaak client
+   * @returns Taken object
+   */
+  static withApiKey(key: string) {
+    if (process.env.USE_TAKEN !== 'true') {
+      return false;
+    }
+    if (!process.env.VIP_TOKEN_BASE_URL) {
+      throw Error('No VIP_TOKEN_BASE_URL provided');
+    }
+    const instance = axios.create(
+      {
+        baseURL: process.env.VIP_TOKEN_BASE_URL,
+        headers: {
+          Authorization: 'Token ' + key,
+        },
+      },
+    );
+    const openZaakClient = new OpenZaakClient({
+      baseUrl: new URL(process.env.VIP_TOKEN_BASE_URL),
+      axiosInstance: instance,
+    });
+
+    return new Taken(openZaakClient);
+  }
+
   private client: OpenZaakClient;
+
   constructor(client: OpenZaakClient) {
     this.client = client;
   }
@@ -42,3 +74,5 @@ export class Taken {
     return date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 }
+
+

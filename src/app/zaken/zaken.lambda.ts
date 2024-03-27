@@ -4,6 +4,7 @@ import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { Inzendingen } from './Inzendingen';
 import { OpenZaakClient } from './OpenZaakClient';
+import { ZaakAggregator } from './ZaakAggregator';
 import { Zaken } from './Zaken';
 import { zakenRequestHandler } from './zakenRequestHandler';
 
@@ -44,12 +45,23 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
   try {
     const params = parseEvent(event);
     const secrets = await initPromise;
+    const zaakAggregator = new ZaakAggregator({
+      zaakConnectors: {
+        zaken: await sharedZaken(secrets.vipSecret),
+      },
+    });
+    const submissions = inzendingen(secrets.submissionstorageSecret);
+    if (submissions) {
+      zaakAggregator.addConnector('inzendingen', submissions);
+    }
+    inzendingen:
     return await zakenRequestHandler(params.cookies, dynamoDBClient, {
+      zaakAggregator,
       zaken: await sharedZaken(secrets.vipSecret),
+      inzendingen: submissions,
       zaak: params.zaakId,
       zaakConnectorId: params.zaakConnectorId,
       takenSecret: secrets.takenSecret,
-      inzendingen: inzendingen(secrets.submissionstorageSecret),
       file: params.file,
     });
   } catch (err) {
