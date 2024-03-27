@@ -34,6 +34,14 @@ export interface Configuration {
    * not be called.
    */
   readonly useSubmissions?: boolean;
+
+  /**
+   * Allow zaken from these 'domains'. These values are added to
+   * a call to `Zaken.allowDomains` which checks the 'zaakType'
+   * for each zaak for its 'domein', and only shows zaken
+   * from the allowed list.
+   */
+  readonly allowZakenDomains: string[];
 }
 
 export const configurations: {[key: string]: Configuration} = {
@@ -45,6 +53,7 @@ export const configurations: {[key: string]: Configuration} = {
     useTaken: true,
     isLive: true,
     useSubmissions: true,
+    allowZakenDomains: ['APV', 'JZ'],
   },
   production: {
     branchName: 'main',
@@ -54,6 +63,7 @@ export const configurations: {[key: string]: Configuration} = {
     useTaken: false,
     isLive: true,
     useSubmissions: false,
+    allowZakenDomains: ['APV'], // JZ is not yet available in prod
   },
 };
 

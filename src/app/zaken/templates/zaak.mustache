@@ -95,6 +95,12 @@
                 <dd>{{registratiedatum}}</dd>
                 <dt>Zaaknummer</dt>
                 <dd>{{identifier}}</dd>
+                {{#has_behandelaars}}
+                <dt>Behandelaars</dt>
+                {{#behandelaars}}
+                <dd>{{.}}</dd>
+                {{/behandelaars}}
+                {{/has_behandelaars}}
             </dl>
             {{#has_documenten}}
                 <h2>Documenten</h2>
