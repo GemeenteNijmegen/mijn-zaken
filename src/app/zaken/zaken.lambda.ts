@@ -4,6 +4,7 @@ import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { Inzendingen } from './Inzendingen';
 import { OpenZaakClient } from './OpenZaakClient';
+import { Taken } from './Taken';
 import { ZaakAggregator } from './ZaakAggregator';
 import { Zaken } from './Zaken';
 import { zakenRequestHandler } from './zakenRequestHandler';
@@ -47,7 +48,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const secrets = await initPromise;
     const zaakAggregator = new ZaakAggregator({
       zaakConnectors: {
-        zaak: await sharedZaken(secrets.vipSecret),
+        zaak: await sharedZaken(secrets.vipSecret, secrets.takenSecret),
       },
     });
     const submissions = inzendingen(secrets.submissionstorageSecret);
@@ -57,11 +58,8 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     inzendingen:
     return await zakenRequestHandler(params.cookies, dynamoDBClient, {
       zaakAggregator,
-      zaken: await sharedZaken(secrets.vipSecret),
-      inzendingen: submissions,
       zaak: params.zaakId,
       zaakConnectorId: params.zaakConnectorId,
-      takenSecret: secrets.takenSecret,
       file: params.file,
     });
   } catch (err) {
@@ -89,10 +87,11 @@ function inzendingen(accessKey: string) {
  *
  * @param secret the JWT token secret for connecting to ZGW
  */
-async function sharedZaken(secret: string) {
+async function sharedZaken(secret: string, takenSecret: string) {
   const zakenClient = sharedOpenZaakClient(secret);
   if (!zaken) {
     zaken = new Zaken(zakenClient, { zaakConnectorId: 'zaak', show_documents: process.env.SHOW_DOCUMENTS == 'True' });
+    zaken.setTaken(Taken.withApiKey(takenSecret));
     await zaken.metaData();
     if (process.env.ALLOWED_ZAKEN_DOMAINS) {
       const domains = process.env.ALLOWED_ZAKEN_DOMAINS.split(',').map(domain => domain.trim());
