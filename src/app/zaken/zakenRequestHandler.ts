@@ -20,6 +20,7 @@ export async function zakenRequestHandler(
   config: {
     zaken: Zaken;
     inzendingen?: Inzendingen;
+    zaakAggregator: ZaakAggregator;
     zaak?: string;
     file?: string;
     takenSecret?: string;
@@ -34,7 +35,7 @@ export async function zakenRequestHandler(
   await session.init();
 
   if (config.takenSecret) {
-    config.zaken.setTaken(Taken.takenFromSecret(config.takenSecret));
+    config.zaken.setTaken(Taken.withApiKey(config.takenSecret));
   }
 
   console.timeLog('request', 'init session');
@@ -58,7 +59,7 @@ export async function zakenRequestHandler(
           throw Error('No suitable zaakconnector found');
         }
       } else {
-        response = await listZakenRequest(session, config.zaken, config.inzendingen);
+        response = await listZakenRequest(session, config.zaakAggregator);
       }
       console.timeEnd('request');
       return response;
@@ -72,11 +73,10 @@ export async function zakenRequestHandler(
   return Response.redirect('/login');
 }
 
-async function listZakenRequest(session: Session, statuses: Zaken, inzendingen?: Inzendingen) {
+async function listZakenRequest(session: Session, aggregator: ZaakAggregator) {
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
-  let aggregator = zakenAggregator(inzendingen, statuses);
   const zaken = await aggregator.list(user);
   const zaakSummaries = ZaakFormatter.formatList(zaken);
 
@@ -141,21 +141,3 @@ function getUser(session: Session) {
   return user;
 }
 
-function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) {
-  let aggregator;
-  if (inzendingen) {
-    aggregator = new ZaakAggregator({
-      zaakConnectors: {
-        zaken: statuses,
-        inzendingen: inzendingen,
-      },
-    });
-  } else {
-    aggregator = new ZaakAggregator({
-      zaakConnectors: {
-        zaken: statuses,
-      },
-    });
-  };
-  return aggregator;
-}

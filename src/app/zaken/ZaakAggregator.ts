@@ -11,6 +11,10 @@ export class ZaakAggregator {
     this.zaakConnectors = config.zaakConnectors;
   }
 
+  public addConnector(name: string, connector: ZaakConnector) {
+    this.zaakConnectors[name] = connector;
+  }
+
   async list(user: User): Promise<ZaakSummary[]> {
     const listPromises = Object.values(this.zaakConnectors)
       .map(connector => connector.list(user));
