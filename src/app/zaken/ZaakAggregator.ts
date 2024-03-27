@@ -28,7 +28,17 @@ export class ZaakAggregator {
   }
 
   async get(zaakId: string, zaakConnectorId: string, user: User) {
+    if (!this.zaakConnectors[zaakConnectorId]) {
+      throw Error(`Zaakconnector with id ${zaakConnectorId} not found`);
+    }
     const zaak = await this.zaakConnectors[zaakConnectorId].get(zaakId, user);
     return zaak;
+  }
+
+  async download(zaakConnectorId: string, zaakId: string, file: string, user: User) {
+    if (!this.zaakConnectors[zaakConnectorId]) {
+      throw Error(`Zaakconnector with id ${zaakConnectorId} not found`);
+    }
+    return this.zaakConnectors[zaakConnectorId].download(zaakId, file, user);
   }
 }
