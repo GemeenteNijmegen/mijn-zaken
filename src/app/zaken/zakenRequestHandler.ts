@@ -2,14 +2,11 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
-import { Inzendingen } from './Inzendingen';
-import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Organisation, Person, User } from './User';
 import { ZaakAggregator } from './ZaakAggregator';
 import { ZaakFormatter } from './ZaakFormatter';
-import { Zaken } from './Zaken';
 import { Navigation } from '../../shared/Navigation';
 import { render } from '../../shared/render';
 
@@ -17,12 +14,9 @@ export async function zakenRequestHandler(
   cookies: string,
   dynamoDBClient: DynamoDBClient,
   config: {
-    zaken: Zaken;
-    inzendingen?: Inzendingen;
     zaakAggregator: ZaakAggregator;
     zaak?: string;
     file?: string;
-    takenSecret?: string;
     zaakConnectorId?: string;
   }) {
   console.debug('config, ', config);
@@ -32,10 +26,6 @@ export async function zakenRequestHandler(
 
   let session = new Session(cookies, dynamoDBClient);
   await session.init();
-
-  if (config.takenSecret) {
-    config.zaken.setTaken(Taken.withApiKey(config.takenSecret));
-  }
 
   console.timeLog('request', 'init session');
   if (session.isLoggedIn() == true) {
