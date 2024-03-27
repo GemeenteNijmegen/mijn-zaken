@@ -64,6 +64,7 @@ jest.mock('../Zaken', () => {
         allowDomains: jest.fn(),
         list: jest.fn().mockResolvedValue(mockedZakenList),
         get: jest.fn().mockResolvedValue(mockedZaak),
+        setTaken: jest.fn(),
       };
     }),
   };

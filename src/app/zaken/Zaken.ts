@@ -50,8 +50,10 @@ export class Zaken implements ZaakConnector {
     throw new Error('Method not implemented.');
   }
 
-  setTaken(taken: Taken) {
-    this.taken = taken;
+  setTaken(taken: Taken|false) {
+    if (taken) {
+      this.taken = taken;
+    }
   }
 
   /**
