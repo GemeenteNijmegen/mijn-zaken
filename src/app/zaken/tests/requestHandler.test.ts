@@ -124,8 +124,8 @@ const axiosInstance = axios.create(
 const client = new OpenZaakClient({ baseUrl, axiosInstance });
 const zaken = new Zaken(client, { zaakConnectorId: 'test' });
 const inzendingen = new Inzendingen({ baseUrl: 'https://localhost', accessKey: 'test' });
-const zaakAggregator = new ZaakAggregator({ zaakConnectors: { inzendingen, zaken } });
-const zakenOnlyAggregator = new ZaakAggregator({ zaakConnectors: { zaken } });
+const zaakAggregator = new ZaakAggregator({ zaakConnectors: { inzendingen, zaak: zaken } });
+const zakenOnlyAggregator = new ZaakAggregator({ zaakConnectors: { zaak: zaken } });
 
 describe('Request handler', () => {
   test('returns 200 for person', async () => {
