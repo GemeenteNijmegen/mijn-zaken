@@ -3,7 +3,13 @@ import { OpenZaakClient } from './OpenZaakClient';
 
 export class Taken {
 
-  static takenFromSecret(secret: string) {
+  /**
+   * Create a new Taken object using the provided API key.
+   *
+   * @param key The api token for openzaak client
+   * @returns Taken object
+   */
+  static withApiKey(key: string) {
     if (process.env.USE_TAKEN !== 'true') {
       return false;
     }
@@ -14,7 +20,7 @@ export class Taken {
       {
         baseURL: process.env.VIP_TOKEN_BASE_URL,
         headers: {
-          Authorization: 'Token ' + secret,
+          Authorization: 'Token ' + key,
         },
       },
     );

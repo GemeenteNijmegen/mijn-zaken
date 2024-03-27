@@ -34,7 +34,7 @@ export async function zakenRequestHandler(
   await session.init();
 
   if (config.takenSecret) {
-    config.zaken.setTaken(Taken.takenFromSecret(config.takenSecret));
+    config.zaken.setTaken(Taken.withApiKey(config.takenSecret));
   }
 
   console.timeLog('request', 'init session');
