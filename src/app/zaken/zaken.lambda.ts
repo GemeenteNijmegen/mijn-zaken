@@ -47,7 +47,7 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
     const secrets = await initPromise;
     const zaakAggregator = new ZaakAggregator({
       zaakConnectors: {
-        zaken: await sharedZaken(secrets.vipSecret),
+        zaak: await sharedZaken(secrets.vipSecret),
       },
     });
     const submissions = inzendingen(secrets.submissionstorageSecret);

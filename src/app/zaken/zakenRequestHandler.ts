@@ -8,7 +8,6 @@ import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
 import { Organisation, Person, User } from './User';
 import { ZaakAggregator } from './ZaakAggregator';
-import { ZaakConnector } from './ZaakConnector';
 import { ZaakFormatter } from './ZaakFormatter';
 import { Zaken } from './Zaken';
 import { Navigation } from '../../shared/Navigation';
@@ -43,17 +42,12 @@ export async function zakenRequestHandler(
     try {
       let response;
       if (config.zaak) {
-        let zaakConnector;
-        if (config.zaakConnectorId == 'inzendingen') {
-          zaakConnector = config.inzendingen;
-        } else if (config.zaakConnectorId == 'zaak') {
-          zaakConnector = config.zaken;
-        }
-        if (zaakConnector) {
+        const zaakConnectorId = config.zaakConnectorId ?? '';
+        if (['inzendingen', 'zaak'].includes(zaakConnectorId as string)) {
           if (config.file) {
-            response = await downloadRequest(session, zaakConnector, config.zaak, config.file);
+            response = await downloadRequest(session, config.zaakAggregator, zaakConnectorId, config.zaak, config.file);
           } else {
-            response = await singleZaakRequest(session, zaakConnector, config.zaak);
+            response = await singleZaakRequest(session, config.zaakAggregator, zaakConnectorId, config.zaak);
           }
         } else {
           throw Error('No suitable zaakconnector found');
@@ -94,12 +88,16 @@ async function listZakenRequest(session: Session, aggregator: ZaakAggregator) {
   return Response.html(html, 200, session.getCookie());
 }
 
-async function singleZaakRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string) {
+async function singleZaakRequest(
+  session: Session,
+  zaakAggregator: ZaakAggregator,
+  zaakConnectorId: string,
+  zaakId: string) {
 
   console.timeLog('request', 'Api Client init');
 
   const user = getUser(session);
-  const zaak = await zaakConnector.get(zaakId, user);
+  const zaak = await zaakAggregator.get(zaakId, zaakConnectorId, user);
   console.timeLog('request', 'zaak received');
   if (zaak) {
     const formattedZaak = ZaakFormatter.formatZaak(zaak);
@@ -120,9 +118,9 @@ async function singleZaakRequest(session: Session, zaakConnector: ZaakConnector,
   }
 }
 
-async function downloadRequest(session: Session, zaakConnector: ZaakConnector, zaakId: string, file: string) {
+async function downloadRequest(session: Session, zaakAggregator: ZaakAggregator, zaakConnectorId: string, zaakId: string, file: string) {
   const user = getUser(session);
-  const response = await zaakConnector.download(zaakId, file, user);
+  const response = await zaakAggregator.download(zaakConnectorId, zaakId, file, user);
   if (response) {
     return Response.redirect(response.downloadUrl);
   } else {
