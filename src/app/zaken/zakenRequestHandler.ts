@@ -2,9 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
-import axios from 'axios';
 import { Inzendingen } from './Inzendingen';
-import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
@@ -24,23 +22,20 @@ export async function zakenRequestHandler(
     inzendingen?: Inzendingen;
     zaak?: string;
     file?: string;
+    takenSecret?: string;
     zaakConnectorId?: string;
-    takenSecret: string;
   }) {
   console.debug('config, ', config);
-  let takenObj = undefined;
-  if (config.takenSecret) {
-    takenObj = taken(config.takenSecret);
-    if (takenObj) {
-      config.zaken.setTaken(takenObj);
-    }
-  }
   console.time('request');
   console.timeLog('request', 'start request');
   console.timeLog('request', 'finished init');
 
   let session = new Session(cookies, dynamoDBClient);
   await session.init();
+
+  if (config.takenSecret) {
+    config.zaken.setTaken(Taken.takenFromSecret(config.takenSecret));
+  }
 
   console.timeLog('request', 'init session');
   if (session.isLoggedIn() == true) {
@@ -163,44 +158,4 @@ function zakenAggregator(inzendingen: Inzendingen | undefined, statuses: Zaken) 
     });
   };
   return aggregator;
-}
-
-/**
- * Return taken object, or undefined if the taken functionality
- * is not yet live. (controlled by the USE_TAKEN env. param).
- *
- * @param secret secret for the taken endpoint
- */
-//@ts-ignore Unused for now, may be required later. Should be moved to handler?
-function taken(secret: string): Taken|undefined {
-  if (!TakenIsAllowed()) {
-    return;
-  }
-  if (!process.env.VIP_TOKEN_BASE_URL) {
-    throw Error('No VIP_TOKEN_BASE_URL provided');
-  }
-  const instance = axios.create(
-    {
-      baseURL: process.env.VIP_TOKEN_BASE_URL,
-      headers: {
-        Authorization: 'Token ' + secret,
-      },
-    },
-  );
-  const openZaakClient = new OpenZaakClient({
-    baseUrl: new URL(process.env.VIP_TOKEN_BASE_URL),
-    axiosInstance: instance,
-  });
-
-  return new Taken(openZaakClient);
-}
-
-/**
- * Check if the taken functionality should be live
- */
-function TakenIsAllowed() {
-  if (process.env.USE_TAKEN === 'true') {
-    return true;
-  }
-  return false;
 }
