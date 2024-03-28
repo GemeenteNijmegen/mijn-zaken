@@ -10,7 +10,7 @@ import { OpenZaakClient } from '../OpenZaakClient';
 import { ZaakAggregator } from '../ZaakAggregator';
 import { ZaakSummary } from '../ZaakConnector';
 import { Zaken } from '../Zaken';
-import { zakenRequestHandler } from '../zakenRequestHandler';
+import { ZaakRequestHandler } from '../zakenRequestHandler';
 dotenv.config();
 
 const sampleDate = new Date();
@@ -58,6 +58,10 @@ const mockedInzendingenList: ZaakSummary[] = [
   },
 ];
 
+const mockedDownload = {
+  downloadUrl: 'https://somebucket.s3.eu-central-1.amazonaws.com/APV1.234/APV1.234.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=<SOMESTRING>%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240305T135245Z&X-Amz-Expires=5&X-Amz-Security-Token=<REALLYLONGSTRING>X-Amz-Signature=<SIGNATURE>&X-Amz-SignedHeaders=host&x-id=GetObject',
+};
+
 jest.mock('../Zaken', () => {
   return {
     Zaken: jest.fn(() => {
@@ -78,6 +82,7 @@ jest.mock('../Inzendingen', () => {
       return {
         list: jest.fn().mockResolvedValue(mockedInzendingenList),
         get: jest.fn().mockResolvedValue(mockedZaak),
+        download: jest.fn().mockResolvedValue(mockedDownload),
       };
     }),
   };
@@ -125,12 +130,12 @@ const client = new OpenZaakClient({ baseUrl, axiosInstance });
 const zaken = new Zaken(client, { zaakConnectorId: 'test' });
 const inzendingen = new Inzendingen({ baseUrl: 'https://localhost', accessKey: 'test' });
 const zaakAggregator = new ZaakAggregator({ zaakConnectors: { inzendingen, zaak: zaken } });
-const zakenOnlyAggregator = new ZaakAggregator({ zaakConnectors: { zaak: zaken } });
 
-describe('Request handler', () => {
+describe('Request handler class', () => {
+  const handler = new ZaakRequestHandler(zaakAggregator, new DynamoDBClient({ region: process.env.AWS_REGION }));
   test('returns 200 for person', async () => {
     console.debug('inzendingen in test', inzendingen);
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaakAggregator });
+    const result = await handler.handleRequest('session=12345');
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
@@ -155,16 +160,12 @@ describe('Request handler', () => {
     };
     ddbMock.on(GetItemCommand).resolves(getItemOutputForOrganisation);
 
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaakAggregator: zakenOnlyAggregator });
+    const result = await handler.handleRequest('session=12345');
     expect(result.statusCode).toBe(200);
   });
-});
 
-
-describe('Request handler single zaak', () => {
-  test('returns 200', async () => {
-
-    const result = await zakenRequestHandler('session=12345', new DynamoDBClient({ region: process.env.AWS_REGION }), { zaakAggregator: zakenOnlyAggregator, zaak: '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', zaakConnectorId: 'zaak' });
+  test('returns 200 for single zaak', async () => {
+    const result = await handler.handleRequest('session=12345', 'zaak', '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886');
     expect(result.statusCode).toBe(200);
     if (result.body) {
       try {
@@ -175,4 +176,9 @@ describe('Request handler single zaak', () => {
     }
   });
 
+  test('returns link for download', async () => {
+    const result = await handler.handleRequest('session=12345', 'inzendingen', '5b1c4f8f-8c62-41ac-a3a0-e2ac08b6e886', 'test.png');
+    expect(result.statusCode).toBe(302);
+    expect(result.headers).toHaveProperty('Location');
+  });
 });

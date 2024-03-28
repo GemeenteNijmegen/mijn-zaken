@@ -8,6 +8,7 @@ import { Bsn } from '@gemeentenijmegen/utils';
 export interface User {
   identifier: string;
   type: 'person' | 'organisation';
+  userName?: string;
 }
 
 /**
@@ -18,9 +19,10 @@ export class Person implements User {
   identifier: string;
   userName?: string;
   type: 'person' | 'organisation' = 'person';
-  constructor(bsn: Bsn) {
+  constructor(bsn: Bsn, userName?: string) {
     this.bsn = bsn;
     this.identifier = bsn.bsn;
+    this.userName = userName;
   }
 }
 
@@ -31,9 +33,11 @@ export class Organisation implements User {
   kvk: string;
   identifier: string;
   type: 'person' | 'organisation' = 'organisation';
+  userName?: string;
 
-  constructor(kvk: string) {
+  constructor(kvk: string, userName?: string) {
     this.kvk = kvk;
     this.identifier = kvk;
+    this.userName = userName;
   }
 }
