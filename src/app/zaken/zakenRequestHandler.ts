@@ -1,16 +1,15 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V2/Response';
 import { Session } from '@gemeentenijmegen/session';
-import { Bsn } from '@gemeentenijmegen/utils';
 import * as zaakTemplate from './templates/zaak.mustache';
 import * as zakenTemplate from './templates/zaken.mustache';
-import { Organisation, Person, User } from './User';
+import { UserFromSession } from './User';
 import { ZaakAggregator } from './ZaakAggregator';
 import { ZaakFormatter } from './ZaakFormatter';
 import { Navigation } from '../../shared/Navigation';
 import { render } from '../../shared/render';
 
-export class ZaakRequestHandler {
+export class ZakenRequestHandler {
   private zaakAggregator: ZaakAggregator;
   private dynamoDBClient: DynamoDBClient;
   constructor(zaakAggregator: ZaakAggregator, dynamoDBClient: DynamoDBClient) {
@@ -41,7 +40,7 @@ export class ZaakRequestHandler {
   }
 
   async list(session: Session) {
-    const user = getUser(session);
+    const user = UserFromSession(session);
     console.timeLog('request', 'Api Client init');
 
     const zaken = await this.zaakAggregator.list(user);
@@ -62,7 +61,7 @@ export class ZaakRequestHandler {
   }
 
   async get(zaakConnectorId: string, zaakId: string, session: Session) {
-    const user = getUser(session);
+    const user = UserFromSession(session);
     const zaak = await this.zaakAggregator.get(zaakId, zaakConnectorId, user);
     if (zaak) {
       const formattedZaak = ZaakFormatter.formatZaak(zaak);
@@ -84,7 +83,7 @@ export class ZaakRequestHandler {
   }
 
   async download(zaakConnectorId: string, zaakId: string, file: string, session: Session) {
-    const user = getUser(session);
+    const user = UserFromSession(session);
     const response = await this.zaakAggregator.download(zaakConnectorId, zaakId, file, user);
     if (response) {
       return Response.redirect(response.downloadUrl);
@@ -92,16 +91,5 @@ export class ZaakRequestHandler {
       return Response.error(404);
     }
   }
-}
-
-function getUser(session: Session) {
-  const userType = session.getValue('user_type');
-  let user: User;
-  if (userType == 'organisation') {
-    user = new Organisation(session.getValue('identifier'), session.getValue('username'));
-  } else {
-    user = new Person(new Bsn(session.getValue('identifier')), session.getValue('username'));
-  }
-  return user;
 }
 

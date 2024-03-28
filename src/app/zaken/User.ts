@@ -1,3 +1,4 @@
+import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 
 /**
@@ -40,4 +41,16 @@ export class Organisation implements User {
     this.identifier = kvk;
     this.userName = userName;
   }
+}
+
+
+export function UserFromSession(session: Session): User {
+  const userType = session.getValue('user_type');
+  let user: User;
+  if (userType == 'organisation') {
+    user = new Organisation(session.getValue('identifier'), session.getValue('username'));
+  } else {
+    user = new Person(new Bsn(session.getValue('identifier')), session.getValue('username'));
+  }
+  return user;
 }

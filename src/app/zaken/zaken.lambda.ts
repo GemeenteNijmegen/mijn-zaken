@@ -7,13 +7,13 @@ import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import { ZaakAggregator } from './ZaakAggregator';
 import { Zaken } from './Zaken';
-import { ZaakRequestHandler } from './zakenRequestHandler';
+import { ZakenRequestHandler } from './zakenRequestHandler';
 
 const dynamoDBClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 
 let openZaakClient: OpenZaakClient | false;
 let zaken: Zaken | false;
-let sharedRequestHandler: ZaakRequestHandler;
+let sharedRequestHandler: ZakenRequestHandler;
 
 async function initSecret() {
   if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN || !process.env.SUBMISSIONSTORAGE_SECRET_ARN) {
@@ -38,7 +38,7 @@ async function sharedZakenRequestHandler() {
     if (submissions) {
       zaakAggregator.addConnector('inzendingen', submissions);
     }
-    sharedRequestHandler = new ZaakRequestHandler(zaakAggregator, dynamoDBClient);
+    sharedRequestHandler = new ZakenRequestHandler(zaakAggregator, dynamoDBClient);
   }
   return sharedRequestHandler;
 }

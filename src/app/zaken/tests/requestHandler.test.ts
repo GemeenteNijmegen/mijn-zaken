@@ -10,7 +10,7 @@ import { OpenZaakClient } from '../OpenZaakClient';
 import { ZaakAggregator } from '../ZaakAggregator';
 import { ZaakSummary } from '../ZaakConnector';
 import { Zaken } from '../Zaken';
-import { ZaakRequestHandler } from '../zakenRequestHandler';
+import { ZakenRequestHandler } from '../zakenRequestHandler';
 dotenv.config();
 
 const sampleDate = new Date();
@@ -132,7 +132,7 @@ const inzendingen = new Inzendingen({ baseUrl: 'https://localhost', accessKey: '
 const zaakAggregator = new ZaakAggregator({ zaakConnectors: { inzendingen, zaak: zaken } });
 
 describe('Request handler class', () => {
-  const handler = new ZaakRequestHandler(zaakAggregator, new DynamoDBClient({ region: process.env.AWS_REGION }));
+  const handler = new ZakenRequestHandler(zaakAggregator, new DynamoDBClient({ region: process.env.AWS_REGION }));
   test('returns 200 for person', async () => {
     console.debug('inzendingen in test', inzendingen);
     const result = await handler.handleRequest('session=12345');
