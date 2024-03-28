@@ -1,3 +1,4 @@
+import { Session } from '@gemeentenijmegen/session';
 import { Bsn } from '@gemeentenijmegen/utils';
 
 /**
@@ -8,6 +9,7 @@ import { Bsn } from '@gemeentenijmegen/utils';
 export interface User {
   identifier: string;
   type: 'person' | 'organisation';
+  userName?: string;
 }
 
 /**
@@ -18,9 +20,10 @@ export class Person implements User {
   identifier: string;
   userName?: string;
   type: 'person' | 'organisation' = 'person';
-  constructor(bsn: Bsn) {
+  constructor(bsn: Bsn, userName?: string) {
     this.bsn = bsn;
     this.identifier = bsn.bsn;
+    this.userName = userName;
   }
 }
 
@@ -31,9 +34,23 @@ export class Organisation implements User {
   kvk: string;
   identifier: string;
   type: 'person' | 'organisation' = 'organisation';
+  userName?: string;
 
-  constructor(kvk: string) {
+  constructor(kvk: string, userName?: string) {
     this.kvk = kvk;
     this.identifier = kvk;
+    this.userName = userName;
   }
+}
+
+
+export function UserFromSession(session: Session): User {
+  const userType = session.getValue('user_type');
+  let user: User;
+  if (userType == 'organisation') {
+    user = new Organisation(session.getValue('identifier'), session.getValue('username'));
+  } else {
+    user = new Person(new Bsn(session.getValue('identifier')), session.getValue('username'));
+  }
+  return user;
 }

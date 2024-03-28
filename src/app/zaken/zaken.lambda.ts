@@ -7,12 +7,13 @@ import { OpenZaakClient } from './OpenZaakClient';
 import { Taken } from './Taken';
 import { ZaakAggregator } from './ZaakAggregator';
 import { Zaken } from './Zaken';
-import { zakenRequestHandler } from './zakenRequestHandler';
+import { ZakenRequestHandler } from './zakenRequestHandler';
 
 const dynamoDBClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 
 let openZaakClient: OpenZaakClient | false;
 let zaken: Zaken | false;
+let sharedRequestHandler: ZakenRequestHandler;
 
 async function initSecret() {
   if (!process.env.VIP_JWT_SECRET_ARN || !process.env.VIP_TAKEN_SECRET_ARN || !process.env.SUBMISSIONSTORAGE_SECRET_ARN) {
@@ -23,6 +24,23 @@ async function initSecret() {
     takenSecret: await AWS.getSecret(process.env.VIP_TAKEN_SECRET_ARN),
     submissionstorageSecret: await AWS.getSecret(process.env.SUBMISSIONSTORAGE_SECRET_ARN),
   };
+}
+
+async function sharedZakenRequestHandler() {
+  if (!sharedRequestHandler) {
+    const secrets = await initPromise;
+    const zaakAggregator = new ZaakAggregator({
+      zaakConnectors: {
+        zaak: await sharedZaken(secrets.vipSecret, secrets.takenSecret),
+      },
+    });
+    const submissions = inzendingen(secrets.submissionstorageSecret);
+    if (submissions) {
+      zaakAggregator.addConnector('inzendingen', submissions);
+    }
+    sharedRequestHandler = new ZakenRequestHandler(zaakAggregator, dynamoDBClient);
+  }
+  return sharedRequestHandler;
 }
 
 const initPromise = initSecret();
@@ -45,23 +63,8 @@ export async function handler(event: any, _context: any):Promise<ApiGatewayV2Res
   }
   try {
     const params = parseEvent(event);
-    const secrets = await initPromise;
-    const zaakAggregator = new ZaakAggregator({
-      zaakConnectors: {
-        zaak: await sharedZaken(secrets.vipSecret, secrets.takenSecret),
-      },
-    });
-    const submissions = inzendingen(secrets.submissionstorageSecret);
-    if (submissions) {
-      zaakAggregator.addConnector('inzendingen', submissions);
-    }
-    inzendingen:
-    return await zakenRequestHandler(params.cookies, dynamoDBClient, {
-      zaakAggregator,
-      zaak: params.zaakId,
-      zaakConnectorId: params.zaakConnectorId,
-      file: params.file,
-    });
+    const requestHandler = await sharedZakenRequestHandler();
+    return await requestHandler.handleRequest(params.cookies, params.zaakConnectorId, params.zaakId, params.file);
   } catch (err) {
     console.debug(err);
     return Response.error(500);
