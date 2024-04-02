@@ -34,6 +34,8 @@ export class ZaakFormatter {
       has_statuses: zaak.status_list && zaak.status_list?.length > 0 ? true : false,
       behandelaars: zaak.behandelaars?.sort((a, b) => a < b ? -1 : 1).join(', '),
       has_behandelaars: zaak.behandelaars && zaak.behandelaars.length > 0 ? true : false,
+      is_submission: zaak.type == 'submission',
+      is_case: zaak.type == 'case',
     };
   }
 

@@ -27,6 +27,7 @@ export interface SingleZaak {
   documenten?: any[];
   taken?: any[];
   behandelaars?: string[];
+  type: 'case' | 'submission';
 }
 
 export interface ZaakConnector {

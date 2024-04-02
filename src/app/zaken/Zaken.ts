@@ -154,6 +154,7 @@ export class Zaken implements ZaakConnector {
         documenten: documents,
         taken: taken,
         behandelaars,
+        type: 'case',
       };
     }
     return false;
@@ -215,7 +216,6 @@ export class Zaken implements ZaakConnector {
       if (!this.zaakTypeInAllowedCatalogus(zaak.zaaktype)) { continue; }
       const status = statussen.find((aStatus: any) => aStatus.url == zaak.status);
       const resultaat = resultaten.find((aResultaat: any) => aResultaat.url == zaak.resultaat);
-      console.debug(this.zaakTypes);
       const zaaktype = this.zaakTypes.results.find((type: any) => type.url == zaak.zaaktype)?.omschrijving;
       let status_type = null;
       if (status) {
