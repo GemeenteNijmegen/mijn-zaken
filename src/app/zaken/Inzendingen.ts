@@ -122,7 +122,7 @@ export class Inzendingen implements ZaakConnector {
       internal_id: `inzendingen/${inzending.key}`,
       registratiedatum: inzending?.dateSubmitted,
       zaak_type: inzending.formTitle,
-      status: 'ontvangen',
+      status: 'Ontvangen',
     };
   }
 
@@ -133,7 +133,7 @@ export class Inzendingen implements ZaakConnector {
       key: inzending.key,
       zaak_type: inzending.formTitle,
       registratiedatum: inzending.dateSubmitted,
-      status: 'ontvangen',
+      status: 'Ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
           url: `attachments/${attachment}`,
