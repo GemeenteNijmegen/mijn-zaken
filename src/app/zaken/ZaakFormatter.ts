@@ -1,7 +1,7 @@
 import { SingleZaak, ZaakSummary } from './ZaakConnector';
 
 export class ZaakFormatter {
-  static formatList(zaken: ZaakSummary[]) {
+  formatList(zaken: ZaakSummary[]) {
     const sorted = zaken
       .sort((a, b) => a.registratiedatum < b.registratiedatum ? 1 : -1)
       .map(zaak => this.formatZaakSummary(zaak));
@@ -11,7 +11,7 @@ export class ZaakFormatter {
     };
   }
 
-  static formatZaakSummary(zaak: ZaakSummary) {
+  formatZaakSummary(zaak: ZaakSummary) {
     return {
       ...zaak,
       registratiedatum: this.humanDate(zaak.registratiedatum),
@@ -21,7 +21,7 @@ export class ZaakFormatter {
     };
   }
 
-  static formatZaak(zaak: SingleZaak) {
+  formatZaak(zaak: SingleZaak) {
     return {
       ...zaak,
       registratiedatum: this.humanDate(zaak.registratiedatum),
@@ -34,18 +34,20 @@ export class ZaakFormatter {
       has_statuses: zaak.status_list && zaak.status_list?.length > 0 ? true : false,
       behandelaars: zaak.behandelaars?.sort((a, b) => a < b ? -1 : 1).join(', '),
       has_behandelaars: zaak.behandelaars && zaak.behandelaars.length > 0 ? true : false,
+      is_submission: zaak.type == 'submission',
+      is_case: zaak.type == 'case',
     };
   }
 
   /**
    * Convert ISO 8601 datestring to something formatted like '12 september 2023'
    */
-  private static humanDate(date: Date | undefined) {
+  private humanDate(date: Date | undefined) {
     if (!date) { return; }
     return date.toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
-  private static sortDocuments(document_a: any, document_b: any) {
+  private sortDocuments(document_a: any, document_b: any) {
     if (document_a.sort_order || document_b.sort_order) {
       console.debug('sorting by order');
       return document_a.sort_order > document_b.sort_order ? 1 : -1;

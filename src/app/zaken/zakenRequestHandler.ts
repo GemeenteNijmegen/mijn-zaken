@@ -44,7 +44,7 @@ export class ZakenRequestHandler {
     console.timeLog('request', 'Api Client init');
 
     const zaken = await this.zaakAggregator.list(user);
-    const zaakSummaries = ZaakFormatter.formatList(zaken);
+    const zaakSummaries = new ZaakFormatter().formatList(zaken);
 
     const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
     let data = {
@@ -64,7 +64,7 @@ export class ZakenRequestHandler {
     const user = UserFromSession(session);
     const zaak = await this.zaakAggregator.get(zaakId, zaakConnectorId, user);
     if (zaak) {
-      const formattedZaak = ZaakFormatter.formatZaak(zaak);
+      const formattedZaak = new ZaakFormatter().formatZaak(zaak);
 
       const navigation = new Navigation(user.type, { showZaken: true, currentPath: '/zaken' });
       let data = {

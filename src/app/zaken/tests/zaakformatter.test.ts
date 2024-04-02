@@ -17,8 +17,9 @@ describe('Zaakformatter can format single zaak', () => {
       documenten: [],
       taken: undefined,
       behandelaars: ['Piet Pietersen', 'Antoon Andriessen'],
+      type: 'case',
     };
 
-    expect(ZaakFormatter.formatZaak(zaak).behandelaars).toBe('Antoon Andriessen, Piet Pietersen');
+    expect(new ZaakFormatter().formatZaak(zaak).behandelaars).toBe('Antoon Andriessen, Piet Pietersen');
   });
 });

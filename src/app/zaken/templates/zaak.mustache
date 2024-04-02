@@ -17,7 +17,14 @@
         <div class="col-lg-9 col-md-12">
             {{#zaak}}
                 <h1>{{zaak_type}}</h1>
-                <p class="lead">Uw aanvraag is op dit moment in de fase: <strong>{{status}}</strong>. {{#verwachtte_einddatum}}Verwachtte einddatum: <strong>{{verwachtte_einddatum}}</strong>.{{/verwachtte_einddatum}}</p>
+                <p class="lead">
+                {{#is_case}}
+                  Uw aanvraag is op dit moment in de fase: <strong>{{status}}</strong>. {{#verwachtte_einddatum}}Verwachte einddatum: <strong>{{verwachtte_einddatum}}</strong>.{{/verwachtte_einddatum}}
+                {{/is_case}}
+                {{#is_submission}}
+                  Uw inzending is door ons ontvangen op {{registratiedatum}}.
+                {{/is_submission}}
+                </p>
                 {{#taken}}
                 <div class="denhaag-action">
                     <div class="denhaag-action__content">

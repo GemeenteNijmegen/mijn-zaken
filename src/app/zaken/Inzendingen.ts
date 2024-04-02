@@ -122,18 +122,17 @@ export class Inzendingen implements ZaakConnector {
       internal_id: `inzendingen/${inzending.key}`,
       registratiedatum: inzending?.dateSubmitted,
       zaak_type: inzending.formTitle,
-      status: 'ontvangen',
+      status: 'Ontvangen',
     };
   }
 
   summarizeSingle(inzending: Inzending) {
-    const single = {
+    const single: SingleZaak = {
       identifier: inzending.key,
       internal_id: `inzendingen/${inzending.key}`,
-      key: inzending.key,
       zaak_type: inzending.formTitle,
       registratiedatum: inzending.dateSubmitted,
-      status: 'ontvangen',
+      status: 'Ontvangen',
       documenten: inzending.attachments.map((attachment) => {
         return {
           url: `attachments/${attachment}`,
@@ -142,9 +141,10 @@ export class Inzendingen implements ZaakConnector {
           sort_order: 1,
         };
       }),
+      type: 'submission',
     };
     // Add the PDF link to the documenten-list
-    single.documenten.push({
+    single.documenten!.push({
       url: `${inzending.key}.pdf`,
       titel: 'Formulier (PDF)',
       registratieDatum: inzending.dateSubmitted,

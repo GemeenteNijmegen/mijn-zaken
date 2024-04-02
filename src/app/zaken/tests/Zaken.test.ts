@@ -132,6 +132,7 @@ describe('Zaken', () => {
           documenten: [],
           taken: null,
           behandelaars: [],
+          type: 'case',
         });
     });
 
@@ -188,6 +189,7 @@ describe('Zaken', () => {
       ],
       taken: null,
       behandelaars: [],
+      type: 'case',
     });
   });
 
@@ -209,6 +211,7 @@ describe('Zaken', () => {
       documenten: [],
       taken: null,
       behandelaars: [],
+      type: 'case',
     });
   });
 
@@ -326,6 +329,7 @@ describe('Filtering domains', () => {
           documenten: [],
           taken: null,
           behandelaars: [],
+          type: 'case',
         });
     });
   test('a single zaak is filtered correctly (APV)',
