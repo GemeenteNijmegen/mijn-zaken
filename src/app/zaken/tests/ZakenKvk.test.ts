@@ -112,6 +112,7 @@ describe('Zaken', () => {
           documenten: [],
           taken: null,
           behandelaars: undefined,
+          type: 'case',
         });
     });
 
