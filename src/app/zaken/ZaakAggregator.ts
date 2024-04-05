@@ -36,11 +36,9 @@ export class ZaakAggregator {
   }
 
   async download(zaakConnectorId: string, zaakId: string, file: string, user: User) {
-    console.debug('zaakConnectorId', zaakConnectorId);
     if (!this.zaakConnectors[zaakConnectorId]) {
       throw Error(`Zaakconnector with id ${zaakConnectorId} not found`);
     }
-    console.debug(this.zaakConnectors[zaakConnectorId]);
     return this.zaakConnectors[zaakConnectorId].download(zaakId, file, user);
   }
 }

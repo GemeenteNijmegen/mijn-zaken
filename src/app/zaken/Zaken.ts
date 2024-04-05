@@ -101,7 +101,6 @@ export class Zaken implements ZaakConnector {
 
     console.timeLog('list zaken', 'received zaken');
     if (zaken?.results) {
-      console.debug('zaken results,', zaken.results);
       const [statussen, resultaten] = await this.zaakMetaData(zaken);
       console.timeLog('list zaken', 'received zaakmetadata');
       console.timeEnd('list zaken');
@@ -236,7 +235,6 @@ export class Zaken implements ZaakConnector {
         status: status_type,
         resultaat: resultaat_type,
       };
-      console.debug('summary', summary);
       zaak_summaries.push(summary);
     }
     return zaak_summaries;
@@ -246,7 +244,6 @@ export class Zaken implements ZaakConnector {
   async metaData() {
     console.time('metadata');
     console.timeLog('metadata', 'awaiting metadata');
-    console.debug('getting metadata');
     if (!this.zaakTypes || !this.statusTypes || !this.resultaatTypes || !this.catalogi) {
       [
         this.zaakTypes,
@@ -260,7 +257,6 @@ export class Zaken implements ZaakConnector {
         this.catalogiPromise,
       ]);
     }
-    console.debug('has metadata');
     console.timeLog('metadata', 'retreived metadata');
     console.timeEnd('metadata');
   }
