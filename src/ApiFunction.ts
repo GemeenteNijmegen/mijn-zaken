@@ -1,10 +1,8 @@
-import { aws_lambda as Lambda, aws_dynamodb, RemovalPolicy, Duration, Stack } from 'aws-cdk-lib';
-import { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { aws_lambda as Lambda, aws_dynamodb, Duration, Stack } from 'aws-cdk-lib';
 import { IRole } from 'aws-cdk-lib/aws-iam';
-import { FilterPattern, IFilterPattern, MetricFilter, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { IFilterPattern, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { LambdaReadOnlyPolicy } from './iam/lambda-readonly-policy';
-import { Statics } from './statics';
 
 type T = Lambda.Function;
 
