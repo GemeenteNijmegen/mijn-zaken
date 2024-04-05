@@ -62,7 +62,7 @@ export const configurations: {[key: string]: Configuration} = {
     deployToEnvironment: Statics.productionEnvironment,
     useTaken: false,
     isLive: true,
-    useSubmissions: false,
+    useSubmissions: true,
     allowZakenDomains: ['APV'], // JZ is not yet available in prod
   },
 };
