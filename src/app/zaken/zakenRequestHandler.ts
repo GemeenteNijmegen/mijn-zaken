@@ -54,7 +54,6 @@ export class ZakenRequestHandler {
       nav: navigation.items,
       zaken: zaakSummaries,
     };
-    console.debug('data', JSON.stringify(data.zaken));
     // render page
     const html = await render(data, zakenTemplate.default);
     return Response.html(html, 200, session.getCookie());

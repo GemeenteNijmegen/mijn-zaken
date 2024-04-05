@@ -49,14 +49,11 @@ export class ZaakFormatter {
 
   private sortDocuments(document_a: any, document_b: any) {
     if (document_a.sort_order || document_b.sort_order) {
-      console.debug('sorting by order');
       return document_a.sort_order > document_b.sort_order ? 1 : -1;
     }
     if (document_a.registratieDatum !== document_b.registratieDatum) {
-      console.debug('sorting by date');
       return document_a.registratieDatum < document_b.registratieDatum ? 1 : -1;
     }
-    console.debug('sorting by title');
     return document_a.titel < document_b.titel ? 1 : -1;
   }
 }

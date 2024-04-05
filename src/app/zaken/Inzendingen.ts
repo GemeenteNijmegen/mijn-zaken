@@ -53,10 +53,10 @@ export class Inzendingen implements ZaakConnector {
     const paramString = params ? `?${params}` : '';
     const url =`${endpoint}${paramString}`;
     try {
-      console.debug('getting ', this.axios.getUri({ url }));
+      // console.debug('getting ', this.axios.getUri({ url }));
       const response = await this.axios.get(url);
       if (response.status != 200) {
-        console.debug(response.request.responseURL);
+        // console.debug(response.request.responseURL);
         throw Error('Unexpected response: ' + response.status);
       }
       return response.data;
@@ -97,20 +97,16 @@ export class Inzendingen implements ZaakConnector {
     });
     const results = await this.request(`submissions/${key}`, params);
     const submission = this.summarizeSingle(InzendingSchema.parse(results));
-    console.debug('formatted inzending', submission);
     return submission;
   }
 
   async download(zaakId: string, file: string, user: User) {
-    console.debug('downloading file', file);
     const submission = await this.get(zaakId, user);
-    console.debug(`found submission for file ${file}`);
     if (submission && submission.documenten?.find((document) => document.url == file)) {
       const params = new URLSearchParams({
         key: `${zaakId}/${file}`,
       });
       const results = await this.request('download', params);
-      console.debug('found file', results);
       return results;
     }
     return false;
