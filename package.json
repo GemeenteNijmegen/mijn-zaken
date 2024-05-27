@@ -48,7 +48,7 @@
     "eslint-plugin-import": "^2.29.1",
     "jest": "^29",
     "jest-junit": "^15",
-    "projen": "^0.81.15",
+    "projen": "^0.81.16",
     "standard-version": "^9",
     "ts-jest": "^29",
     "ts-node": "^10.9.2",
@@ -75,8 +75,12 @@
     "zod": "^3.23.8"
   },
   "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.0.0",
   "jest": {
+    "coverageProvider": "v8",
     "setupFiles": [
       "dotenv/config"
     ],
