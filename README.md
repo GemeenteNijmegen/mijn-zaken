@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> Deze repository wordt niet meer gebruikt. Deze functionaliteit is vanaf nu opgenomen in [Mijn Nijmegen](https://github.com/GemeenteNijmegen/mijn-nijmegen).
+
 # MIJN Zaken
 Een applicatie voor het bekijken van je lopende zaken binnen de gemeente Nijmegen.
 
